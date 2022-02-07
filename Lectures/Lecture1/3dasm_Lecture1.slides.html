@@ -14726,14 +14726,14 @@ div.jp-OutputPrompt {
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="OPTION-1.-Run-this-notebook-locally-in-your-computer:"><strong>OPTION 1</strong>. Run this notebook <strong>locally in your computer</strong>:<a class="anchor-link" href="#OPTION-1.-Run-this-notebook-locally-in-your-computer:">&#182;</a></h2><ol>
-<li>install miniconda3 <a href="https://docs.conda.io/en/latest/miniconda.html">here</a></li>
-<li>Create a virtual environment for this course called "3dasm":
+<li>Install miniconda3 <a href="https://docs.conda.io/en/latest/miniconda.html">here</a></li>
+<li>Open a command window and create a virtual environment called "3dasm":
 <pre><code>conda create -n 3dasm python=3 numpy scipy jupyter nb_conda matplotlib pandas scikit-learn rise tensorflow -c conda-forge</code></pre>
 </li>
-<li>clone the repository to your computer:
+<li>Install <a href="https://github.com/git-guides/install-git">git</a>, open command window &amp; clone the repository to your computer:
 <pre><code>git clone https://github.com/bessagroup/3dasm_course</code></pre>
 </li>
-<li>load jupyter notebook (it will open in your internet browser):
+<li>Load jupyter notebook by typing in (anaconda) command window (it will open in your internet browser):
 <pre><code>conda activate 3dasm
 jupyter notebook</code></pre>
 </li>
@@ -15099,7 +15099,7 @@ class="
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>The <span style="color:green">green</span> curve shows the Gaussian <a title="probability density function">pdf</a> of the <a title="random variable">rv</a> $z$ <strong>conditioned</strong> on the mean $\mu_z=1.5$ and variance $\sigma_z^2=0.5$ for the car stopping distance problem.</p>
+<p>The <span style="color:green">green</span> curve shows the Gaussian <a title="probability density function">pdf</a> of the <a title="random variable">rv</a> $z$ <strong>conditioned</strong> on the mean $\mu_z=1.5$ and variance $\sigma_z^2=0.5^2$ for the car stopping distance problem.</p>
 
 </div>
 </div>
@@ -15163,7 +15163,7 @@ $$<p>The output of this expression is the <strong>PROBABILITY DENSITY</strong> o
 <h2 id="Joint-probability">Joint probability<a class="anchor-link" href="#Joint-probability">&#182;</a></h2><p><strong>Joint probability</strong> of two events: $\text{Pr}(A \wedge B)= \text{Pr}(A, B)$</p>
 <p>If $A$ and $B$ are <strong>independent</strong>: $\text{Pr}(A, B)= \text{Pr}(A) \text{Pr}(B)$</p>
 <p>For example, suppose $z_1$ and $z_2$ are chosen uniformly at random from the set $\mathcal{Z} = \{1, 2, 3, 4\}$.</p>
-<p>Let $A$ be the event that $z_1 \in \{1, 2\}$ and $B$ be the event that $z_2 \in \{3\}$.</p>
+<p>Let $A$ be the event that $z_1 \in \{1, 2\}$ and $B$ be the event that <strong>another</strong> <a title="random variable">rv</a> denoted as $z_2 \in \{3\}$.</p>
 <p>Then we have: $\text{Pr}(A, B) = \text{Pr}(A) \text{Pr}(B) = \frac{1}{2} \cdot \frac{1}{4}$.</p>
 
 </div>
@@ -15181,7 +15181,7 @@ $$<p>The output of this expression is the <strong>PROBABILITY DENSITY</strong> o
 $$
 \text{Pr}(A \vee B)= \text{Pr}(A) + \text{Pr}(B)
 $$<p>For example, suppose an <a title="random variable">rv</a> denoted as $z_1$ is chosen uniformly at random from the set $\mathcal{Z} = \{1, 2, 3, 4\}$.</p>
-<p>Let $A$ be the event that $z_1 \in \{1, 2\}$ and $B$ be the event that anoter <a title="random variable">rv</a> denoted as $z_2 \in \{3\}$.</p>
+<p>Let $A$ be the event that $z_1 \in \{1, 2\}$ and $B$ be the event that the <strong>same</strong> <a title="random variable">rv</a> $z_1 \in \{3\}$.</p>
 <p>Then we have $\text{Pr}(A \vee B) = \frac{2}{4} + \frac{1}{4}$.</p>
 
 </div>
@@ -15838,7 +15838,7 @@ $$ \mathbf{z}^* = \underset{z}{\mathrm{argmax}}~p(z)$$<p>If the distribution is 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>[&lt;matplotlib.lines.Line2D at 0x7f7a03db4760&gt;]</pre>
+<pre>[&lt;matplotlib.lines.Line2D at 0x7f3aa2b50c40&gt;]</pre>
 </div>
 
 </div>
@@ -15897,7 +15897,7 @@ $$ \mathbf{z}^* = \underset{z}{\mathrm{argmax}}~p(z)$$<p>If the distribution is 
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>&lt;matplotlib.legend.Legend at 0x7f79faf540a0&gt;</pre>
+<pre>&lt;matplotlib.legend.Legend at 0x7f3aa2b1f610&gt;</pre>
 </div>
 
 </div>
