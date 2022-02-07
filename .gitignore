@@ -1,0 +1,5 @@
+# Ignore all files in the following folders:
+STUFF_NOT_TO_UPLOAD/
+# ignore ipynb checkpoints:
+.ipynb_checkpoints
+
