@@ -16,12 +16,12 @@ Miguel A. Bessa | M.A.Bessa@tudelft.nl | Associate Professor
 * If attending lectures remotely: listen to me (!) via Zoom and (ideally) use two screens where you have the notebook open in 1 screen and you see the lectures on the other. Read the book.
 
 **Folder structure**
-* The "Lectures" folder contains each lecture in a separate folder "Lecture_X"
-* Each "Lecture_X" folder contains:
-    1. A jupyter notebook "3dasm_Lecture_X.ipynb" that you can run locally or in servers like Google Colab.
-    2. An html file "3dasm_Lecture_X.slides.html" that contains the slides for the course (compiled from the notebook).
-    3. A pdf "3dasm_Lecture_X slides.pdf" with the slides of the course (printed from the html file).
+* The "Lectures" folder contains each lecture in a separate folder "LectureX" where $X$ is the lecture number.
+* Each "LectureX" folder contains:
+    1. A jupyter notebook "3dasm_LectureX.ipynb" that you can run locally or in servers like Google Colab.
+    2. An html file "3dasm_LectureX.slides.html" that contains the slides for the course (compiled from the notebook).
+    3. A pdf "3dasm_LectureX slides.pdf" with the slides of the course (printed from the html file).
     4. A "docs" folder with all the files needed for each lecture.
 * The preferred method to follow the course is to look directly into the jupyter notebook, as it contains additional notes and working code.
 
-** This course is under construction. Comments are welcome.
+**This course is under construction. Comments are welcome.**
