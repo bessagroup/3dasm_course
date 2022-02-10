@@ -2,4 +2,6 @@
 STUFF_NOT_TO_UPLOAD/
 # ignore ipynb checkpoints:
 .ipynb_checkpoints
-
+# ignore some files created during class
+Lectures/Lecture2/docs/car_dataframe.pkl
+Lectures/Lecture2/docs/exercise1_data.pkl
