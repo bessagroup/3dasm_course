@@ -5,3 +5,4 @@ STUFF_NOT_TO_UPLOAD/
 # ignore some files created during class
 Lectures/Lecture2/docs/car_dataframe.pkl
 Lectures/Lecture2/docs/exercise1_data.pkl
+Lectures/Lecture2/docs/Exercise1.py
