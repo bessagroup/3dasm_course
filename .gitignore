@@ -2,5 +2,6 @@
 STUFF_NOT_TO_UPLOAD/
 # ignore ipynb checkpoints:
 .ipynb_checkpoints
-# ignore some folders or files created during class
-your_data/
+# ignore files inside the subfolders your_data that students can use in class
+your_data/*
+your_assignments/*
