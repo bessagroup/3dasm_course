@@ -5,3 +5,5 @@ STUFF_NOT_TO_UPLOAD/
 # ignore files inside some subfolders to be used by students
 **/your_data/*
 **/your_Assignments/*
+# but do not ignore the placeholder file such that some folders exist for students, yet remain empty
+!.gitkeep

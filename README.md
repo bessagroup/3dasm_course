@@ -27,14 +27,14 @@ Miguel A. Bessa | miguel_bessa@brown.edu | Associate Professor
 
 Homeworks 30%, Midterm 30%, and Final Project 40%.
 
-Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; has minor error), B (75%; has significant error), C (60%; mostly incorrect but homework was delivered), D (0%, not delivered). If you deliver something with an honest attempt at solving the homework you are assigned 60% for that homework. Late Homework can only get up to A (90%). The worst Homework is removed.
+Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; has minor error), B (75%; has significant error), C (60%; mostly incorrect but homework was delivered), D (0%, not delivered). If you deliver something with an honest attempt at solving the homework you are assigned 60% for that homework. **Late Homework can only get up to A (90%)**. The worst Homework is removed.
 
 **Course outline for the first half**
 
 | DATE | SUBJECT | Notebook | PDF | Homework |
 | :-- | :-- | :-- | :-- | :-- |
-| Wed 9/6  | Introduction & Basics of univariate statistics | [Lecture 1](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture1/3dasm_Lecture1.ipynb) | [Slides](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture1/3dasm_Lecture1_slides.pdf) | [<font color='green'>HW1 assigned</font>](https://github.com/bessagroup/3dasm_course/blob/main/Assignments/3dasm_Homework1.pdf) |
-| Fri 9/8  | Handling data with Pandas | Lecture 2 <!-- [Lecture 2](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture2/3dasm_Lecture2.ipynb) --> | Slides <!-- [Slides](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture2/3dasm_Lecture2_slides.pdf) --> |  |
+| Wed 9/6  | Introduction & Basics of univariate statistics | [Lecture 1](Lectures/Lecture1/3dasm_Lecture1.ipynb) | [Slides](Lectures/Lecture1/3dasm_Lecture1_slides.pdf) | [<font color='green'>HW1 assigned</font>](Assignments/3dasm_Homework1.pdf) |
+| Fri 9/8  | Handling data with Pandas | [Lecture 2](Lectures/Lecture2/3dasm_Lecture2.ipynb) | [Slides](Lectures/Lecture2/3dasm_Lecture2_slides.pdf) |  |
 | Mon 9/11  | Introducing joint & conditional distributions; Bayes' rule | Lecture 3 <!-- [Lecture 3](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture3/3dasm_Lecture3.ipynb) --> | Slides <!-- [Slides](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture3/3dasm_Lecture3_slides.pdf) --> |  |
 | Wed 9/13   | Multivariate statistics; visualization of joint & conditional distributions | Lecture 4 <!-- [Lecture 4](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture4/3dasm_Lecture4.ipynb) --> | Slides <!-- [Slides](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture4/3dasm_Lecture4_slides.pdf) --> | <font color='red'>HW1 due</font> & HW 2 assigned <!-- [<font color='green'>HW2 assigned</font>](https://github.com/bessagroup/3dasm_course/blob/main/Assignments/3dasm_Homework2.pdf) --> |
 | Fri 9/15  | Bayesian inference for one hidden rv: Part I | Lecture 5 <!-- [Lecture 5](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture5/3dasm_Lecture5.ipynb) --> | Slides <!-- [Slides](https://github.com/bessagroup/3dasm_course/blob/main/Lectures/Lecture5/3dasm_Lecture5_slides.pdf) --> |  |
