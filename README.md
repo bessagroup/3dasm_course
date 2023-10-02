@@ -43,8 +43,8 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 | Fri 9/22  | Machine Learning without going Bayesian: Point Estimates | [Lecture 8](Lectures/Lecture8/3dasm_Lecture8.ipynb) | [Slides](Lectures/Lecture8/3dasm_Lecture8_slides.pdf) |  |
 | Mon 9/25  | Linear Regression: Part I | [Lecture 9](Lectures/Lecture9/3dasm_Lecture9.ipynb) | [Slides](Lectures/Lecture9/3dasm_Lecture9_slides.pdf) |  |
 | Wed 9/27  | Linear Regression: Part II | [Lecture 10](Lectures/Lecture10/3dasm_Lecture10.ipynb) | [Slides](Lectures/Lecture10/3dasm_Lecture10_slides.pdf) | <font color='red'>HW3 due</font> & [<font color='green'>HW4 assigned</font>](Assignments/3dasm_Homework4.pdf) |
-| Fri 9/29  | Linear Regression: Part III | Lecture 11 <!-- [Lecture 11](Lectures/Lecture11/3dasm_Lecture11.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture11/3dasm_Lecture11_slides.pdf) --> |  |
-| Mon 10/2  | Linear Regression: Part IV | Lecture 12 <!-- [Lecture 12](Lectures/Lecture12/3dasm_Lecture12.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture12/3dasm_Lecture12_slides.pdf) --> |  |
+| Fri 9/29  | Linear Regression: Part III | [Lecture 11](Lectures/Lecture11/3dasm_Lecture11.ipynb) | [Slides](Lectures/Lecture11/3dasm_Lecture11_slides.pdf) |  |
+| Mon 10/2  | Linear Regression: Part IV | [Lecture 12](Lectures/Lecture12/3dasm_Lecture12.ipynb)  | [Slides](Lectures/Lecture12/3dasm_Lecture12_slides.pdf) |  |
 | Wed 10/4  | Gaussian process regression: Part I | Lecture 13 <!-- [Lecture 13](Lectures/Lecture13/3dasm_Lecture13.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture13/3dasm_Lecture13_slides.pdf) --> | <font color='red'>HW4 due</font> & HW5 assigned <!-- [<font color='green'>HW5 assigned</font>](Assignments/3dasm_Homework2.pdf) --> |
 | Fri 10/6  | Gaussian process regression: Part II | Lecture 14 <!-- [Lecture 14](Lectures/Lecture14/3dasm_Lecture14.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture14/3dasm_Lecture14_slides.pdf) --> |  |
 | Mon 10/9  | <font color='green'>HOLIDAY</font> 🥹 |  |  |  |
