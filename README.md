@@ -45,13 +45,13 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 | Wed 9/27  | Linear Regression: Part II | [Lecture 10](Lectures/Lecture10/3dasm_Lecture10.ipynb) | [Slides](Lectures/Lecture10/3dasm_Lecture10_slides.pdf) | <font color='red'>HW3 due</font> & [<font color='green'>HW4 assigned</font>](Assignments/3dasm_Homework4.pdf) |
 | Fri 9/29  | Linear Regression: Part III | [Lecture 11](Lectures/Lecture11/3dasm_Lecture11.ipynb) | [Slides](Lectures/Lecture11/3dasm_Lecture11_slides.pdf) |  |
 | Mon 10/2  | Linear Regression: Part IV | [Lecture 12](Lectures/Lecture12/3dasm_Lecture12.ipynb)  | [Slides](Lectures/Lecture12/3dasm_Lecture12_slides.pdf) |  |
-| Wed 10/4  | Gaussian process regression: Part I | [Lecture 13](Lectures/Lecture13/3dasm_Lecture13.ipynb) | [Slides](Lectures/Lecture13/3dasm_Lecture13_slides.pdf) | <font color='red'>HW4 due</font> & HW5 assigned [<font color='green'>HW5 assigned</font>](Assignments/3dasm_Homework2.pdf) |
+| Wed 10/4  | Gaussian process regression: Part I | [Lecture 13](Lectures/Lecture13/3dasm_Lecture13.ipynb) | [Slides](Lectures/Lecture13/3dasm_Lecture13_slides.pdf) | <font color='red'>HW4 due</font> & HW5 assigned [<font color='green'>HW5 assigned</font>](Assignments/3dasm_Homework5.pdf) |
 | Fri 10/6  | Gaussian process regression: Part II | Lecture 14 <!-- [Lecture 14](Lectures/Lecture14/3dasm_Lecture14.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture14/3dasm_Lecture14_slides.pdf) --> |  |
 | Mon 10/9  | <font color='green'>HOLIDAY</font> 🥹 |  |  |  |
-| Wed 10/11  | Gaussian process regression: Part III | Lecture 15 <!-- [Lecture 15](Lectures/Lecture15/3dasm_Lecture15.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture15/3dasm_Lecture15_slides.pdf) --> | <font color='red'>HW5 due</font> & HW6 assigned <!-- [<font color='green'>HW6 assigned</font>](Assignments/3dasm_Homework2.pdf) --> |
+| Wed 10/11  | Gaussian process regression: Part III | Lecture 15 <!-- [Lecture 15](Lectures/Lecture15/3dasm_Lecture15.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture15/3dasm_Lecture15_slides.pdf) --> | <font color='red'>HW5 due</font> & HW6 assigned <!-- [<font color='green'>HW6 assigned</font>](Assignments/3dasm_Homework6.pdf) --> |
 | Fri 10/13  | Artificial neural networks: Part I | Lecture 16 <!-- [Lecture 16](Lectures/Lecture16/3dasm_Lecture16.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture16/3dasm_Lecture16_slides.pdf) --> |  |
 | Mon 10/16  | Artificial neural networks: Part II | Lecture 17 <!-- [Lecture 17](Lectures/Lecture17/3dasm_Lecture17.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture17/3dasm_Lecture17_slides.pdf) --> |  |
-| Wed 10/18  | Artificial neural networks: Part III | Lecture 18 <!-- [Lecture 18](Lectures/Lecture16/3dasm_Lecture16.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture16/3dasm_Lecture16_slides.pdf) --> | <font color='red'>HW6 due</font> |
+| Wed 10/18  | Artificial neural networks: Part III | Lecture 18 <!-- [Lecture 18](Lectures/Lecture18/3dasm_Lecture18.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture18/3dasm_Lecture18_slides.pdf) --> | <font color='red'>HW6 due</font> |
 | Fri 10/20  | <font color='green'>Midterm review session with T.A.</font> |  |  |  |
 | Mon 10/23  | <font color='red'>Midterm exam</font> 🦾 |  |  |  |
 | Wed 10/25  | Second part of the course starts... |  |  |  |
