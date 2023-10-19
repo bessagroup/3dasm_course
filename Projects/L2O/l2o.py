@@ -7,12 +7,13 @@ from __future__ import annotations
 
 # Standard
 from abc import abstractmethod
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, Iterable, List, Type
 
 # Third-party
 import numpy as np
 import xarray as xr
 from f3dasm import ExperimentData
+from tqdm import tqdm
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -118,45 +119,49 @@ class CustomStrategy(Strategy):
     name: str = "custom_strategy"
 
     @abstractmethod
-    def predict(self, dim: int, budget: int, noise: int, convex: int,
-                separable: int, multimodal: int,
-                samples_output: np.ndarray) -> str:
-        """
-        Method to predict the optimizer to use given features of the
-        benchmark problem. THis method needs to be implemented by the user.
-
-        Parameters
-        ----------
-        dim : int
-            Dimension of the benchmark problem
-            budget
-            Budget of the benchmark problem
-        noise : int
-            Noise of the benchmark problem
-        convex : int
-            Convexity of the benchmark problem
-        separable : int
-            Separability of the benchmark problem
-        multimodal : int
-            Multimodality of the benchmark problem
-        samples_output : np.ndarray
-            Output samples of the benchmark problem
-
-        Returns
-        -------
-        str
-            Optimizer to use
-
-        Raises
-        ------
-        NotImplementedError
-            If the method is not implemented by the user
-        """
+    # def predict(self, dim: int, budget: int, noise: int, convex: int,
+    #             separable: int, multimodal: int,
+    #             samples_output: np.ndarray) -> str:
+    #     """
+    #     Method to predict the optimizer to use given features of the
+    #     benchmark problem. THis method needs to be implemented by the user.
+    #     Parameters
+    #     ----------
+    #     dim : int
+    #         Dimension of the benchmark problem
+    #         budget
+    #         Budget of the benchmark problem
+    #     noise : int
+    #         Noise of the benchmark problem
+    #     convex : int
+    #         Convexity of the benchmark problem
+    #     separable : int
+    #         Separability of the benchmark problem
+    #     multimodal : int
+    #         Multimodality of the benchmark problem
+    #     samples_output : np.ndarray
+    #         Output samples of the benchmark problem
+    #     Returns
+    #     -------
+    #     str
+    #         Optimizer to use
+    #     Raises
+    #     ------
+    #     NotImplementedError
+    #         If the method is not implemented by the user
+    #     """
+    #     ...
+    def predict(self, features: xr.Dataset) -> Iterable[str]:
         ...
 
     def __call__(self, xarr: PerformanceDataset) -> StrategyDataArray:
-        predictions = [self.predict(
-            **create_features_dict(xarr, id)) for id in xarr.itemID]
+        # predictions = [self.predict(
+        #     **create_features_dict(xarr, id)) for id in xarr.itemID]
+        # return xr.DataArray(predictions, dims=['itemID'],
+        #                     coords={'itemID': xarr['itemID']})
+
+        allowed_features = xarr.drop(['perf_profile', 'ranking'])
+        predictions = self.predict(allowed_features)
         return xr.DataArray(predictions, dims=['itemID'],
                             coords={'itemID': xarr['itemID']})
 
@@ -169,7 +174,8 @@ class WorstPerfProfile(Strategy):
 
     def __call__(self, xarr: PerformanceDataset) -> StrategyDataArray:
         return xarr['perf_profile'].mean('realization').idxmax(
-            'optimizer').sel(output_dim='y').drop('output_dim')
+            'optimizer', fill_value='RandomSearch').sel(
+                output_dim='y').drop('output_dim')
 
 
 class BestPerfProfile(Strategy):
@@ -177,7 +183,8 @@ class BestPerfProfile(Strategy):
 
     def __call__(self, xarr: PerformanceDataset) -> StrategyDataArray:
         return xarr['perf_profile'].mean('realization').idxmin(
-            'optimizer').sel(output_dim='y').drop('output_dim')
+            'optimizer', fill_value='RandomSearch').sel(
+                output_dim='y').drop('output_dim')
 
 # =============================================================================
 
@@ -214,7 +221,7 @@ class StrategyManager:
     Class to manage the strategies of the optimizer to use given features
     """
 
-    def __init__(self, experimentdata: ExperimentData,
+    def __init__(self, data: ExperimentData | xr.Dataset,
                  strategy_list: List[CustomStrategy] = None):
         """
         Parameters
@@ -226,7 +233,12 @@ class StrategyManager:
             List of strategies to use
         """
         # Configure the strategies
-        self.combined_data = open_all_datasets_post(experimentdata)
+        if isinstance(data, ExperimentData):
+            self.combined_data = open_all_datasets_post(data)
+
+        elif isinstance(data, xr.Dataset):
+            self.combined_data = data
+
         self.strategies = create_strategy_xarr(self.combined_data)
 
         if strategy_list is None:
@@ -267,16 +279,11 @@ class StrategyManager:
         # fraction of runs that are within a factor f of the best run
         f_values = np.linspace(1, 5, 300)
 
-        fractions = []
-        for f in f_values:
-            fractions.append((pp <= f).mean(dim='problem'))
+        xr_f = xr.concat([(pp <= f).mean(dim='problem')
+                          for f in f_values],
+                         dim=xr.DataArray(f_values, dims='f'))
 
-        fractions_xr = xr.DataArray(fractions, dims=('f', 'strategy',
-                                                     'output_dim'), coords={
-                                    'f': f_values, 'strategy': pp.strategy,
-                                    'output_dim': pp.output_dim})
-
-        return fractions_xr
+        return xr_f
 
 
 #                                                                Plotting tools
@@ -300,12 +307,6 @@ def plot_perf_profile(data: ExperimentData | xr.Dataset):
     pp = data.stack({'problem': ['itemID', 'realization']})['perf_profile']
     f_values = np.linspace(1, 5, 300)
 
-    fractions = []
-    for f in f_values:
-        fractions.append((pp <= f).mean(dim='problem'))
-
-    fractions_xr = xr.DataArray(fractions, dims=('f', 'optimizer',
-                                                 'output_dim'), coords={
-                                'f': f_values, 'optimizer': pp.optimizer,
-                                'output_dim': pp.output_dim})
-    fractions_xr.plot(hue='optimizer')
+    xr_f = xr.concat([(pp <= f).mean(dim='problem')
+                     for f in f_values], dim=xr.DataArray(f_values, dims='f'))
+    xr_f.plot(hue='optimizer')
