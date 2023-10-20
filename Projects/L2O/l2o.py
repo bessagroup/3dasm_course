@@ -1,4 +1,7 @@
-"""Helper functions for the L2O project"""
+"""
+Created on October 20, 2023
+Helper functions for the L2O project
+"""
 
 #                                                                       Modules
 # =============================================================================
@@ -7,13 +10,13 @@ from __future__ import annotations
 
 # Standard
 from abc import abstractmethod
-from typing import Any, Dict, Iterable, List, Type
+from typing import Iterable, List, Optional, Tuple, Type
 
 # Third-party
+import matplotlib.pyplot as plt
 import numpy as np
 import xarray as xr
 from f3dasm import ExperimentData
-from tqdm import tqdm
 
 #                                                          Authorship & Credits
 # =============================================================================
@@ -108,6 +111,7 @@ def open_all_datasets_post(experimentdata:
 class Strategy:
     name: str = "strategy"
 
+    @abstractmethod
     def __call__(self, xarr: PerformanceDataset) -> StrategyDataArray:
         ...
 
@@ -119,47 +123,27 @@ class CustomStrategy(Strategy):
     name: str = "custom_strategy"
 
     @abstractmethod
-    # def predict(self, dim: int, budget: int, noise: int, convex: int,
-    #             separable: int, multimodal: int,
-    #             samples_output: np.ndarray) -> str:
-    #     """
-    #     Method to predict the optimizer to use given features of the
-    #     benchmark problem. THis method needs to be implemented by the user.
-    #     Parameters
-    #     ----------
-    #     dim : int
-    #         Dimension of the benchmark problem
-    #         budget
-    #         Budget of the benchmark problem
-    #     noise : int
-    #         Noise of the benchmark problem
-    #     convex : int
-    #         Convexity of the benchmark problem
-    #     separable : int
-    #         Separability of the benchmark problem
-    #     multimodal : int
-    #         Multimodality of the benchmark problem
-    #     samples_output : np.ndarray
-    #         Output samples of the benchmark problem
-    #     Returns
-    #     -------
-    #     str
-    #         Optimizer to use
-    #     Raises
-    #     ------
-    #     NotImplementedError
-    #         If the method is not implemented by the user
-    #     """
-    #     ...
     def predict(self, features: xr.Dataset) -> Iterable[str]:
+        """
+        Method to predict the optimizer to use given features of the
+        benchmark problem. THis method needs to be implemented by the user.
+        Parameters
+        ----------
+        features : xr.Dataset
+            Features of the benchmark problem
+
+        Returns
+        -------
+        Iterable[str]
+            Optimizer to be used for each of the test problems
+        Raises
+        ------
+        NotImplementedError
+            If the method is not implemented by the user
+        """
         ...
 
     def __call__(self, xarr: PerformanceDataset) -> StrategyDataArray:
-        # predictions = [self.predict(
-        #     **create_features_dict(xarr, id)) for id in xarr.itemID]
-        # return xr.DataArray(predictions, dims=['itemID'],
-        #                     coords={'itemID': xarr['itemID']})
-
         allowed_features = xarr.drop(['perf_profile', 'ranking'])
         predictions = self.predict(allowed_features)
         return xr.DataArray(predictions, dims=['itemID'],
@@ -195,24 +179,6 @@ def create_strategy_xarr(combined_data: PerformanceDataset) -> StrategyDataset:
                      coords={'itemID': combined_data['itemID']},
                      name=opt) for opt in combined_data['optimizer'].values]})
 
-
-def create_features_dict(combined_data: PerformanceDataset,
-                         itemID: int) -> Dict[str, Any]:
-    ds = combined_data.drop_vars(['perf_profile', 'ranking'])
-
-    features = {var: ds.sel(itemID=itemID)[var].values for var in ds.data_vars}
-
-    for feature, value in features.items():
-        if isinstance(value, np.ndarray):
-            if value.shape == ():
-                features[feature] = value.item()
-
-        if feature == 'samples_output':
-            features[feature] = value.reshape(
-                len(combined_data['realization']), -1)
-
-    return features
-
 # =============================================================================
 
 
@@ -222,14 +188,14 @@ class StrategyManager:
     """
 
     def __init__(self, data: ExperimentData | xr.Dataset,
-                 strategy_list: List[CustomStrategy] = None):
+                 strategy_list: Optional[List[CustomStrategy]] = None):
         """
         Parameters
         ----------
 
-        experimentdata : ExperimentData
-            ExperimentData object
-        strategy_list : List[CustomStrategy]
+        data : ExperimentData | xr.Dataset`
+            ExperimentData object or post-processed data xarray
+        strategy_list : List[CustomStrategy], optional
             List of strategies to use
         """
         # Configure the strategies
@@ -252,11 +218,38 @@ class StrategyManager:
         for strategy in strategy_list:
             self.strategies[strategy.name] = strategy(self.combined_data)
 
-    def plot(self):
+    def plot(self, title: Optional[str] = None) -> \
+            Tuple[plt.Figure, plt.Axes]:
         """
         Plot the performance profiles of the strategies
+
+        Parameters
+        ----------
+        title : Optional[str]
+            Title of the plot
+
+        Returns
+        -------
+        Tuple[plt.Figure, plt.Axes]
+            Figure and axes of the plot
         """
-        self.compute_performance_profiles().plot(hue='strategy')
+        xr_f = self.compute_performance_profiles()
+
+        # Plotting
+        fig, ax = plt.subplots(figsize=(10, 5))
+        for strategy in xr_f.strategy:
+            f_one = xr_f.sel(f=1.0, strategy=strategy).values[0]
+            ax.plot(xr_f.f, xr_f.sel(strategy=strategy),
+                    label=f"{strategy.values} = {f_one}", zorder=-1)
+            ax.scatter(1.0, xr_f.sel(f=1.0, strategy=strategy),
+                       marker="x", zorder=1)
+
+        if title is not None:
+            ax.set_title(title)
+        ax.set_xlabel("Performance ratio (f)")
+        ax.set_ylabel("Fraction of problems solved")
+        ax.legend()
+        return fig, ax
 
     def compute_performance_profiles(self) -> xr.DataArray:
         """
@@ -290,7 +283,9 @@ class StrategyManager:
 # =============================================================================
 
 
-def plot_perf_profile(data: ExperimentData | xr.Dataset):
+def plot_perf_profile(data: ExperimentData | xr.Dataset,
+                      title: Optional[str] = None) -> \
+        Tuple[plt.Figure, plt.Axes]:
     """
     Plot the performance profiles of the strategies
 
@@ -300,6 +295,13 @@ def plot_perf_profile(data: ExperimentData | xr.Dataset):
     data : ExperimentData | xr.Dataset
         ExperimentData object or xr.Dataset containing the performance profiles
         of the strategies
+    title : Optional[str]
+        Title of the plot
+
+    Returns
+    -------
+    Tuple[plt.Figure, plt.Axes]
+        Figure and axes of the plots
     """
     if isinstance(data, ExperimentData):
         data = open_all_datasets_post(data)
@@ -309,4 +311,19 @@ def plot_perf_profile(data: ExperimentData | xr.Dataset):
 
     xr_f = xr.concat([(pp <= f).mean(dim='problem')
                      for f in f_values], dim=xr.DataArray(f_values, dims='f'))
-    xr_f.plot(hue='optimizer')
+
+    # Plotting
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for optimizer in xr_f.optimizer:
+        f_one = xr_f.sel(f=1.0, optimizer=optimizer).values[0]
+        ax.plot(xr_f.f, xr_f.sel(optimizer=optimizer),
+                label=f"{optimizer.values} = {f_one}", zorder=-1)
+        ax.scatter(1.0, xr_f.sel(f=1.0, optimizer=optimizer),
+                   marker="x", zorder=1)
+
+    if title is not None:
+        ax.set_title(title)
+    ax.set_xlabel("Performance ratio (f)")
+    ax.set_ylabel("Fraction of problems solved")
+    ax.legend()
+    return fig, ax

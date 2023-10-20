@@ -7,3 +7,8 @@ STUFF_NOT_TO_UPLOAD/
 **/your_Assignments/*
 # but do not ignore the placeholder file such that some folders exist for students, yet remain empty
 !.gitkeep
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
