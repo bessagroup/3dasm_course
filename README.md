@@ -54,4 +54,6 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 | Wed 10/18  | Artificial neural networks: Part III | Lecture 18 <!-- [Lecture 18](Lectures/Lecture18/3dasm_Lecture18.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture18/3dasm_Lecture18_slides.pdf) --> | <font color='red'>HW6 due</font> |
 | Fri 10/20  | <font color='green'>Midterm review session with T.A.</font> |  |  |  |
 | Mon 10/23  | <font color='red'>Midterm exam</font> 🦾 |  |  |  |
-| Wed 10/25  | Second part of the course starts... |  |  |  |
+| Wed 10/25  | `f3dasm`: Framework for Data-driven Design and Analysis of Structures and Materials |  [Lecture f3dasm](Lectures/Lecture_f3dasm/presentation.ipynb) |  |  |
+| Fri 10/28  | Project 1: Learning to optimize |  [Lecture L2O](Lectures/Lecture_L2O_Project/presentation_l2o_project.ipynb) |  |  |
+| Mon 10/30  | Project 2: Supercompressible | [Lecture Supercompressible](Lectures/Lecture_Supercompressible_Project/presentation.ipynb) |  |  |
