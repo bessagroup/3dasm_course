@@ -57,3 +57,4 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 | Wed 10/25  | `f3dasm`: Framework for Data-driven Design and Analysis of Structures and Materials |  [Lecture f3dasm](Lectures/Lecture_f3dasm/presentation.ipynb) |  |  |
 | Fri 10/28  | Project 1: Learning to optimize |  [Lecture L2O](Lectures/Lecture_L2O_Project/presentation_l2o_project.ipynb) |  |  |
 | Mon 10/30  | Project 2: Supercompressible | [Lecture Supercompressible](Lectures/Lecture_Supercompressible_Project/presentation.ipynb) |  |  |
+| Mon 11/1  | Lecture 20: Classification | [Lecture 20](Lectures/Lecture20/3dasm_Lecture20.ipynb) |  |  |
