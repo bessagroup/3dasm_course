@@ -49,11 +49,12 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 | Fri 10/6  | Gaussian process regression: Part II | [Lecture 14](Lectures/Lecture14/3dasm_Lecture14.ipynb) | [Slides](Lectures/Lecture14/3dasm_Lecture14_slides.pdf) |  |
 | Mon 10/9  | <font color='green'>HOLIDAY</font> 🥹 |  |  |  |
 | Wed 10/11  | Gaussian process regression: Part III | [Lecture 15](Lectures/Lecture15/3dasm_Lecture15.ipynb) | [Slides](Lectures/Lecture15/3dasm_Lecture15_slides.pdf) | <font color='red'>HW5 due</font> & [<font color='green'>HW6 assigned</font>](Assignments/3dasm_Homework6.pdf) |
-| Fri 10/13  | Artificial neural networks: Part I | Lecture 16 <!-- [Lecture 16](Lectures/Lecture16/3dasm_Lecture16.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture16/3dasm_Lecture16_slides.pdf) --> |  |
-| Mon 10/16  | Artificial neural networks: Part II | Lecture 17 <!-- [Lecture 17](Lectures/Lecture17/3dasm_Lecture17.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture17/3dasm_Lecture17_slides.pdf) --> |  |
-| Wed 10/18  | Artificial neural networks: Part III | Lecture 18 <!-- [Lecture 18](Lectures/Lecture18/3dasm_Lecture18.ipynb) --> | Slides <!-- [Slides](Lectures/Lecture18/3dasm_Lecture18_slides.pdf) --> | <font color='red'>HW6 due</font> |
-| Fri 10/20  | <font color='green'>Midterm review session with T.A.</font> |  |  |  |
+| Fri 10/13  | Bayesian model selection |  [Lecture 16](Lectures/Lecture16/3dasm_Lecture16.ipynb) | Slides [Slides](Lectures/Lecture16/3dasm_Lecture16_slides.pdf) |  |
+| Mon 10/16  | Q&A session |  |  |  |
+| Wed 10/18  | Q&A session |  |  | <font color='red'>HW6 due</font> |
+| Fri 10/20  | No lecture  |  |  |  |
 | Mon 10/23  | <font color='red'>Midterm exam</font> 🦾 |  |  |  |
 | Wed 10/25  | `f3dasm`: Framework for Data-driven Design and Analysis of Structures and Materials |  [Lecture f3dasm](Lectures/Lecture_f3dasm/presentation.ipynb) |  |  |
 | Fri 10/28  | Project 1: Learning to optimize |  [Lecture L2O](Lectures/Lecture_L2O_Project/presentation_l2o_project.ipynb) |  |  |
 | Mon 10/30  | Project 2: Supercompressible | [Lecture Supercompressible](Lectures/Lecture_Supercompressible_Project/presentation.ipynb) |  |  |
+| Mon 11/1  | Lecture 20: Classification | [Lecture 20](Lectures/Lecture20/3dasm_Lecture20.ipynb) |  |  |
