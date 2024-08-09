@@ -58,3 +58,59 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 | Fri 10/28  | Project 1: Learning to optimize |  [Lecture L2O](Lectures/Lecture_L2O_Project/presentation_l2o_project.ipynb) |  |  |
 | Mon 10/30  | Project 2: Supercompressible | [Lecture Supercompressible](Lectures/Lecture_Supercompressible_Project/presentation.ipynb) |  |  |
 | Mon 11/1  | Lecture 20: Classification | [Lecture 20](Lectures/Lecture20/3dasm_Lecture20.ipynb) |  |  |
+
+
+## Installation instructions
+
+### **OPTION 1**. Run this notebook **locally in your computer**:
+1. Install Mamba as described [here](https://mamba.readthedocs.io/en/latest/mamba-installation.html#mamba-install).
+2. Install Jupyter notebook and extensions in base environment
+```
+mamba install notebook nb_conda rise ipywidgets
+```
+
+3. Add conda-forge as the highest priority channel:
+
+```
+conda config --add channels conda-forge
+```
+4. Add `strict` channel priority:
+
+```
+conda config --set channel_priority strict
+```
+
+5. Create a virtual enviroment for this course called '3dasm':
+
+```
+mamba create -n 3dasm python==3.10
+```
+6. Install the following packages in the '3dasm' environment:
+
+```
+mamba install numpy scipy matplotlib pandas scikit-learn f3dasm
+```
+7. Install [tensorflow](https://www.tensorflow.org/install/pip). (See Homework 1 for additional instructions)
+8. Install [git](https://github.com/git-guides/install-git), open command window & clone the repository to your computer:
+```
+git clone https://github.com/bessagroup/3dasm_course
+```
+
+After you installed every package, you are ready to go!
+
+5. Open a (mamba) command window and load jupyter notebook (it will open in your internet browser):
+```
+jupyter notebook
+``` 
+6. Open notebook (3dasm_course/Lectures/Lecture1/3dasm_Lecture1.ipynb) and choose the '3dasm' kernel.
+
+You're all set!
+
+### **OPTION 2**. Use **Google's Colab** (no installation required, but times out if idle):
+
+1. go to [Google Colab](https://colab.research.google.com)
+2. Login with your cridentials
+3. File > Open notebook
+4. Click on Github (no need to login or authorize anything)
+5. paste the git link: https://github.com/bessagroup/3dasm_course
+6. click search and then click on the notebook (*3dasm_course/Lectures/Lecture1/3dasm_Lecture1.ipynb*)
