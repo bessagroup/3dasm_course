@@ -88,7 +88,7 @@ mamba create -n 3dasm python==3.10
 6. Install the following packages in the '3dasm' environment:
 
 ```
-mamba install numpy scipy matplotlib pandas scikit-learn f3dasm
+mamba install numpy scipy matplotlib pandas scikit-learn ipykernel f3dasm
 ```
 7. Install [tensorflow](https://www.tensorflow.org/install/pip). (See Homework 1 for additional instructions)
 8. Install [git](https://github.com/git-guides/install-git), open command window & clone the repository to your computer:
