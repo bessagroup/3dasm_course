@@ -86,7 +86,7 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 
 ### **OPTION 1**. Run this notebook **locally in your computer**:
 
-[Homework 1](Assignments/3dasm_Homework1.pdf) contains detailed instructions to install the virtual environment with all the packages required for this course.
+[Homework 1](Assignments/3dasm_Homework1.pdf) contains detailed instructions to install the virtual environment with all the packages required for this course. Below are more concise instructions for people familiar with installing mamba and tensorflow:
 
 1. Install Mamba as described [here](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html). (See Homework 1 for additional instructions)
 2. Install Jupyter notebook and extensions in base environment
