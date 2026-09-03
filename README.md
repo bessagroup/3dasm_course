@@ -21,8 +21,8 @@ Miguel A. Bessa | <miguel_bessa@brown.edu> | Associate Professor
 * The "Lectures" folder contains each lecture in a separate folder "LectureX" where X is the lecture number.
 * Each "LectureX" folder contains:
     1. A jupyter notebook "3dasm_LectureX.ipynb" that you can run locally or in servers like Google Colab.
-    2. A pdf "3dasm_LectureX slides.pdf" with the slides of that lecture.
-    4. A "your_data" folder that you can use to create data or other things in your own computer.
+    2. A "your_data" folder that you can use to create data or other things in your own computer.
+    3. The `Lectures/data` and `Lectures/figures` folders hold datasets and figures shared by several lectures.
 * The preferred method to follow the course is to look directly into the jupyter notebook, as it contains additional notes and working code.
 
 **Grading**
@@ -74,7 +74,7 @@ Practical instructions for setting up an AI coding agent (with an Anthropic acco
 | Wed 10/15  | Q&A session |  |  | ```HW6 due``` |  |
 | Fri 10/17  | **```MIDTERM Exam```** 🦾 |  |  |  |
 | Mon 10/20  | **Framework for Data-Driven Design & Analysis of Structures & Materials**: [f3dasm](https://f3dasm.readthedocs.io/en/latest/) | [Lecture 17](Lectures/Lecture17/3dasm_Lecture17.ipynb) |  |  | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bessagroup/3dasm_course/blob/main/Lectures/Lecture17/3dasm_Lecture17.ipynb) |
-| Wed 10/22  | **[f3dasm](https://f3dasm.readthedocs.io/en/latest/) tutorial**: Data-driven process; Sampling methods; Simple model selection example |  [Lecture 18](Lectures/Lecture18/3dasm_Lecture18.ipynb) |  | [HW7 assigned](Assignments/3dasm_Homework7.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bessagroup/3dasm_course/blob/main/Lectures/Lecture20/3dasm_Lecture20.ipynb) |
+| Wed 10/22  | **[f3dasm](https://f3dasm.readthedocs.io/en/latest/) tutorial**: Data-driven process; Sampling methods; Simple model selection example |  [Lecture 18](Lectures/Lecture18/3dasm_Lecture18.ipynb) |  | [HW7 assigned](Assignments/3dasm_Homework7.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bessagroup/3dasm_course/blob/main/Lectures/Lecture18/3dasm_Lecture18.ipynb) |
 | Fri 10/24  | **[f3dasm](https://f3dasm.readthedocs.io/en/latest/) tutorial**: General use case (object oriented) | [Lecture 19](Lectures/Lecture19/3dasm_Lecture19.ipynb) |  |  | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bessagroup/3dasm_course/blob/main/Lectures/Lecture19/3dasm_Lecture19.ipynb) |
 | Mon 10/27  | **```Final Project Overview & Assignment```** 🦾  |  [Lecture 20](Lectures/Lecture20/3dasm_Lecture20.ipynb) |  | [Final Project assigned](Projects/3dasm_FinalProject.pdf) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bessagroup/3dasm_course/blob/main/Lectures/Lecture20/3dasm_Lecture20.ipynb) |
 | Wed 10/29  | **Introduction to classification**: Tutorial with 3 simple classifiers on Iris dataset | [Lecture 21](Lectures/Lecture21/3dasm_Lecture21.ipynb) | Sections 1.2.1 + 2.4.2 + 10.1 + 10.2 | ```HW7 due``` & [HW8 assigned](Assignments/3dasm_Homework8.ipynb) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bessagroup/3dasm_course/blob/main/Lectures/Lecture21/3dasm_Lecture21.ipynb) |
@@ -99,7 +99,7 @@ Practical instructions for setting up an AI coding agent (with an Anthropic acco
 
 ### **OPTION 1**. Run this notebook **locally in your computer**
 
-[Homework 1](Assignments/3dasm_Homework1.pdf) contains detailed instructions to install the virtual environment with all the packages required for this course. Below are more concise instructions for people familiar with installing mamba and tensorflow:
+[Homework 1](Assignments/3dasm_Homework1.pdf) contains detailed instructions to install the virtual environment with all the packages required for this course. Below are more concise instructions for people familiar with mamba and pip:
 
 1. Install Mamba as described [here](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html). (See Homework 1 for additional instructions)
 
@@ -112,7 +112,7 @@ git clone https://github.com/bessagroup/3dasm_course
 3. Create a virtual environment for this course called '3dasm':
 
 ```
-mamba create -n 3dasm python==3.11 notebook nb_conda rise numpy scipy matplotlib pandas scikit-learn ipykernel ipywidgets requests
+mamba create -n 3dasm python=3.11 notebook nb_conda rise numpy scipy matplotlib pandas scikit-learn ipykernel ipywidgets requests
 ```
 
 4. Activate the '3dasm' virtual environment:
@@ -124,7 +124,7 @@ mamba activate 3dasm
 5. Install [pytorch](https://pytorch.org/) in the '3dasm' virtual environment. (See Homework 1 for additional instructions)
 
 ```
-pip install torch torchvision –index-url https://download.pytorch.org/whl/cu126
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 ```
 
 6. Install f3dasm package:
