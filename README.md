@@ -27,9 +27,11 @@ Miguel A. Bessa | <miguel_bessa@brown.edu> | Associate Professor
 
 **Grading**
 
+The [syllabus](Lectures/Syllabus/3dasm_syllabus.pdf) is the official course document; office hours and classroom are listed on the Canvas course page and on [Courses@Brown](https://cab.brown.edu/).
+
 Homeworks 10%, Midterm 40%, and Final Project 50%.
 
-Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; has minor error), B (75%; has significant error), C (60%; mostly incorrect but homework was delivered), D (0%, not delivered). If you deliver something with an honest attempt at solving the homework you get 60% for that homework.
+Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; has minor error), B (75%; has significant error or several minor errors), C (60%; several significant errors), D (0%, homework not delivered). If you deliver something with an honest attempt at solving the homework you get 60% for that homework.
 
 > [!NOTE]
 > Late Homework can only get up to A (90%).
