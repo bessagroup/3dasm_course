@@ -40,14 +40,14 @@ Homeworks will be graded only with 5 levels: A+ (100%; fully correct), A (90%; h
 
 **Using LLMs and AI coding agents in this course**
 
-You are encouraged to use large language models (ChatGPT, Claude, Gemini, open-weight models, etc.) and AI coding agents (Claude Code, opencode, Copilot, etc.) throughout this course, including for homework. Engineers already work this way, and the second half of the course teaches you to use these tools for data-driven design. This is also why homework now counts for only 10% of the grade: current models solve every homework in this course flawlessly, so a homework grade no longer measures what you learned.
+You are encouraged to use large language models (ChatGPT, Claude, Gemini, open-weight models, etc.) and AI coding agents (Claude Code, opencode, Copilot, etc.) throughout this course, including for homework. However, be aware that **using an LLM to do your homework can significantly impair your learning**: two large controlled studies found that students with AI help scored much better on homework and then scored *worse* than students without AI on the exams that followed.
+* Bastani et al. (2025), a randomized trial with about 1,000 high-school students: GPT-4 access raised practice performance by 48%, and those students then scored 17% *lower* than the control group on the exam. [*PNAS* 122(26)](https://www.pnas.org/doi/10.1073/pnas.2422633122)
+* Strömberg, Lei & Wu (2026), 30 months of data on 26,811 secondary-school students: AI use raised homework scores by 18%; unaided exam scores fell by 20% within six months. 81% of AI users used it to generate answers; only those students were harmed. [CEPR Discussion Paper 21577](https://econpapers.repec.org/paper/cprceprdp/21577.htm)
 
-> [!WARNING]
-> **Using an LLM to do your homework can lower your grade in this course.** Two large controlled studies found the same pattern: students with AI help scored much better on homework and then scored *worse* than students without AI on the exams that followed.
-> * Bastani et al. (2025), a randomized trial with about 1,000 high-school students: GPT-4 access raised practice performance by 48%, and those students then scored 17% *lower* than the control group on the exam. A tutor version designed to give hints instead of answers removed the harm, but did not improve exam scores either. [*PNAS* 122(26)](https://www.pnas.org/doi/10.1073/pnas.2422633122)
-> * Strömberg, Lei & Wu (2026), 30 months of data on 26,811 secondary-school students: AI use raised homework scores by 18% and cut homework time by 30%; unaided exam scores fell by 20% within six months, and the two high-stakes entrance exams fell by 18% and 24%. 81% of AI users used it to generate answers and finish faster; the 19% who used it as a tutor, spending the same time on homework as non-users, saw no drop. [CEPR Discussion Paper 21577](https://econpapers.repec.org/paper/cprceprdp/21577.htm), [press coverage](https://fortune.com/2026/07/21/gen-z-cheating-homework-school-exam-scores-crash-post-literate-society-incentives/)
->
-> The midterm is closed-book and worth 40%. Use LLMs the way the students who benefited did: to ask why, to get unstuck, to check your reasoning after you tried. Do not use them to skip the struggle, because the struggle is the learning.
+This is why:
+1. Homeworks only weigh 10% of the grade because good LLMs can solve them.
+2. The midterm is closed-book (no computer, no Internet, and... no LLM).
+3. The Final Project has an open-ended component. Working with an LLM is encouraged. The question is: how great can that project become?
 
 Practical instructions for setting up an AI coding agent (with an Anthropic account, or with free open-weight models) will be given in class during the first weeks.
 
