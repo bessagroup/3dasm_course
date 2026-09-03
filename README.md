@@ -112,7 +112,7 @@ git clone https://github.com/bessagroup/3dasm_course
 3. Create a virtual environment for this course called '3dasm':
 
 ```
-mamba create -n 3dasm python==3.11 notebook nb_conda rise numpy scipy matplotlib pandas scikit-learn ipykernel ipywidgets
+mamba create -n 3dasm python==3.11 notebook nb_conda rise numpy scipy matplotlib pandas scikit-learn ipykernel ipywidgets requests
 ```
 
 4. Activate the '3dasm' virtual environment:
@@ -130,7 +130,7 @@ pip install torch torchvision –index-url https://download.pytorch.org/whl/cu12
 6. Install f3dasm package:
 
 ```
-pip install f3dasm==2.4.0
+pip install "f3dasm[scipy]==2.4.0"
 ```
 
 7. Install optuna package:
