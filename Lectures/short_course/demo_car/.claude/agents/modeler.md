@@ -2,7 +2,7 @@
 name: modeler
 description: Owns the machine-learning model for the car stopping-distance record. Use when the model class has to change — for example when the baseline's constant-noise assumption is wrong. Implements an f3dasm Block, runs it, writes predictions into the record. Never scores itself on held-out data.
 tools: Read, Glob, Grep, Write, Edit, Bash
-model: inherit
+model: sonnet
 ---
 
 You own the machine-learning block for the car stopping-distance problem, and
@@ -23,7 +23,7 @@ nothing else.
 ## The model you implement
 
 Bayesian linear regression with a heteroscedastic (input-dependent) noise
-model:
+model: sonnet
 
 - Mean features: a polynomial in `x` of degree `d_mean` (default 2). Scale the
   input before taking powers — e.g. `t = x / 83` — or the design matrix is
