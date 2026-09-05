@@ -2,7 +2,7 @@
 
 **Command**
 
-```bash
+```
 PATH="$ENV/bin:$PATH" claude -p "<prompt>" --allowedTools "Read Glob Grep Write Edit Bash Agent TodoWrite NotebookEdit" --output-format stream-json --verbose
 ```
 
@@ -10,57 +10,74 @@ PATH="$ENV/bin:$PATH" claude -p "<prompt>" --allowedTools "Read Glob Grep Write 
 
 > The baseline in baseline.py fits the mean but assumes constant noise, and the data clearly does not. Change the model.
 
-**Wall time:** 157 s
+**Wall time:** 170 s
 
 ---
 
-*session 86062f5b-ff20-4d9f-8d6b-022efda6eebd; agents available: claude, Explore, general-purpose, modeler, Plan, selector, statusline-setup*
+*session bea7a7f6-0397-4fb5-b020-c7e32c2a779c; model claude-fable-5-1; agents available: claude, Explore, general-purpose, modeler, Plan, selector, statusline-setup*
 
 **assistant**
 
-I'll look at the record and the baseline first, then replace the constant-noise model with one whose noise scales with speed, writing predictions into the record as a Block.
+I'll look at the baseline and the record, then replace the constant-noise model with one whose noise scales with speed, writing predictions into the record.
 
 **tool: Bash**
 
 ```
-ls -R . | head -50 && cat baseline.py && cat make_data.py && cat reset.sh
+ls -la . blocks figures data data/experiment_data 2>/dev/null && cat baseline.py && cat make_data.py && git diff baseline.py
 ```
 
 *result (Bash)*
 
 ```
 .:
-baseline.py
-blocks
-CLAUDE.md
-data
-figures
-make_data.py
-pipeline.ipynb
-__pycache__
-README.md
-reset.sh
-templates
+total 236
+drwxrwxr-x 9 mbessa mbessa  4096 Sep  5 14:33 .
+drwxr-xr-x 5 mbessa mbessa  4096 Sep  5 14:27 ..
+-rw-rw-r-- 1 mbessa mbessa  4730 Sep  5 14:33 baseline.py
+drwxrwxr-x 2 mbessa mbessa  4096 Sep  5 12:01 blocks
+drwxrwxr-x 3 mbessa mbessa  4096 Sep  5 12:01 .claude
+-rw-rw-r-- 1 mbessa mbessa  6167 Sep  5 12:01 CLAUDE.md
+drwxrwxr-x 3 mbessa mbessa  4096 Sep  5 14:33 data
+-rw-rw-r-- 1 mbessa mbessa 37799 Sep  5 12:01 demo_stage1_transcript.md
+-rw-rw-r-- 1 mbessa mbessa 24029 Sep  5 12:01 demo_stage2_transcript.md
+-rw-rw-r-- 1 mbessa mbessa 86674 Sep  5 12:01 demo_stage3_transcript.md
+drwxrwxr-x 2 mbessa mbessa  4096 Sep  5 14:33 figures
+-rw-rw-r-- 1 mbessa mbessa    39 Sep  5 12:01 .gitignore
+-rw-rw-r-- 1 mbessa mbessa  3897 Sep  5 12:01 make_data.py
+-rw-rw-r-- 1 mbessa mbessa  4479 Sep  5 14:33 pipeline.ipynb
+drwxrwxr-x 2 mbessa mbessa  4096 Sep  5 14:33 __pycache__
+-rw-rw-r-- 1 mbessa mbessa  8383 Sep  5 12:01 README.md
+drwxrwxr-x 2 mbessa mbessa  4096 Sep  5 12:01 recorded
+-rwxrwxr-x 1 mbessa mbessa  1587 Sep  5 12:01 reset.sh
+drwxrwxr-x 3 mbessa mbessa  4096 Sep  5 12:01 templates
 
-./blocks:
+blocks:
+total 8
+drwxrwxr-x 2 mbessa mbessa 4096 Sep  5 12:01 .
+drwxrwxr-x 9 mbessa mbessa 4096 Sep  5 14:33 ..
+-rw-rw-r-- 1 mbessa mbessa    0 Sep  5 12:01 .gitkeep
 
-./data:
-experiment_data
+data:
+total 12
+drwxrwxr-x 3 mbessa mbessa 4096 Sep  5 14:33 .
+drwxrwxr-x 9 mbessa mbessa 4096 Sep  5 14:33 ..
+drwxrwxr-x 2 mbessa mbessa 4096 Sep  5 14:33 experiment_data
 
-./data/experiment_data:
-domain.json
-input.csv
-jobs.csv
-output.csv
+data/experiment_data:
+total 24
+drwxrwxr-x 2 mbessa mbessa 4096 Sep  5 14:33 .
+drwxrwxr-x 3 mbessa mbessa 4096 Sep  5 14:33 ..
+-rw-rw-r-- 1 mbessa mbessa 1131 Sep  5 14:33 domain.json
+-rw-rw-r-- 1 mbessa mbessa  496 Sep  5 14:33 input.csv
+-rw-rw-r-- 1 mbessa mbessa  713 Sep  5 14:33 jobs.csv
+-rw-rw-r-- 1 mbessa mbessa 4088 Sep  5 14:33 output.csv
 
-./figures:
-baseline.png
-
-./__pycache__:
-make_data.cpython-311.pyc
-
-./templates:
-pipeline.ipynb
+figures:
+total 100
+drwxrwxr-x 2 mbessa mbessa  4096 Sep  5 14:33 .
+drwxrwxr-x 9 mbessa mbessa  4096 Sep  5 14:33 ..
+-rw-rw-r-- 1 mbessa mbessa 92193 Sep  5 14:33 baseline.png
+-rw-rw-r-- 1 mbessa mbessa     0 Sep  5 12:01 .gitkeep
 """The "2019" baseline: a person decided everything.
 
 Degree-2 polynomial least squares for the mean, and one constant residual
@@ -91,45 +108,71 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
-from f3dasm import ExperimentData, datagenerator
+from f3dasm import Block, ExperimentData, datagenerator
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
 
 from make_data import X_HIGH, X_LOW, true_mean, true_sd
 
 DEGREE = 2
 
 
+class QuadraticLeastSquares(Block):
+    """The machine learning block, the 2019 way.
+
+    A person decided: a degree-2 polynomial fitted by scikit-learn least
+    squares for the mean, and one constant residual standard deviation for the
+    noise.  Reads the record, writes y_pred_baseline, sd_baseline and a
+    provenance stamp back into it.
+    """
+
+    degree = DEGREE
+
+    def call(self, data: ExperimentData, **kwargs) -> ExperimentData:
+        input_df, output_df = data.to_pandas()
+        x = input_df["x"].to_numpy(dtype=float).reshape(-1, 1)
+        y = output_df["y"].to_numpy(dtype=float)
+
+        # --- the model: polynomial mean, one constant noise sd -------------
+        model = make_pipeline(
+            PolynomialFeatures(degree=self.degree, include_bias=True),
+            LinearRegression(fit_intercept=False),
+        )
+        model.fit(x, y)
+        resid = y - model.predict(x)
+        sd_const = float(np.sqrt(resid @ resid / (len(y) - (self.degree + 1))))
+        self.coef, self.sd_const = model[-1].coef_, sd_const
+
+        print("BASELINE  (degree-2 least squares, constant noise)")
+        print(f"  coefficients [1, x, x^2] = "
+              f"{np.array2string(self.coef, precision=4)}")
+        print(f"  constant residual sd     = {sd_const:.4f}")
+        print(f"  train RMSE               = {np.sqrt(np.mean(resid ** 2)):.4f}")
+        print(f"  truth: sd[y|x] = 0.5 x runs over "
+              f"[{true_sd(X_LOW):.2f}, {true_sd(X_HIGH):.2f}] -- "
+              f"one number cannot cover that")
+
+        # f3dasm bookkeeping: reopen the rows, append the new columns
+        @datagenerator(output_names=["y_pred_baseline", "sd_baseline",
+                                     "_source_baseline"])
+        def predict_baseline(x: float):
+            return float(model.predict([[x]])[0]), sd_const, "baseline"
+
+        return predict_baseline.call(data.mark_all("open"), mode="sequential")
+
+
 def main() -> None:
     data = ExperimentData.from_file("data")
+    block = QuadraticLeastSquares()
+    data = block.call(data)
+    data.store("data")
+    print("\n  wrote y_pred_baseline, sd_baseline, _source_baseline into data/")
+
     input_df, output_df = data.to_pandas()
     x = input_df["x"].to_numpy(dtype=float)
     y = output_df["y"].to_numpy(dtype=float)
-
-    # --- fit: ordinary least squares on [1, x, x^2] ----------------------
-    phi = np.vander(x, DEGREE + 1, increasing=True)
-    coef, *_ = np.linalg.lstsq(phi, y, rcond=None)
-    resid = y - phi @ coef
-    dof = len(x) - (DEGREE + 1)
-    sd_const = float(np.sqrt(resid @ resid / dof))
-
-    print("BASELINE  (degree-2 least squares, constant noise)")
-    print(f"  coefficients [1, x, x^2] = {np.array2string(coef, precision=4)}")
-    print(f"  constant residual sd     = {sd_const:.4f}")
-    print(f"  train RMSE               = {np.sqrt(np.mean(resid ** 2)):.4f}")
-    print(f"  truth: sd[y|x] = 0.5 x runs over "
-          f"[{true_sd(X_LOW):.2f}, {true_sd(X_HIGH):.2f}] -- "
-          f"one number cannot cover that")
-
-    # --- write the numbers back into the record ---------------------------
-    @datagenerator(output_names=["y_pred_baseline", "sd_baseline",
-                                "_source_baseline"])
-    def predict_baseline(x: float):
-        mean = float((np.vander([x], DEGREE + 1, increasing=True) @ coef)[0])
-        return mean, sd_const, "baseline"
-
-    data = data.mark_all("open")
-    data = predict_baseline.call(data, mode="sequential")
-    data.store("data")
-    print("\n  wrote y_pred_baseline, sd_baseline, _source_baseline into data/")
+    coef, sd_const = block.coef, block.sd_const
 
     # --- figure ------------------------------------------------------------
     grid = np.linspace(X_LOW, X_HIGH, 400)
@@ -137,196 +180,397 @@ def main() -> None:
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
     ax.scatter(x, y, s=18, color="#333333", zorder=3, label="training data")
-    ax.plot(grid, mean_grid, color="#1f77b4", lw=2, label="baseline mean (deg 2)")
-    ax.fill_between(grid, mean_grid - 2 * sd_const, mean_grid + 2 * sd_const,
-                    color="#1f77b4", alpha=0.20,
-                    label=f"baseline $\\pm2$ sd (constant, sd = {sd_const:.1f})")
-    ax.plot(grid, true_mean(grid) + 2 * true_sd(grid), "k--", lw=1.4,
-            label="true $\\pm2$ sd (sd = 0.5 x)")
-    ax.plot(grid, true_mean(grid) - 2 * true_sd(grid), "k--", lw=1.4)
-    ax.set_xlabel("speed x [m/s]")
-    ax.set_ylabel("stopping distance y [m]")
-    ax.set_title("Baseline: right mean, wrong noise")
-    ax.legend(loc="upper left", fontsize=8)
-    fig.tight_layout()
-    fig.savefig("figures/baseline.png", dpi=150)
-    print("  wrote figures/baseline.png")
-
-
-if __name__ == "__
+    ax.plot(grid, mean_grid, color="#1f77b4", lw=2, label
 ... [truncated]
 ```
 
 **tool: Bash**
 
 ```
-cat README.md; head -5 data/experiment_data/output.csv; python -c "
-import json,nbformat
-nb=nbformat.read('pipeline.ipynb',4)
-for c in nb.cells: print('----',c.cell_type); print(c.source)
-"
+head -5 data/experiment_data/output.csv; head -3 data/experiment_data/input.csv; cat data/experiment_data/domain.json; echo; cat reset.sh; echo ----; cat .gitignore; ls .claude .claude/* recorded templates
 ```
 
 *result (Bash)*
 
 ```
-# demo_car — the data-driven process, with and without a separation of powers
+,y,y_pred_baseline,sd_baseline,_source_baseline
+0,5.231399699323243,4.731874256004194,27.563180855889765,baseline
+1,277.27315340384547,246.9754996104445,27.563180855889765,baseline
+2,462.5856419444955,489.0481241828602,27.563180855889765,baseline
+3,75.83672947156876,85.53674963482584,27.563180855889765,baseline
+,x
+0,3.0
+1,43.0
+{
+    "input_space": {
+        "x": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 3.0,
+            "upper_bound": 83.0,
+            "log": false
+        }
+    },
+    "output_space": {
+        "y": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "y_pred_baseline": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "sd_baseline": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "_source_baseline": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    }
+}
+#!/usr/bin/env bash
+# Put the folder back to the pre-run state, so the demo can be run again.
+#
+#   ./reset.sh
+#
+# Kept:     make_data.py, baseline.py, CLAUDE.md, README.md, .claude/,
+#           templates/, the transcripts, and the training record data/
+#           (deleted and rebuilt from its fixed seeds, so it comes back
+#           byte-for-byte identical).
+# Removed:  everything an agent wrote -- data_test/, blocks/*, the study
+#           records, model.png and selection.png, stray scripts -- and
+#           pipeline.ipynb is restored from templates/.
+set -euo pipefail
+cd "$(dirname "$0")"
 
-A 10–12 minute live segment opening Part 2 of the short course. Everything is
-small enough that nothing hides: 60 data points, one input, one output, a model
-you can write on a slide.
+PYTHON="${PYTHON:-python}"
+export MPLBACKEND=Agg
 
-**The lesson in one line: the agent decides and wires; the tool computes; the
-record remembers.**
+echo "reset: removing agent-written artefacts"
+rm -rf data data_test study_selection blocks/__pycache__ __pycache__ .ipynb_checkpoints
+find blocks -mindepth 1 ! -name '.gitkeep' -delete 2>/dev/null || true
+find figures -mindepth 1 ! -name '.gitkeep' -delete 2>/dev/null || true
+# top-level scripts an agent may have written (the four originals are kept)
+for f in *.py; do
+  case "$f" in
+    make_data.py|baseline.py) ;;
+    *) echo "  rm $f"; rm -f "$f" ;;
+  esac
+done
+rm -rf data_*/ 2>/dev/null || true
 
-## The problem (course canon, Lecture 17)
+echo "reset: restoring pipeline.ipynb from templates/"
+cp templates/pipeline.ipynb pipeline.ipynb
 
-    y = z x + 0.1 x²,   z ~ N(1.5, 0.5²),   x ∈ [3, 83] m/s
+echo "reset: rebuilding the training record and the baseline"
+"$PYTHON" make_data.py
+"$PYTHON" baseline.py
 
-so `E[y|x] = 1.5x + 0.1x²` and `sd[y|x] = 0.5x`. The noise **grows with speed**.
-The 2019 baseline (`baseline.py`) fits the mean with degree-2 least squares and
-the noise with one constant number. Its mean is right; its band is flat while
-the truth fans out. `figures/baseline.png` is the setup for the whole segment.
+echo
+echo "reset: done. The folder is back to the pre-run state:"
+echo "  data/ (60 training points + baseline columns), figures/baseline.png,"
+echo "  blocks/ empty, no held-out record, pipeline.ipynb is the template."
+----
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.claude:
+agents
 
-## Setup
+.claude/agents:
+modeler.md
+selector.md
 
-```bash
-pip install "f3dasm[scipy]==2.4.0" matplotlib jupyter
-cd Lectures/short_course/demo_car
-python make_data.py     # writes data/       (60 training points, Sobol seed 123)
-python baseline.py      # writes the baseline columns into data/ + figures/baseline.png
-```
+recorded:
+baseline.png
+model.png
+selection.png
+stage3_sonnet_run.txt
 
-Expected output of `baseline.py`:
-
-```
-  coefficients [1, x, x^2] = [-0.4342  1.4196  0.1008]
-  constant residual sd     = 27.5632
-  train RMSE               = 26.8653
-```
-
-Note what does **not** exist after setup: a held-out record. `make_data.py`
-only makes one when asked (`python make_data.py --test --seed 456`). Who
-creates the test set, and when, is the point of the demo.
-
-Every script uses `matplotlib.use("Agg")` and `savefig` — nothing pops a
-window mid-talk.
-
-## The three stages
-
-Run them in order, with `./reset.sh` between stages. Each stage is one Claude
-Code session started in this folder, so `CLAUDE.md` and `.claude/agents/` are
-picked up automatically.
-
-### Stage 1 — one agent, one module
-
-Type:
-
-> The baseline in baseline.py fits the mean but assumes constant noise, and the
-> data clearly does not. Change the model.
-
-The session reads the record, writes a heteroscedastic model, runs it, writes
-the predictions back into `data/`. It is fast and it is good.
-
-**Lesson: inside one module, one agent is enough.** There is a right answer,
-the agent finds it, and the record shows what changed.
-
-### Stage 2 — the same agent grades its own homework
-
-In the same session, type:
-
-> Now select the model's hyperparameters properly and show me the record.
-
-Watch what it does, and read the transcript afterwards: Which score did it
-choose? Did it build a held-out set, or score on the training data? Did it
-quietly change the model while it was "selecting" — a feature here, a
-regulariser there?
-
-**Lesson: the same agent built the model, chose the score, and (if it made one)
-held the test set. Who checked it?** Not a story about a bad agent — a story
-about a missing boundary. Nobody at any scale should be author, examiner and
-custodian of the test set at once.
-
-### Stage 3 — two agents, and a real separation of powers
-
-`./reset.sh`, then type:
-
-> The baseline in baseline.py fits the mean but assumes constant noise, and the
-> data clearly does not. Use the modeler and selector subagents: modeler fixes
-> the model, selector selects its hyperparameters properly. Then show me the
-> record.
-
-Two custom subagents, defined in `.claude/agents/`:
-
-- **`modeler`** — owns the model. May read `data/` (training only), writes only
-  inside `blocks/` and into the record. **The held-out data does not exist while
-  it works, and it is forbidden to create it.** It cannot tune against a test
-  set it has never seen.
-- **`selector`** — owns the judgement. Creates the held-out record itself
-  (`python make_data.py --test --seed 456`), enumerates the 12-row candidate
-  grid (`d_mean ∈ {1,2,3,4} × d_noise ∈ {0,1,2}`) as an `ExperimentData`, scores
-  every row by held-out mean log predictive density and MSE, refits the winner
-  and writes `y_pred_selected`, `sd_selected` into the record. **It may not edit
-  `blocks/`** — if the model is broken it says so and stops.
-
-**Lesson: the judge creates the held-out data 
-... [truncated]
-```
-
-**tool: Grep**
-
-```
-{"pattern": "hblr|heteroscedastic", "path": "/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures", "-i": true, "output_mode": "files_with_matches"}
-```
-
-*result (Grep)*
-
-```
-Found 22 files
-README.md
+templates:
 pipeline.ipynb
-templates/pipeline.ipynb
-.claude/agents/modeler.md
-make_data.py
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/figures/agent_anatomy.svg
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture18/3dasm_Lecture18.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture17/3dasm_Lecture17_new.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture14/3dasm_Lecture14.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture13/3dasm_Lecture13.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture04/3dasm_Lecture4.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/Lecture3.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/Lecture1.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture15/3dasm_Lecture15.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture10/3dasm_Lecture10.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture32/3dasm_Lecture32.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture22/3dasm_Lecture22.ipynb
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/figures/f3dasm_carstoppingdistance.svg
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/figures/f3dasm_datageneration.svg
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/figures/f3dasm_design.svg
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/figures/f3dasm_optimization.svg
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/figures/f3dasm_overview.svg
 ```
 
 **tool: Bash**
 
 ```
-cat .claude/agents/modeler.md; echo ======; python -c "
-import nbformat
-nb=nbformat.read('/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture17/3dasm_Lecture17_new.ipynb',4)
-for c in nb.cells:
-    s=c.source
-    if 'heterosc' in s.lower() or 'hblr' in s.lower(): print('----',c.cell_type); print(s[:2500])
-" | head -200
+python -c "
+import json,sys
+nb=json.load(open('pipeline.ipynb'))
+for c in nb['cells']:
+    print('=== ',c['cell_type']); print(''.join(c['source']))
+"; python -c "import f3dasm,numpy,scipy;print(f3dasm.__version__,numpy.__version__,scipy.__version__)"
+```
+
+**tool: Read**
+
+```
+{"file_path": "/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/README.md"}
 ```
 
 *result (Bash)*
 
 ```
+Exit code 1
+===  markdown
+# The reproduction gate, in miniature
+
+This notebook regenerates **every** figure of the demo from the f3dasm record
+`data/` and nothing else. No pickles, no `.npy` files, no numbers typed by hand.
+
+If a result cannot be redrawn from here, it is not a result — it is an anecdote.
+
+===  code
+import matplotlib
+matplotlib.use("Agg")   # scripted execution: save figures, never show them
+
+import matplotlib.pyplot as plt
+import numpy as np
+from f3dasm import ExperimentData
+
+from make_data import X_HIGH, X_LOW, true_mean, true_sd
+
+data = ExperimentData.from_file("data")
+input_df, output_df = data.to_pandas()
+x = input_df["x"].to_numpy(float)
+y = output_df["y"].to_numpy(float)
+grid = np.linspace(X_LOW, X_HIGH, 400)
+
+print(f"record data/: {len(data)} rows")
+print("output columns:", list(output_df.columns))
+===  markdown
+## Baseline (written by `baseline.py`)
+
+Plotted from the stored columns `y_pred_baseline` and `sd_baseline` — the
+notebook does not re-fit anything here.
+===  code
+order = np.argsort(x)
+mu_b = output_df["y_pred_baseline"].to_numpy(float)[order]
+sd_b = float(output_df["sd_baseline"].iloc[0])
+
+fig, ax = plt.subplots(figsize=(7, 4.5))
+ax.scatter(x, y, s=18, color="#333333", zorder=3, label="training data")
+ax.plot(x[order], mu_b, color="#1f77b4", lw=2, label="baseline mean (deg 2)")
+ax.fill_between(x[order], mu_b - 2 * sd_b, mu_b + 2 * sd_b, color="#1f77b4",
+                alpha=0.20, label=f"baseline $\\pm2$ sd (constant, sd = {sd_b:.1f})")
+ax.plot(grid, true_mean(grid) + 2 * true_sd(grid), "k--", lw=1.4,
+        label="true $\\pm2$ sd (sd = 0.5 x)")
+ax.plot(grid, true_mean(grid) - 2 * true_sd(grid), "k--", lw=1.4)
+ax.set_xlabel("speed x [m/s]"); ax.set_ylabel("stopping distance y [m]")
+ax.set_title("Baseline: right mean, wrong noise")
+ax.legend(loc="upper left", fontsize=8)
+fig.tight_layout(); fig.savefig("figures/baseline.png", dpi=150)
+print("redrew figures/baseline.png from the record")
+===  markdown
+---
+
+## Agent sections below
+
+Whoever changes the model or selects its hyperparameters appends cells here,
+**between this marker and the final cell**. Those cells may only read columns
+that are already in the record — `y_pred_hblr`, `sd_hblr`, `y_pred_selected`,
+`sd_selected`, … — plus `data/` itself. They must not read `data_test/`, and
+they must not load anything from outside the record.
+
+<!-- AGENT CELLS BELOW THIS LINE -->
+===  markdown
+---
+
+## What the record remembers
+===  code
+print(f"rows: {len(data)}")
+print("input columns :", list(input_df.columns))
+print("output columns:", list(output_df.columns))
+
+stamps = [c for c in output_df.columns if c.startswith("_source")]
+if stamps:
+    print("\nprovenance -- who wrote what:")
+    for c in stamps:
+        print(f"  {c:22s} {output_df[c].iloc[0]}")
+else:
+    print("\nno provenance columns yet")
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AttributeError: module 'f3dasm' has no attribute '__version__'
+```
+
+*result (Read)*
+
+```
+1	# demo_car — the data-driven process, with and without a separation of powers
+2	
+3	A 10–12 minute live segment opening Part 2 of the short course. Everything is
+4	small enough that nothing hides: 60 data points, one input, one output, a model
+5	you can write on a slide.
+6	
+7	**The lesson in one line: the agent decides and wires; the tool computes; the
+8	record remembers.**
+9	
+10	## The problem (course canon, Lecture 17)
+11	
+12	    y = z x + 0.1 x²,   z ~ N(1.5, 0.5²),   x ∈ [3, 83] m/s
+13	
+14	so `E[y|x] = 1.5x + 0.1x²` and `sd[y|x] = 0.5x`. The noise **grows with speed**.
+15	The 2019 baseline (`baseline.py`) fits the mean with degree-2 least squares and
+16	the noise with one constant number. Its mean is right; its band is flat while
+17	the truth fans out. `figures/baseline.png` is the setup for the whole segment.
+18	
+19	## Setup
+20	
+21	```bash
+22	pip install "f3dasm[scipy]==2.4.0" matplotlib jupyter
+23	cd Lectures/short_course/demo_car
+24	python make_data.py     # writes data/       (60 training points, Sobol seed 123)
+25	python baseline.py      # writes the baseline columns into data/ + figures/baseline.png
+26	```
+27	
+28	Expected output of `baseline.py`:
+29	
+30	```
+31	  coefficients [1, x, x^2] = [-0.4342  1.4196  0.1008]
+32	  constant residual sd     = 27.5632
+33	  train RMSE               = 26.8653
+34	```
+35	
+36	Note what does **not** exist after setup: a held-out record. `make_data.py`
+37	only makes one when asked (`python make_data.py --test --seed 456`). Who
+38	creates the test set, and when, is the point of the demo.
+39	
+40	Every script uses `matplotlib.use("Agg")` and `savefig` — nothing pops a
+41	window mid-talk.
+42	
+43	## The three stages
+44	
+45	Run them in order, with `./reset.sh` between stages. Each stage is one Claude
+46	Code session started in this folder, so `CLAUDE.md` and `.claude/agents/` are
+47	picked up automatically.
+48	
+49	### Stage 1 — one agent, one module
+50	
+51	Type:
+52	
+53	> The baseline in baseline.py fits the mean but assumes constant noise, and the
+54	> data clearly does not. Change the model.
+55	
+56	The session reads the record, writes a heteroscedastic model, runs it, writes
+57	the predictions back into `data/`. It is fast and it is good.
+58	
+59	**Lesson: inside one module, one agent is enough.** There is a right answer,
+60	the agent finds it, and the record shows what changed.
+61	
+62	### Stage 2 — the same agent grades its own homework
+63	
+64	In the same session, type:
+65	
+66	> Now select the model's hyperparameters properly and show me the record.
+67	
+68	Watch what it does, and read the transcript afterwards: Which score did it
+69	choose? Did it build a held-out set, or score on the training data? Did it
+70	quietly change the model while it was "selecting" — a feature here, a
+71	regulariser there?
+72	
+73	**Lesson: the same agent built the model, chose the score, and (if it made one)
+74	held the test set. Who checked it?** Not a story about a bad agent — a story
+75	about a missing boundary. Nobody at any scale should be author, examiner and
+76	custodian of the test set at once.
+77	
+78	### Stage 3 — two agents, and a real separation of powers
+79	
+80	`./reset.sh`, then type:
+81	
+82	> The baseline in baseline.py fits the mean but assumes constant noise, and the
+83	> data clearly does not. Use the modeler and selector subagents: modeler fixes
+84	> the model, selector selects its hyperparameters properly. Then show me the
+85	> record.
+86	
+87	Two custom subagents, defined in `.claude/agents/`:
+88	
+89	- **`modeler`** — owns the model. May read `data/` (training only), writes only
+90	  inside `blocks/` and into the record. **The held-out data does not exist while
+91	  it works, and it is forbidden to create it.** It cannot tune against a test
+92	  set it has never seen.
+93	- **`selector`** — owns the judgement. Creates the held-out record itself
+94	  (`python make_data.py --test --seed 456`), enumerates the 12-row candidate
+95	  grid (`d_mean ∈ {1,2,3,4} × d_noise ∈ {0,1,2}`) as an `ExperimentData`, scores
+96	  every row by held-out mean log predictive density and MSE, refits the winner
+97	  and writes `y_pred_selected`, `sd_selected` into the record. **It may not edit
+98	  `blocks/`** — if the model is broken it says so and stops.
+99	
+100	**Lesson: the judge creates the held-out data and cannot touch the model; the
+101	author cannot touch the score. Both write only into the record**, each stamping
+102	a `_source_*` column, so afterwards you can see who wrote what.
+103	
+104	### The reproduction gate
+105	
+106	After any stage:
+107	
+108	```bash
+109	jupyter nbconvert --to notebook --execute --inplace pipeline.ipynb
+110	```
+111	
+112	`pipeline.ipynb` redraws every figure from `data/` alone. If a result cannot be
+113	redrawn from the record, it is not a result.
+114	
+115	## Reset between stages
+116	
+117	```bash
+118	./reset.sh
+119	```
+120	
+121	Deletes everything an agent wrote (`blocks/*`, `data_test/`, the study record,
+122	`model.png`, `selection.png`, stray scripts), restores `pipeline.ipynb` from
+123	`templates/`, and rebuilds `data/` + `figures/baseline.png` from the fixed
+124	seeds — byte-for-byte identical to the pre-run state. `make_data.py`,
+125	`baseline.py`, `CLAUDE.md`, `.claude/` and the transcripts are never touched.
+126	
+127	If `python` in your shell is not the environment with f3dasm 2.4.0:
+128	`PYTHON=/path/to/python ./reset.sh`.
+129	
+130	## What happened when this was recorded
+131	
+132	Claude Code v2.1.260, `claude -p` non-interactive, Max subscription, f3dasm
+133	2.4.0. Subagent delegation works fine non-interactively — stage 3 really did
+134	run `modeler` and then `selector` as separate agents.
+135	
+136	| | wall time | score used | held-out data | model edited while selecting |
+137	|---|---|---|---|---|
+138	| Stage 1 | 157 s | — (fit only) | none exists | — |
+139	| Stage 2 | 107 s | held-out mean log predictive density | it made its own, `--test --seed 456` | no, it declined to |
+140	| Stage 3 | 429 s | held-out mean log predictive density | the **s
+... [truncated]
+```
+
+**tool: Bash**
+
+```
+cat .claude/agents/modeler.md; pip show f3dasm scipy numpy 2>/dev/null | grep -E '^(Name|Version)'; which python jupyter
+```
+
+*result (Bash)*
+
+````
 ---
 name: modeler
 description: Owns the machine-learning model for the car stopping-distance record. Use when the model class has to change — for example when the baseline's constant-noise assumption is wrong. Implements an f3dasm Block, runs it, writes predictions into the record. Never scores itself on held-out data.
 tools: Read, Glob, Grep, Write, Edit, Bash
-model: inherit
+model: sonnet
 ---
 
 You own the machine-learning block for the car stopping-distance problem, and
@@ -347,7 +591,7 @@ nothing else.
 ## The model you implement
 
 Bayesian linear regression with a heteroscedastic (input-dependent) noise
-model:
+model: sonnet
 
 - Mean features: a polynomial in `x` of degree `d_mean` (default 2). Scale the
   input before taking powers — e.g. `t = x / 83` — or the design matrix is
@@ -416,192 +660,108 @@ Answer with exactly these four sections:
 ```
 
 `### Numbers` contains only values your code printed, copied verbatim.
-======
-```
+Name: f3dasm
+Version: 2.4.0
+Name: scipy
+Version: 1.17.1
+Name: numpy
+Version: 2.4.6
+/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/bin/python
+/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/bin/jupyter
+````
+
+**assistant**
+
+Now I'll write the heteroscedastic model as an f3dasm Block, plus a runner that fits it, writes the columns into the record and draws the figure.
 
 **tool: Write**
 
 ```
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py  (7280 chars)
+/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py  (6112 chars)
 
-"""Heteroscedastic Bayesian linear regression as an f3dasm Block.
+"""Heteroscedastic Bayesian linear regression -- the model the baseline lacked.
 
-The baseline (baseline.py) gets the mean right and the noise wrong: one
-constant residual standard deviation against a truth that fans out,
-sd[y|x] = 0.5 x.  This block keeps the polynomial mean and lets the noise
-depend on the input.
+The baseline's mean is fine; its noise is one constant number.  Here the noise
+standard deviation is itself a function of the input:
 
-Model (t = x / X_HIGH keeps the design matrix well conditioned):
+    mean:   E[y|x]  = phi(t) @ w,          phi(t) = [1, t, ..., t**d_mean]
+    noise:  sd(x)   = exp(psi(t) @ c),     psi(t) = [1, t, ..., t**d_noise]
+    prior:  w ~ N(0, tau**2 I)
 
-    mean       E[y|x]  = phi(t) @ w,            phi(t) = [1, t, ..., t**d_mean]
-    noise      sd(x)   = exp(psi(t) @ c),       psi(t) = [1, t, ..., t**d_noise]
-    prior      w ~ N(0, tau**2 I)
+with t = x / 83 so the design matrices are well conditioned.  d_noise = 0 is
+the baseline's constant noise; d_noise >= 1 lets the band fan out.
 
-`d_noise = 0` is the baseline's constant noise; `d_noise >= 1` lets the band
-fan.  `tau` and `c` are fit by type-II maximum likelihood (maximise the log
-marginal likelihood of the training targets, L-BFGS-B).  Given them, the
-posterior on w is closed form:
+tau and c are fitted by type-II maximum likelihood (maximise the log marginal
+likelihood of the training targets, L-BFGS-B).  Given them, the posterior on
+w is Gaussian and closed form:
 
     W = diag(1 / sd(x)**2),  A = Phi.T W Phi + I / tau**2,  S = A^-1,
     m = S Phi.T W y
 
-Predictive at a new x:  mean phi @ m,  var phi @ S @ phi + sd(x)**2.
+Predictive at a new x:  mean phi @ m,  variance phi @ S @ phi + sd(x)**2.
 
-Writes into the record the output columns
+numpy + scipy + f3dasm only.
 
-    y_pred_hblr      predictive mean
-    sd_hblr          predictive standard deviation (posterior + noise)
-    _source_modeler  provenance stamp, 'modeler'
-
-Run:  python blocks/hetero_blr.py        (from demo_car/, fits on data/)
+    python -m blocks.hetero_blr      # fits on data/, appends columns, stores
 """
 
 from __future__ import annotations
 
-import os
-import sys
-
 import numpy as np
-from scipy.optimize import minimize
 from f3dasm import Block, ExperimentData, datagenerator
+from scipy.optimize import minimize
 
-X_LOW, X_HIGH = 3.0, 83.0     # same constants as make_data.py
-
-
-def _features(x, degree: int, scale: float) -> np.ndarray:
-    t = np.asarray(x, dtype=float) / scale
-    return np.vander(t, degree + 1, increasing=True)
+X_SCALE = 83.0
 
 
 class HeteroBLR(Block):
-    """Bayesian linear regression with input-dependent noise."""
+    """Bayesian linear regression with an input-dependent noise model."""
 
     def __init__(self, d_mean: int = 2, d_noise: int = 1,
-                 x_scale: float = X_HIGH, maxiter: int = 500):
+                 x_scale: float = X_SCALE, source: str = "hblr",
+                 suffix: str = "hblr") -> None:
         self.d_mean = int(d_mean)
         self.d_noise = int(d_noise)
         self.x_scale = float(x_scale)
-        self.maxiter = int(maxiter)
-        # fitted quantities (set by fit)
-        self.m = None          # posterior mean of the weights
-        self.S = None          # posterior covariance of the weights
-        self.c = None          # log-noise polynomial coefficients
-        self.tau = None        # prior scale of the weights
-        self.log_marginal = None
-        self.opt_result = None
+        self.source = source
+        self.suffix = suffix
+        self.m = self.S = self.c = self.tau = self.log_evidence = None
 
-    # ------------------------------------------------------------------ fit
-    def _unpack(self, theta):
-        log_tau, c = theta[0], theta[1:]
-        return np.exp(log_tau), c
+    # --- features -----------------------------------------------------------
+    def _phi(self, x):
+        t = np.asarray(x, dtype=float) / self.x_scale
+        return np.vander(t, self.d_mean + 1, increasing=True)
 
+    def _psi(self, x):
+        t = np.asarray(x, dtype=float) / self.x_scale
+        return np.vander(t, self.d_noise + 1, increasing=True)
+
+    def noise_sd(self, x, c=None):
+        c = self.c if c is None else c
+        return np.exp(self._psi(x) @ c)
+
+    # --- type-II maximum likelihood ------------------------------------------
     def _neg_log_marginal(self, theta, Phi, Psi, y):
-        tau, c = self._unpack(theta)
-        var_n = np.exp(2.0 * (Psi @ c))                 # sd(x)**2 per point
-        # y ~ N(0, C),  C = tau**2 Phi Phi.T + diag(var_n)
-        C = tau ** 2 * (Phi @ Phi.T) + np.diag(var_n)
-        L, lower = np.linalg.cholesky(C), True
+        log_tau, c = theta[0], theta[1:]
+        sd2 = np.exp(2.0 * (Psi @ c))
+        K = np.exp(2.0 * log_tau) * (Phi @ Phi.T) + np.diag(sd2)
+        try:
+            L = np.linalg.cholesky(K)
+        except np.linalg.LinAlgError:
+            return 1e25
         alpha = np.linalg.solve(L, y)
-        logdet = 2.0 * np.sum(np.log(np.diag(L)))
-        n = len(y)
-        return 0.5 * (alpha @ alpha + logdet + n * np.log(2.0 * np.pi))
+        return float(0.5 * alpha @ alpha + np.log(np.diag(L)).sum()
+                     + 0.5 * len(y) * np.log(2.0 * np.pi))
 
     def fit(self, x, y) -> "HeteroBLR":
-        x = np.asarray(x, float)
-        y = np.asarray(y, float)
-        Phi = _features(x, self.d_mean, self.x_scale)
-        Psi = _features(x, self.d_noise, self.x_scale)
+        x = np.asarray(x, dtype=float)
+        y = np.asarray(y, dtype=float)
+        Phi, Psi = self._phi(x), self._psi(x)
 
-        # start: tau from the data scale, constant noise at the raw sd of y
         theta0 = np.zeros(1 + self.d_noise + 1)
-        theta0[0] = np.log(np.std(y) + 1e-12)
-        theta0[1] = np.log(np.std(y) + 1e-12)
-
-        res = minimize(self._neg_log_marginal, theta0, args=(Phi, Psi, y),
-                       method="L-BFGS-B",
-                       bounds=[(-10, 15)] * len(theta0),
-                       options={"maxiter": self.maxiter})
-        self.opt_result = res
-        self.tau, self.c = self._unpack(res.x)
-        self.log_marginal = -float(res.fun)
-
-        # closed-form posterior for w given tau and c
-        var_n = np.exp(2.0 * (Psi @ self.c))
-        W = np.diag(1.0 / var_n)
-        A = Phi.T @ W @ Phi + np.eye(Phi.shape[1]) / self.tau ** 2
-        self.S = np.linalg.inv(A)
-        self.m = self.S @ Phi.T @ W @ y
-        return self
-
-    # -------------------------------------------------------------- predict
-    def noise_sd(self, x) -> np.ndarray:
-        Psi = _features(x, self.d_noise, self.x_scale)
-        return np.exp(Psi @ self.c)
-
-    def predict(self, x):
-        """Return (mean, sd) arrays of the predictive distribution at x."""
-        if self.m is None:
-            raise RuntimeError("HeteroBLR.predict called before fit")
-        Phi = _features(x, self.d_mean, self.x_scale)
-        mean = Phi @ self.m
-        var_post = np.einsum("ij,jk,ik->i", Phi, self.S, Phi)
-        sd = np.sqrt(var_post + self.noise_sd(x) ** 2)
-        return mean, sd
-
-    # ----------------------------------------------------------------- call
-    def call(self, data: ExperimentData, **kwargs) -> ExperimentData:
-        input_df, output_df = data.to_pandas()
-        x = input_df["x"].to_numpy(float)
-        y = output_df["y"].to_numpy(float)
-        self.fit(x, y)
-
-        model = self
-
-        @datagenerator(output_names=["y_pred_hblr", "sd_hblr",
-                                    "_source_modeler"])
-        def predict_hblr(x: float):
-            mu, sd = model.predict(np.array([x]))
-            return float(mu[0]), float(sd[0]), "modeler"
-
-        data = data.mark_all("open")
-        data = predict_hblr.call(data, mode="sequential")
-        return data
-
-
-# ---------------------------------------------------------------------- main
-if __name__ == "__main__":
-    here = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(os.path.dirname(here))          # run from demo_car/
-
-    block = HeteroBLR(d_mean=2, d_noise=1)
-    data = ExperimentData.from_file("data")
-    data = block.call(data)
-    data.store("data")
-
-    np.set_printoptions(precision=4, suppress=True)
-    print(f"HETERO-BLR  (d_mean={block.d_mean}, d_noise={block.d_noise}, "
-          f"t = x/{block.x_scale:g})")
-    print(f"  optimizer success        = {block.opt_result.success} "
-          f"({block.opt_result.message})")
-    print(f"  log marginal likelihood  = {block.log_marginal:.4f}")
-    print(f"  tau (prior sd of w)      = {block.tau:.4f}")
-    print(f"  posterior mean m (in t)  = {block.m}")
-    # back to raw-x polynomial coefficients for comparison with the baseline
-    scale_pow = block.x_scale ** np.arange(block.d_mean + 1)
-    print(f"  mean coefs [1, x, x^2..] = {block.m / scale_pow}")
-    print(f"  log-noise coefs c (in t) = {block.c}")
-    lo, hi = block.noise_sd([X_LOW])[0], block.noise_sd([X_HIGH])[0]
-    print(f"  fitted sd(x) at x={X_LOW:g}      = {lo:.4f}   (truth 0.5x = {0.5*X_LOW:.2f})")
-    print(f"  fitted sd(x) at x={X_HIGH:g}     = {hi:.4f}   (truth 0.5x = {0.5*X_HIGH:.2f})")
-    print(f"  noise grows with x?      = {hi > lo}")
-
-    xs = data.to_pandas()[0]["x"].to_numpy(float)
-    ys = data.to_pandas()[1]["y"].to_numpy(float)
-    mu, sd = block.predict(xs)
-    print(f"  train RMSE               = {np.sqrt(np.mean((ys - mu) ** 2)):.4f}")
-    print(f"  train mean log pred dens = "
-          f"{np.mean(-0.5*np.log(2*np.pi*sd**2) - 0.5*((ys-mu)/sd)**2):.4f}")
-    print("\n  wrote y_pred_hblr, sd_hblr, _source_modeler into data/")
+        theta0[0] = np.log(10.0)              # tau
+        theta0[1] = np
+... [truncated]
 ```
 
 *result (Write)*
@@ -610,196 +770,116 @@ if __name__ == "__main__":
 File created successfully at: /home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py (file state is current in your context — no need to Read it back)
 ```
 
-**tool: Bash**
+**tool: Write**
 
 ```
-python blocks/hetero_blr.py 2>&1 | tail -30; echo ====; head -4 data/experiment_data/output.csv
-```
+/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/fit_model.py  (2537 chars)
 
-*result (Bash)*
+"""Run the heteroscedastic model on the training record and draw the result.
 
-```
+    python fit_model.py
+
+Reads data/, fits blocks/hetero_blr.py's HeteroBLR (d_mean=2, d_noise=1),
+appends y_pred_hblr, sd_hblr, _source_hblr to the record, stores it, and
+writes figures/model.png next to the baseline for comparison.  Only data/ is
+read; no held-out record exists or is made here.
+"""
+
+from __future__ import annotations
+
+import matplotlib
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import numpy as np
+from f3dasm import ExperimentData
+
+from blocks.hetero_blr import HeteroBLR
+from make_data import X_HIGH, X_LOW, true_mean, true_sd
+
+
+def main() -> None:
+    data = ExperimentData.from_file("data")
+    block = HeteroBLR(d_mean=2, d_noise=1)
     data = block.call(data)
-           ^^^^^^^^^^^^^^^^
-  File "/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py", line 130, in call
-    self.fit(x, y)
-  File "/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py", line 94, in fit
-    res = minimize(self._neg_log_marginal, theta0, args=(Phi, Psi, y),
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/lib/python3.11/site-packages/scipy/optimize/_minimize.py", line 784, in minimize
-    res = _minimize_lbfgsb(fun, x0, args, jac, bounds,
-          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/lib/python3.11/site-packages/scipy/optimize/_lbfgsb_py.py", line 469, in _minimize_lbfgsb
-    f, g = func_and_grad(x)
-           ^^^^^^^^^^^^^^^^
-  File "/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/lib/python3.11/site-packages/scipy/optimize/_differentiable_functions.py", line 412, in fun_and_grad
-    self._update_fun()
-  File "/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/lib/python3.11/site-packages/scipy/optimize/_differentiable_functions.py", line 362, in _update_fun
-    fx = self._wrapped_fun(self.x)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/lib/python3.11/site-packages/scipy/_lib/_util.py", line 603, in __call__
-    fx = self.f(np.copy(x), *self.args)
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py", line 77, in _neg_log_marginal
-    L, lower = np.linalg.cholesky(C), True
-               ^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/lib/python3.11/site-packages/numpy/linalg/_linalg.py", line 875, in cholesky
-    r = gufunc(a, signature=signature)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/tmp/claude-1000/-home-mbessa-Dropbox-GitHub-3dasm-course/4dc75aa6-92b3-4b7c-a0d7-4d1b5e255e2f/scratchpad/student/env/lib/python3.11/site-packages/numpy/linalg/_linalg.py", line 147, in _raise_linalgerror_nonposdef
-    raise LinAlgError("Matrix is not positive definite")
-numpy.linalg.LinAlgError: Matrix is not positive definite
-====
-,y,y_pred_baseline,sd_baseline,_source_baseline
-0,5.231399699323243,4.731874256004194,27.563180855889765,baseline
-1,277.27315340384547,246.9754996104445,27.563180855889765,baseline
-2,462.5856419444955,489.0481241828602,27.563180855889765,baseline
+    data.store("data")
+
+    input_df, output_df = data.to_pandas()
+    x = input_df["x"].to_numpy(dtype=float)
+    y = output_df["y"].to_numpy(dtype=float)
+    block.report(x, y, X_LOW, X_HIGH)
+    print("\n  wrote y_pred_hblr, sd_hblr, _source_hblr into data/")
+    print("  output columns:", list(output_df.columns))
+
+    # --- figure: baseline band vs heteroscedastic band vs truth ------------
+    grid = np.linspace(X_LOW, X_HIGH, 400)
+    mu_h, sd_h = block.predict(grid)
+    order = np.argsort(x)
+    mu_b = output_df["y_pred_baseline"].to_numpy(float)[order]
+    sd_b = float(output_df["sd_baseline"].iloc[0])
+
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    ax.scatter(x, y, s=18, color="#333333", zorder=3, label="training data")
+    ax.fill_between(x[order], mu_b - 2 * sd_b, mu_b + 2 * sd_b,
+                    color="#1f77b4", alpha=0.12,
+                    label=f"baseline $\\pm2$ sd (constant, sd = {sd_b:.1f})")
+    ax.plot(grid, mu_h, color="#d62728", lw=2,
+            label=f"HeteroBLR mean (deg {block.d_mean})")
+    ax.fill_between(grid, mu_h - 2 * sd_h, mu_h + 2 * sd_h,
+                    color="#d62728", alpha=0.25,
+                    label=f"HeteroBLR $\\pm2$ sd (log-sd deg {block.d_noise})")
+    ax.plot(grid, true_mean(grid) + 2 * true_sd(grid), "k--", lw=1.4,
+            label="true $\\pm2$ sd (sd = 0.5 x)")
+    ax.plot(grid, true_mean(grid) - 2 * true_sd(grid), "k--", lw=1.4)
+    ax.set_xlabel("speed x [m/s]")
+    ax.set_ylabel("stopping distance y [m]")
+    ax.set_title("Heteroscedastic model: the band fans with the truth")
+    ax.legend(loc="upper left", fontsize=8)
+    fig.tight_layout()
+    fig.savefig("figures/model.png", dpi=150)
+    print("  wrote figures/model.png")
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-**tool: Edit**
+*result (Write)*
 
 ```
-/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py
--     def _neg_log_marginal(self, theta, Phi, Psi, y):
-        tau, c = self._unpack(theta)
-        var_n = np.exp(2.0 * (Psi @ c))                 # sd(x)**2 per point
-        # y ~ N(0, C),  C = tau**2 Phi Phi.T + diag(var_n)
-        C = tau ** 2 * (Phi @ Phi.T) + np.diag(var_n)
-        L, lower = n
-+     def _neg_log_marginal(self, theta, Phi, Psi, y):
-        """-log p(y | tau, c), weight-space form (Bishop 3.86, per-point noise).
-
-        log p(y) = -n/2 log 2pi - sum_i log sd_i - M log tau
-                   - 1/2 log|A| - E(m),
-        E(m) = 1/2 (y - Phi m)^T W (y - Phi m) + 1/2 m^T m / tau
-```
-
-*result (Edit)*
-
-```
-The file /home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/blocks/hetero_blr.py has been updated successfully. (file state is current in your context — no need to Read it back)
+File created successfully at: /home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/short_course/demo_car/fit_model.py (file state is current in your context — no need to Read it back)
 ```
 
 **tool: Bash**
 
 ```
-python blocks/hetero_blr.py 2>&1 | tail -30; echo ====; head -4 data/experiment_data/output.csv; grep -c "Error in experiment_sample" <(python -c "print()") || true
+python fit_model.py 2>&1 | grep -v '^$' ; echo "exit=${PIPESTATUS[0]}"; head -3 data/experiment_data/output.csv
 ```
 
 *result (Bash)*
 
 ```
-HETERO-BLR  (d_mean=2, d_noise=1, t = x/83)
-  optimizer success        = True (CONVERGENCE: RELATIVE REDUCTION OF F <= FACTR*EPSMCH)
-  log marginal likelihood  = -273.8905
-  tau (prior sd of w)      = 407.3554
-  posterior mean m (in t)  = [ -0.2132 117.1222 694.2824]
-  mean coefs [1, x, x^2..] = [-0.2132  1.4111  0.1008]
-  log-noise coefs c (in t) = [1.6683 2.4795]
-  fitted sd(x) at x=3      = 5.8002   (truth 0.5x = 1.50)
-  fitted sd(x) at x=83     = 63.2921   (truth 0.5x = 41.50)
-  noise grows with x?      = True
-  train RMSE               = 26.8667
-  train mean log pred dens = -4.3495
-
-  wrote y_pred_hblr, sd_hblr, _source_modeler into data/
-====
-,y,y_pred_baseline,sd_baseline,_source_baseline,y_pred_hblr,sd_hblr,_source_modeler
-0,5.231399699323243,4.731874256004194,27.563180855889765,baseline,4.927155369682859,6.603305289578298,modeler
-1,277.27315340384547,246.9754996104445,27.563180855889765,baseline,246.8091731413914,19.430267238152638,modeler
-2,462.5856419444955,489.0481241828602,27.563180855889765,baseline,488.68774048376514,35.410619146253445,modeler
-0
+HeteroBLR  (d_mean=2, d_noise=1, t = x/83)
+  mean weights m [1, t, ..]  = [-2.1319e-01  1.1712e+02  6.9428e+02]
+  log-noise coeffs c [1, t, ..] = [1.6683 2.4794]
+  prior sd tau               = 407.3800
+  log marginal likelihood    = -273.8905
+  train RMSE                 = 26.8667
+  fitted sd at x =  3.00       = 5.8005   (truth 0.5 x = 1.50)
+  fitted sd at x = 83.00       = 63.2915   (truth 0.5 x = 41.50)
+  noise grows with x: yes
+  wrote y_pred_hblr, sd_hblr, _source_hblr into data/
+  output columns: ['y', 'y_pred_baseline', 'sd_baseline', '_source_baseline', 'y_pred_hblr', 'sd_hblr', '_source_hblr']
+  wrote figures/model.png
+exit=0
+,y,y_pred_baseline,sd_baseline,_source_baseline,y_pred_hblr,sd_hblr,_source_hblr
+0,5.231399699323243,4.731874256004194,27.563180855889765,baseline,4.927167055744651,6.603574870829193,hblr
+1,277.27315340384547,246.9754996104445,27.563180855889765,baseline,246.80917562837553,19.430590309414622,hblr
 ```
 
-**tool: Bash**
+**assistant**
 
-```
-python - <<'EOF'
-import nbformat
-nb = nbformat.read('pipeline.ipynb', 4)
-idx = next(i for i, c in enumerate(nb.cells)
-           if c.cell_type == 'markdown' and 'What the record remembers' in c.source)
-
-md = nbformat.v4.new_markdown_cell(
-"## Heteroscedastic Bayesian linear regression (written by `blocks/hetero_blr.py`)\n\n"
-"Degree-2 polynomial mean, `w ~ N(0, tau^2 I)`, and a noise standard deviation whose\n"
-"log is linear in `x`: `sd(x) = exp(c0 + c1 x/83)`. `tau` and `c` were fit by type-II\n"
-"maximum likelihood; the weight posterior is closed form. Plotted from the stored\n"
-"columns `y_pred_hblr` and `sd_hblr` — nothing is re-fit here.")
-
-code = nbformat.v4.new_code_cell(
-'''mu_h = output_df["y_pred_hblr"].to_numpy(float)[order]
-sd_h = output_df["sd_hblr"].to_numpy(float)[order]
-
-fig, ax = plt.subplots(figsize=(7, 4.5))
-ax.scatter(x, y, s=18, color="#333333", zorder=3, label="training data")
-ax.fill_between(x[order], mu_b - 2 * sd_b, mu_b + 2 * sd_b, color="#1f77b4",
-                alpha=0.12, label=f"baseline $\\\\pm2$ sd (constant, sd = {sd_b:.1f})")
-ax.plot(x[order], mu_h, color="#d62728", lw=2, label="hetero-BLR mean (deg 2)")
-ax.fill_between(x[order], mu_h - 2 * sd_h, mu_h + 2 * sd_h, color="#d62728",
-                alpha=0.25, label="hetero-BLR $\\\\pm2$ sd (log-linear in x)")
-ax.plot(grid, true_mean(grid) + 2 * true_sd(grid), "k--", lw=1.4,
-        label="true $\\\\pm2$ sd (sd = 0.5 x)")
-ax.plot(grid, true_mean(grid) - 2 * true_sd(grid), "k--", lw=1.4)
-ax.set_xlabel("speed x [m/s]"); ax.set_ylabel("stopping distance y [m]")
-ax.set_title("Changed model: the band fans with the truth")
-ax.legend(loc="upper left", fontsize=8)
-fig.tight_layout(); fig.savefig("figures/model.png", dpi=150)
-
-print("redrew figures/model.png from the record")
-print(f"sd_hblr at the slowest point : {sd_h[0]:.2f}   (x = {x[order][0]:.1f})")
-print(f"sd_hblr at the fastest point : {sd_h[-1]:.2f}   (x = {x[order][-1]:.1f})")
-print(f"sd_baseline everywhere       : {sd_b:.2f}")''')
-
-nb.cells[idx:idx] = [md, code]
-nbformat.write(nb, 'pipeline.ipynb')
-print("inserted 2 cells before index", idx)
-EOF
-jupyter nbconvert --to notebook --execute --inplace pipeline.ipynb 2>&1 | tail -3
-python -c "
-import nbformat
-nb=nbformat.read('pipeline.ipynb',4)
-for c in nb.cells:
-    if c.cell_type=='code':
-        for o in c.get('outputs',[]):
-            if o.get('output_type')=='stream': print(o['text'])
-            if o.get('output_type')=='error': print('ERROR', o['ename'], o['evalue'])
-"
-ls -la figures/
-```
-
-*result (Bash)*
-
-```
-inserted 2 cells before index 5
-[NbConvertApp] Converting notebook pipeline.ipynb to notebook
-[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
-[NbConvertApp] Writing 9034 bytes to pipeline.ipynb
-record data/: 60 rows
-output columns: ['y', 'y_pred_baseline', 'sd_baseline', '_source_baseline', 'y_pred_hblr', 'sd_hblr', '_source_modeler']
-
-redrew figures/baseline.png from the record
-
-redrew figures/model.png from the record
-sd_hblr at the slowest point : 6.60   (x = 3.0)
-sd_hblr at the fastest point : 62.60   (x = 81.8)
-sd_baseline everywhere       : 27.56
-
-rows: 60
-input columns : ['x']
-output columns: ['y', 'y_pred_baseline', 'sd_baseline', '_source_baseline', 'y_pred_hblr', 'sd_hblr', '_source_modeler']
-
-provenance -- who wrote what:
-  _source_baseline       baseline
-  _source_modeler        modeler
-
-total 204
-drwxrwxr-x 2 mbessa mbessa   4096 Sep  5 09:42 .
-drwxrwxr-x 8 mbessa mbessa   4096 Sep  5 09:39 ..
--rw-rw-r-- 1 mbessa mbessa  91689 Sep  5 09:42 baseline.png
--rw-rw-r-- 1 mbessa mbessa      0 Sep  5 09:34 .gitkeep
--rw-rw-r-- 1 mbessa mbessa 106343 Sep  5 09:42 model.png
-```
+The fit converged and the noise grows with speed, as it should. Next I'll check the figure and append the reproduction cells to the notebook.
 
 **tool: Read**
 
@@ -813,63 +893,166 @@ drwxrwxr-x 8 mbessa mbessa   4096 Sep  5 09:39 ..
 
 ```
 
+**tool: Bash**
+
+```
+python - <<'EOF'
+import json
+nb = json.load(open('pipeline.ipynb'))
+cells = nb['cells']
+idx = next(i for i, c in enumerate(cells)
+           if 'AGENT CELLS BELOW THIS LINE' in ''.join(c['source']))
+
+md = """## Heteroscedastic model (written by `fit_model.py`, block `blocks/hetero_blr.py`)
+
+Plotted from the stored columns `y_pred_hblr` and `sd_hblr` (predictive mean and
+predictive sd, noise + parameter uncertainty). No re-fit: if the record did not
+carry these columns, this figure could not exist.
+"""
+code = '''mu_h = output_df["y_pred_hblr"].to_numpy(float)[order]
+sd_h = output_df["sd_hblr"].to_numpy(float)[order]
+
+fig, ax = plt.subplots(figsize=(7, 4.5))
+ax.scatter(x, y, s=18, color="#333333", zorder=3, label="training data")
+ax.fill_between(x[order], mu_b - 2 * sd_b, mu_b + 2 * sd_b, color="#1f77b4",
+                alpha=0.12, label=f"baseline $\\\\pm2$ sd (constant, sd = {sd_b:.1f})")
+ax.plot(x[order], mu_h, color="#d62728", lw=2, label="HeteroBLR mean (deg 2)")
+ax.fill_between(x[order], mu_h - 2 * sd_h, mu_h + 2 * sd_h, color="#d62728",
+                alpha=0.25, label="HeteroBLR $\\\\pm2$ sd (log-sd deg 1)")
+ax.plot(grid, true_mean(grid) + 2 * true_sd(grid), "k--", lw=1.4,
+        label="true $\\\\pm2$ sd (sd = 0.5 x)")
+ax.plot(grid, true_mean(grid) - 2 * true_sd(grid), "k--", lw=1.4)
+ax.set_xlabel("speed x [m/s]"); ax.set_ylabel("stopping distance y [m]")
+ax.set_title("Heteroscedastic model: the band fans with the truth")
+ax.legend(loc="upper left", fontsize=8)
+fig.tight_layout(); fig.savefig("figures/model.png", dpi=150)
+
+print("redrew figures/model.png from the record")
+print(f"stored sd_hblr runs from {sd_h.min():.2f} (x = {x[order][0]:.2f}) "
+      f"to {sd_h.max():.2f} (x = {x[order][-1]:.2f}); baseline sd = {sd_b:.2f}")
+'''
+def cell(kind, src):
+    c = {"cell_type": kind, "metadata": {}, "source": src.splitlines(keepends=True)}
+    if kind == "code":
+        c.update(execution_count=None, outputs=[])
+    return c
+cells[idx+1:idx+1] = [cell("markdown",
+... [truncated]
+```
+
+*result (Bash)*
+
+```
+inserted 2 cells after marker at index 4
+```
+
 **assistant**
 
-Done. The model is changed, its predictions are in the record, and the notebook regenerates everything from `data/` alone.
+Figure looks right: the red band fans with the dashed truth while the flat blue baseline band is too wide at low speed and too narrow at high speed. Now the reproduction gate.
 
-**What I changed.** I wrote `blocks/hetero_blr.py`, an f3dasm Block called HeteroBLR. It keeps the degree-2 polynomial mean but replaces the constant residual standard deviation with a noise model whose log is linear in speed, so the band can fan. The mean weights get a Gaussian prior, and the prior scale plus the noise coefficients are fit by type-II maximum likelihood with L-BFGS-B. The weight posterior is then closed form. The class exposes the fitted parameters and a predict method, so later hyperparameter selection can reuse it without editing it.
+**tool: Bash**
 
-**Why this form.** The truth has standard deviation proportional to speed, which one constant cannot follow. Modelling the log of the standard deviation keeps it positive, and degree 0 recovers the baseline's constant noise exactly, so the two models are nested and directly comparable. The first attempt used the 60 by 60 function-space covariance, which went indefinite when the optimizer probed extreme values. I rewrote the likelihood in weight-space form, which only factorises a 3 by 3 matrix.
+```
+jupyter nbconvert --to notebook --execute --inplace pipeline.ipynb 2>&1 | tail -3; echo "exit=${PIPESTATUS[0]}"; python - <<'EOF'
+import json
+nb = json.load(open('pipeline.ipynb'))
+for c in nb['cells']:
+    if c['cell_type'] == 'code':
+        for o in c.get('outputs', []):
+            if o.get('output_type') == 'stream': print(''.join(o['text']), end='')
+            elif o.get('output_type') == 'error': print('ERROR', o['ename'], o['evalue'])
+EOF
+```
 
-**Numbers printed by the fit** (degree 2 mean, degree 1 log-noise):
+*result (Bash)*
+
+```
+_validate(nbdict, ref, version, version_minor, relax_add_props)
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[NbConvertApp] Writing 8779 bytes to pipeline.ipynb
+exit=0
+record data/: 60 rows
+output columns: ['y', 'y_pred_baseline', 'sd_baseline', '_source_baseline', 'y_pred_hblr', 'sd_hblr', '_source_hblr']
+redrew figures/baseline.png from the record
+redrew figures/model.png from the record
+stored sd_hblr runs from 6.60 (x = 3.00) to 62.59 (x = 81.75); baseline sd = 27.56
+rows: 60
+input columns : ['x']
+output columns: ['y', 'y_pred_baseline', 'sd_baseline', '_source_baseline', 'y_pred_hblr', 'sd_hblr', '_source_hblr']
+
+provenance -- who wrote what:
+  _source_baseline       baseline
+  _source_hblr           hblr
+```
+
+**assistant**
+
+The notebook ran end to end. One validation warning appeared before the write, so I'll check what it was.
+
+**tool: Bash**
+
+```
+jupyter nbconvert --to notebook --execute --inplace pipeline.ipynb 2>&1 | grep -v IPKernelApp | head -8; python -c "
+import json; nb=json.load(open('pipeline.ipynb')); print(nb['nbformat'], nb['nbformat_minor']); print([('id' in c) for c in nb['cells']])"
+```
+
+*result (Bash)*
+
+```
+[NbConvertApp] Converting notebook pipeline.ipynb to notebook
+[NbConvertApp] Writing 8779 bytes to pipeline.ipynb
+4 5
+[True, True, True, True, True, True, True, True, True]
+```
+
+**assistant**
+
+Done. The record now carries a heteroscedastic model next to the baseline, and the notebook redraws both figures from the record alone.
+
+**What changed**
+
+- `blocks/hetero_blr.py` holds a new f3dasm Block, `HeteroBLR`. The mean is a degree-2 polynomial in t = x/83 with a Gaussian prior on the weights. The noise standard deviation is exp of a degree-1 polynomial in t, so the band can fan. The prior scale and the noise coefficients are fitted by type-II maximum likelihood with L-BFGS-B; the weight posterior is then closed form. The predictive sd adds parameter uncertainty to the noise sd. Numpy and scipy only.
+- `fit_model.py` runs the block on `data/`, stores the record, and writes `figures/model.png`.
+- `data/` gained three output columns: `y_pred_hblr`, `sd_hblr`, and the stamp `_source_hblr` with value "hblr". The baseline columns are untouched. Neither `baseline.py` nor `make_data.py` was edited.
+- `pipeline.ipynb` has two new cells after the agent marker. They plot only the stored columns, no re-fit. The notebook executed cleanly with nbconvert; the one warning on the first pass was missing cell ids, which nbconvert added, and the second pass was silent.
+
+**Numbers printed by the fit** (d_mean = 2, d_noise = 1, t = x/83)
 
 | quantity | value |
 |---|---|
-| optimizer converged | True |
+| log-noise coefficients c | [1.6683, 2.4794] |
+| prior sd tau | 407.38 |
 | log marginal likelihood | -273.8905 |
-| mean coefficients [1, x, x²] | [-0.2132, 1.4111, 0.1008] |
-| baseline mean coefficients, for comparison | [-0.4342, 1.4196, 0.1008] |
-| fitted sd at x = 3 | 5.80 (truth 1.50) |
-| fitted sd at x = 83 | 63.29 (truth 41.50) |
 | train RMSE | 26.8667 (baseline 26.8653) |
+| fitted noise sd at x = 3 | 5.80 (truth 1.50) |
+| fitted noise sd at x = 83 | 63.29 (truth 41.50) |
 
-The mean is essentially unchanged, as expected. The noise now grows by roughly a factor of ten across the speed range instead of sitting at one value. A log-linear noise is convex in x while the truth is linear, so it overshoots at both ends. That is a hyperparameter question, not a bug, and it is left for the selection stage.
-
-**The record now carries** three new output columns next to the baseline's: the predictive mean, the predictive standard deviation, and a provenance stamp reading `modeler`. Both stamps are visible in the notebook's final cell.
-
-**Reproduction gate.** I appended two cells to the notebook between the agent marker and the closing cell. They draw `figures/model.png` from the stored columns only, with the baseline's flat band behind for contrast. The full notebook executed cleanly with nbconvert and redrew both figures.
-
-Files touched: `blocks/hetero_blr.py` (new), `data/experiment_data/output.csv` and `jobs.csv` (via f3dasm store), `pipeline.ipynb` (two cells appended), `figures/model.png` (new). No held-out record exists, and I did not touch the baseline, the data generator, or git.
+The noise grows with speed, which the baseline could not do. The mean is essentially unchanged from the baseline, as expected. The fitted band overshoots the truth at both ends: an exponential of a straight line is not a straight line through the origin, so the log-linear noise degree is a hyperparameter worth choosing rather than assuming. No held-out data exists and none was made.
 
 ---
 
 ## Final answer
 
-Done. The model is changed, its predictions are in the record, and the notebook regenerates everything from `data/` alone.
+Done. The record now carries a heteroscedastic model next to the baseline, and the notebook redraws both figures from the record alone.
 
-**What I changed.** I wrote `blocks/hetero_blr.py`, an f3dasm Block called HeteroBLR. It keeps the degree-2 polynomial mean but replaces the constant residual standard deviation with a noise model whose log is linear in speed, so the band can fan. The mean weights get a Gaussian prior, and the prior scale plus the noise coefficients are fit by type-II maximum likelihood with L-BFGS-B. The weight posterior is then closed form. The class exposes the fitted parameters and a predict method, so later hyperparameter selection can reuse it without editing it.
+**What changed**
 
-**Why this form.** The truth has standard deviation proportional to speed, which one constant cannot follow. Modelling the log of the standard deviation keeps it positive, and degree 0 recovers the baseline's constant noise exactly, so the two models are nested and directly comparable. The first attempt used the 60 by 60 function-space covariance, which went indefinite when the optimizer probed extreme values. I rewrote the likelihood in weight-space form, which only factorises a 3 by 3 matrix.
+- `blocks/hetero_blr.py` holds a new f3dasm Block, `HeteroBLR`. The mean is a degree-2 polynomial in t = x/83 with a Gaussian prior on the weights. The noise standard deviation is exp of a degree-1 polynomial in t, so the band can fan. The prior scale and the noise coefficients are fitted by type-II maximum likelihood with L-BFGS-B; the weight posterior is then closed form. The predictive sd adds parameter uncertainty to the noise sd. Numpy and scipy only.
+- `fit_model.py` runs the block on `data/`, stores the record, and writes `figures/model.png`.
+- `data/` gained three output columns: `y_pred_hblr`, `sd_hblr`, and the stamp `_source_hblr` with value "hblr". The baseline columns are untouched. Neither `baseline.py` nor `make_data.py` was edited.
+- `pipeline.ipynb` has two new cells after the agent marker. They plot only the stored columns, no re-fit. The notebook executed cleanly with nbconvert; the one warning on the first pass was missing cell ids, which nbconvert added, and the second pass was silent.
 
-**Numbers printed by the fit** (degree 2 mean, degree 1 log-noise):
+**Numbers printed by the fit** (d_mean = 2, d_noise = 1, t = x/83)
 
 | quantity | value |
 |---|---|
-| optimizer converged | True |
+| log-noise coefficients c | [1.6683, 2.4794] |
+| prior sd tau | 407.38 |
 | log marginal likelihood | -273.8905 |
-| mean coefficients [1, x, x²] | [-0.2132, 1.4111, 0.1008] |
-| baseline mean coefficients, for comparison | [-0.4342, 1.4196, 0.1008] |
-| fitted sd at x = 3 | 5.80 (truth 1.50) |
-| fitted sd at x = 83 | 63.29 (truth 41.50) |
 | train RMSE | 26.8667 (baseline 26.8653) |
+| fitted noise sd at x = 3 | 5.80 (truth 1.50) |
+| fitted noise sd at x = 83 | 63.29 (truth 41.50) |
 
-The mean is essentially unchanged, as expected. The noise now grows by roughly a factor of ten across the speed range instead of sitting at one value. A log-linear noise is convex in x while the truth is linear, so it overshoots at both ends. That is a hyperparameter question, not a bug, and it is left for the selection stage.
+The noise grows with speed, which the baseline could not do. The mean is essentially unchanged from the baseline, as expected. The fitted band overshoots the truth at both ends: an exponential of a straight line is not a straight line through the origin, so the log-linear noise degree is a hyperparameter worth choosing rather than assuming. No held-out data exists and none was made.
 
-**The record now carries** three new output columns next to the baseline's: the predictive mean, the predictive standard deviation, and a provenance stamp reading `modeler`. Both stamps are visible in the notebook's final cell.
-
-**Reproduction gate.** I appended two cells to the notebook between the agent marker and the closing cell. They draw `figures/model.png` from the stored columns only, with the baseline's flat band behind for contrast. The full notebook executed cleanly with nbconvert and redrew both figures.
-
-Files touched: `blocks/hetero_blr.py` (new), `data/experiment_data/output.csv` and `jobs.csv` (via f3dasm store), `pipeline.ipynb` (two cells appended), `figures/model.png` (new). No held-out record exists, and I did not touch the baseline, the data generator, or git.
-
-*duration: 156.8 s, turns: 11, cost: $1.2714812500000001*
-
+*duration: 170.1 s, turns: 13, cost: $1.388651*

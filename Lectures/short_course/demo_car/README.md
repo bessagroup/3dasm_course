@@ -12,14 +12,15 @@ record remembers.**
     y = z x + 0.1 x²,   z ~ N(1.5, 0.5²),   x ∈ [3, 83] m/s
 
 so `E[y|x] = 1.5x + 0.1x²` and `sd[y|x] = 0.5x`. The noise **grows with speed**.
-The 2019 baseline (`baseline.py`) fits the mean with degree-2 least squares and
-the noise with one constant number. Its mean is right; its band is flat while
+The 2019 baseline (`baseline.py`) fits the mean with a degree-2 polynomial
+(scikit-learn `PolynomialFeatures` + `LinearRegression`) and the noise with one
+constant number. Its mean is right; its band is flat while
 the truth fans out. `figures/baseline.png` is the setup for the whole segment.
 
 ## Setup
 
 ```bash
-pip install "f3dasm[scipy]==2.4.0" matplotlib jupyter
+pip install "f3dasm[scipy]==2.4.0" scikit-learn matplotlib jupyter
 cd Lectures/short_course/demo_car
 python make_data.py     # writes data/       (60 training points, Sobol seed 123)
 python baseline.py      # writes the baseline columns into data/ + figures/baseline.png
@@ -135,9 +136,9 @@ run `modeler` and then `selector` as separate agents.
 
 | | wall time | score used | held-out data | model edited while selecting |
 |---|---|---|---|---|
-| Stage 1 | 157 s | — (fit only) | none exists | — |
-| Stage 2 | 107 s | held-out mean log predictive density | it made its own, `--test --seed 456` | no, it declined to |
-| Stage 3 | 429 s | held-out mean log predictive density | the **selector** made it, after the modeler had finished | no — the selector is forbidden to |
+| Stage 1 | 170 s | — (fit only) | none exists | — |
+| Stage 2 | 133 s | held-out mean log predictive density | it made its own, `--test --seed 456` | no, it declined to |
+| Stage 3 | 333 s | held-out mean log predictive density | the **selector** made it, after the modeler had finished | no — the selector is forbidden to |
 
 Stage 2 is the interesting one to read aloud: the session chose a proper score
 and built a real held-out set, and *still* closed its own report with "in this
@@ -147,14 +148,19 @@ checked any of them." The point is not that it cheated. It is that nothing in
 the setup would have caught it if it had.
 
 The modeler's fit (defaults `d_mean=2`, `d_noise=1`) came out at log-noise
-coefficients `c = [1.6683, 2.4795]` in `t = x/83`, i.e. `sd` rising from 5.80
+coefficients `c = [1.6683, 2.4794]` in `t = x/83`, i.e. `sd` rising from 5.80
 at x = 3 to 60.97 at x = 81.75 — growing with speed, as the truth demands, and
 overshooting at both ends, which is what the selection stage then fixes. The
 selector's 12-row study picked `d_mean = 2, d_noise = 2` at a held-out log
 predictive density of −4.239, against −4.576 for the best constant-noise
 candidate. Constant noise loses by about 0.34 nats; the exact noise degree
-above 1 is barely resolved (−4.239 vs −4.260 for degree 1). Two independent
-runs of stage 1 reproduced the same coefficients to four decimals.
+above 1 is barely resolved (−4.239 vs −4.260 for degree 1). The stage-1 and
+stage-3 fits reproduced the same log-noise coefficients to four decimals, and
+both stages selected the same winner.
+
+`recorded/` keeps the artefacts of that run: `baseline.png`, `model.png` and
+`selection.png`, the final record printout (`final_record.txt`) and the
+selector's scored grid (`selection_table.txt`).
 
 ## Files
 
@@ -175,6 +181,7 @@ data_test/                   the held-out record — only after the selector mak
 demo_stage1_transcript.md    recorded run of stage 1
 demo_stage2_transcript.md    recorded run of stage 2
 demo_stage3_transcript.md    recorded run of stage 3
+recorded/                    figures, final record and score table of that run
 ```
 
 ## What the record looks like at the end of stage 3

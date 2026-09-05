@@ -29,6 +29,9 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from f3dasm import Block, ExperimentData, datagenerator
+from sklearn.linear_model import LinearRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import PolynomialFeatures
 
 from make_data import X_HIGH, X_LOW, true_mean, true_sd
 
@@ -38,45 +41,45 @@ DEGREE = 2
 class QuadraticLeastSquares(Block):
     """The machine learning block, the 2019 way.
 
-    A person decided: degree-2 polynomial least squares for the mean, and one
-    constant residual standard deviation for the noise.  Reads the record,
-    writes y_pred_baseline, sd_baseline and a provenance stamp back into it.
+    A person decided: a degree-2 polynomial fitted by scikit-learn least
+    squares for the mean, and one constant residual standard deviation for the
+    noise.  Reads the record, writes y_pred_baseline, sd_baseline and a
+    provenance stamp back into it.
     """
 
     degree = DEGREE
 
     def call(self, data: ExperimentData, **kwargs) -> ExperimentData:
         input_df, output_df = data.to_pandas()
-        x = input_df["x"].to_numpy(dtype=float)
+        x = input_df["x"].to_numpy(dtype=float).reshape(-1, 1)
         y = output_df["y"].to_numpy(dtype=float)
 
-        # --- fit: ordinary least squares on [1, x, x^2] ------------------
-        phi = np.vander(x, self.degree + 1, increasing=True)
-        coef, *_ = np.linalg.lstsq(phi, y, rcond=None)
-        resid = y - phi @ coef
-        dof = len(x) - (self.degree + 1)
-        sd_const = float(np.sqrt(resid @ resid / dof))
-        self.coef, self.sd_const = coef, sd_const
+        # --- the model: polynomial mean, one constant noise sd -------------
+        model = make_pipeline(
+            PolynomialFeatures(degree=self.degree, include_bias=True),
+            LinearRegression(fit_intercept=False),
+        )
+        model.fit(x, y)
+        resid = y - model.predict(x)
+        sd_const = float(np.sqrt(resid @ resid / (len(y) - (self.degree + 1))))
+        self.coef, self.sd_const = model[-1].coef_, sd_const
 
         print("BASELINE  (degree-2 least squares, constant noise)")
-        print(f"  coefficients [1, x, x^2] = {np.array2string(coef, precision=4)}")
+        print(f"  coefficients [1, x, x^2] = "
+              f"{np.array2string(self.coef, precision=4)}")
         print(f"  constant residual sd     = {sd_const:.4f}")
         print(f"  train RMSE               = {np.sqrt(np.mean(resid ** 2)):.4f}")
         print(f"  truth: sd[y|x] = 0.5 x runs over "
               f"[{true_sd(X_LOW):.2f}, {true_sd(X_HIGH):.2f}] -- "
               f"one number cannot cover that")
 
-        # --- write the numbers back into the record -----------------------
-        degree = self.degree
-
+        # f3dasm bookkeeping: reopen the rows, append the new columns
         @datagenerator(output_names=["y_pred_baseline", "sd_baseline",
                                      "_source_baseline"])
         def predict_baseline(x: float):
-            mean = float((np.vander([x], degree + 1, increasing=True) @ coef)[0])
-            return mean, sd_const, "baseline"
+            return float(model.predict([[x]])[0]), sd_const, "baseline"
 
-        data = data.mark_all("open")
-        return predict_baseline.call(data, mode="sequential")
+        return predict_baseline.call(data.mark_all("open"), mode="sequential")
 
 
 def main() -> None:
