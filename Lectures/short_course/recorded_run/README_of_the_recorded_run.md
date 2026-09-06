@@ -1,8 +1,8 @@
 # recorded_run — one recorded run of the car demo
 
-`aescape_course.ipynb` runs the three agent stages live. This folder is what it
-shows instead whenever a stage was not run on the machine in front of you:
-no Claude Code installed, no network, or a stage that failed. Every result cell
+`aescape_course.ipynb` runs the agent prompts of demo 2 and demo 3 live. This
+folder is what it shows instead whenever one of them was not run on the machine
+in front of you: no Claude Code installed, no network, or a prompt that failed. Every result cell
 in the notebook takes a live path and a recorded path, and prints which one you
 are looking at.
 
@@ -13,10 +13,10 @@ the only part of the demo that is.
 
 | file | read by | shown when |
 |---|---|---|
-| `model.png` | `show_image` on the stage 1 slide | `demo_car/figures/model.png` is absent |
-| `selection.png` | `show_image` on the stage 3 slide | `demo_car_stage3/figures/selection.png` is absent |
-| `selection_table.txt` | `show_selection` on the stage 2 slide | `demo_car/study_selection/` is absent |
-| `final_record.txt` | `print_record` on the record slide | `demo_car_stage3/data/` is absent |
+| `model.png` | `show_image` on the demo 2 slide | `demo2_car_one_agent/figures/model.png` is absent |
+| `selection.png` | `show_image` on the demo 3 slide | `demo3_car_multi_agent/figures/selection.png` is absent |
+| `selection_table.txt` | `show_selection` on the demo 2 slide | `demo2_car_one_agent/study_selection/` is absent |
+| `final_record.txt` | `print_record` on the record slide | `demo3_car_multi_agent/data/` is absent |
 
 `REC_NOISE_SPAN` and `REC_STAMPS`, two strings in the notebook's configuration
 cell, are the recorded counterparts of the two live checks; their numbers are
@@ -28,23 +28,23 @@ because `baseline.py` runs locally in every case.
 ## What happened in that run
 
 Claude Code v2.1.260, `claude -p` non-interactive, Max subscription,
-f3dasm 2.4.0. Subagent delegation works fine non-interactively: stage 3 really
+f3dasm 2.4.0. Subagent delegation works fine non-interactively: demo 3 really
 did run `modeler` and then `selector` as separate agents.
 
 | | wall time | score used | held-out data | model edited while selecting |
 |---|---|---|---|---|
-| stage 1 | 170 s | none, fit only | none exists | no |
-| stage 2 | 133 s | held-out mean log predictive density | it made its own, `--test --seed 456` | no, it declined to |
-| stage 3 | 333 s | held-out mean log predictive density | the **selector** made it, after the modeler had finished | no, the selector is forbidden to |
+| demo 2, prompt 1 | 170 s | none, fit only | none exists | no |
+| demo 2, prompt 2 | 133 s | held-out mean log predictive density | it made its own, `--test --seed 456` | no, it declined to |
+| demo 3 | 333 s | held-out mean log predictive density | the **selector** made it, after the modeler had finished | no, the selector is forbidden to |
 
-Stage 2 is the one worth reading aloud. The session chose a proper score and
+Demo 2's second prompt is the one worth reading aloud. The session chose a proper score and
 built a real held-out set, and still closed its own report with "in this session
 I built the model, chose the score, created the held-out set, and picked the
 winner. Every step is in the record, but nobody other than me checked any of
 them." The point is not that it cheated. It is that nothing in the setup would
 have caught it if it had.
 
-Stage 3's selector enumerated the 12-row grid (`d_mean` in {1,2,3,4} times
+Demo 3's selector enumerated the 12-row grid (`d_mean` in {1,2,3,4} times
 `d_noise` in {0,1,2}) and picked `d_mean = 2, d_noise = 2` at a held-out log
 predictive density of -4.2395, against -4.5764 for the best constant-noise
 candidate. Ranked by MSE instead, the same grid picks a constant-noise model:
@@ -60,19 +60,19 @@ runs have not always done that, and the notebook's review slide checks it live.
 ## Files
 
 ```
-model.png                    stage 1's figure: the fanning band, drawn from the record
-selection.png                stage 3's figure: held-out score over the candidate grid
+model.png                    demo 2's figure: the fanning band, drawn from the record
+selection.png                demo 3's figure: held-out score over the candidate grid
 baseline.png                 the 2019 baseline's flat band
 selection_table.txt          the 12 scored candidates, best first, with the winner
-final_record.txt             the record at the end of stage 3: 60 rows, three writers
-demo_stage1_transcript.md    full transcript, stage 1
-demo_stage2_transcript.md    full transcript, stage 2
-demo_stage3_transcript.md    full transcript, stage 3
-stage3_sonnet_run.txt        a second stage-3 run, kept for comparison
+final_record.txt             the record at the end of demo 3: 60 rows, three writers
+demo_stage1_transcript.md    full transcript, demo 2's first prompt
+demo_stage2_transcript.md    full transcript, demo 2's second prompt
+demo_stage3_transcript.md    full transcript, demo 3
+stage3_sonnet_run.txt        a second demo-3 run, kept for comparison
 ```
 
 `stage3_sonnet_run.txt` is a different run from the three transcripts and its
 numbers do not match them. It started from a half-reset folder, which it
 rebuilt from the fixed seeds before delegating, and it reached the same winner.
 It is here as evidence that two runs of the same instruction are not the same
-run, which is the point the notebook makes before the stages start.
+run, which is the point the notebook makes before the agent prompts run.

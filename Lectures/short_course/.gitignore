@@ -1,4 +1,5 @@
-# The demo folder of the agentic part: the notebook writes it from scratch, so it is
-# never committed. demo_car_stage3/ is the fresh copy the notebook makes for stage 3.
-demo_car/
-demo_car_stage3/
+# The demo folders of the agentic part: the notebook writes each of them from
+# scratch, so they are never committed. Delete any of them to run it again.
+demo1_car_no_agents/
+demo2_car_one_agent/
+demo3_car_multi_agent/
