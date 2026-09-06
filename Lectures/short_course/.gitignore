@@ -1,5 +1,17 @@
-# The demo folders of the agentic part: the notebook writes each of them from
-# scratch, so they are never committed. Delete any of them to run it again.
+# The three demo folders are written by aescape_course.ipynb.
+#
+# demo1 costs nothing to regenerate and needs no subscription, and committing it
+# would mean the notebook loads a record instead of generating one in front of
+# the audience. So it is not committed.
 demo1_car_no_agents/
-demo2_car_one_agent/
-demo3_car_multi_agent/
+
+# demo2 and demo3 need a Claude subscription to produce, so one run of each is
+# committed as the reference run. Delete a folder to run that demo yourself;
+# `git checkout` brings the committed run back.
+#
+# The reproduction gate's own products are not committed, so that the gate
+# really runs on every machine instead of replaying a stored verdict.
+demo2_car_one_agent/pipeline_executed.ipynb
+demo2_car_one_agent/pipeline_gate.txt
+demo3_car_multi_agent/pipeline_executed.ipynb
+demo3_car_multi_agent/pipeline_gate.txt

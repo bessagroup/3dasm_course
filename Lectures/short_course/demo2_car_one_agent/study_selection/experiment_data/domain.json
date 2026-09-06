@@ -1,0 +1,68 @@
+{
+    "input_space": {
+        "d_mean": {
+            "type": "int",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 1,
+            "upper_bound": 4,
+            "step": 1
+        },
+        "d_noise": {
+            "type": "int",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0,
+            "upper_bound": 2,
+            "step": 1
+        }
+    },
+    "output_space": {
+        "cv_log_pred_density": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "cv_lpd_se": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "cv_rmse": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "n_params": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "n_fit_failures": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "_source_selection": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    }
+}
