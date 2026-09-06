@@ -1,36 +1,47 @@
-"""Choose (d_mean, d_noise) by cross-validation, not by taste.
+"""Choose (d_mean, d_noise, link) from the data, not by taste.
 
-Last step fixed the noise model but *I* picked d_mean = 2 and d_noise = 1 --
-which is the same sin as the baseline, committed with a better model.  The
-training log-likelihood cannot settle it either: it is the very quantity the
-fit maximises, so it rises with every parameter added.
+Last turn the degrees were hand-picked: the mean was kept at degree 2 because
+the baseline used degree 2, and the noise link was picked by comparing two
+candidates.  That is one person's taste with a number attached.  This script
+puts every candidate in one table and lets a single rule decide.
 
-So the candidates are scored by repeated K-fold cross-validation **on `data/`
-alone**.  Each fold fits on 48 points and is scored on the 12 it never saw.
-The score is the mean log predictive density
+The candidate space (20 rows, `study_selection/`):
 
-    lpd = mean[ - log sd(x) - (y - mu(x))^2 / (2 sd(x)^2) - 0.5 log 2*pi ]
+    d_mean  in 1..4      polynomial degree of the mean
+    d_noise in 0..2      polynomial degree of log sd   (0 = one constant sd,
+                                                        i.e. the BASELINE's
+                                                        noise model)
+    link    in log, lin  whether that polynomial is in log x or in x
+                         (at d_noise = 0 the link makes no difference, so
+                          only 'log' is listed -- 4*(1 + 2 + 2) = 20 rows)
 
-a *proper* scoring rule: it rewards a model for getting the spread right, not
-just the centre.  RMSE is reported next to it precisely because it cannot --
-RMSE only ever sees mu(x), so it is blind to the whole question at issue.
+The criterion is K-fold cross-validated **log predictive density** on `data/`.
+Not RMSE: every candidate here has a polynomial mean, so RMSE barely moves and
+cannot tell a good uncertainty from a bad one.  Not the training log evidence
+either -- it is stored alongside for comparison, but the noise weights c are
+point-optimised inside it (type-II maximum likelihood), so it under-penalises
+a flexible noise model.  Cross-validation pays the full price of every fitted
+parameter.
 
-The grid is d_mean in 1..4 (the truth is 2) and d_noise in 0..2, where
-d_noise = 0 is the baseline's constant band.  Nothing tells the search which
-cell is right.
+Every candidate is scored on the SAME folds (seed 7), so candidates can be
+compared pairwise, point by point.
 
-Writes the study as its own record `study_selection/`:
+The winner is then chosen by the one-standard-error rule: take the best
+cross-validated score, and among every candidate within one standard error of
+it, keep the one with the fewest parameters.  The rule exists because the CV
+score is itself a noisy estimate; without it you chase noise and pick a model
+more complicated than the data can support.
 
-    cv_log_pred_density  mean held-out lpd over all folds   <-- the criterion
-    cv_lpd_se            spread across repeats (optimistic, see note)
-    cv_rmse              held-out RMSE of the mean          <-- the blind score
-    n_params             d_mean + d_noise + 2
-    n_fit_failures       folds where the optimiser did not converge
-    _source_selection    provenance stamp
+`data_test/` is NOT touched here.  Selection happens on the training record
+alone; the held-out record stays clean so that `blocks/holdout_check.py` can
+score the chosen model on data no part of this decision has seen.
 
-and the winner's refit-on-everything predictions into `data/`:
-
-    y_pred_selected, sd_selected, _source_selected
+Writes:
+    study_selection/     the whole table, one row per candidate
+    data/                y_pred_selected, sd_selected, _source_selected, and
+                         d_mean_selected, d_noise_selected, link_selected --
+                         the record remembers WHICH model was chosen
+    figures/selection.png, figures/selected.png
 
 Run:  python -m blocks.selection
 """
@@ -38,236 +49,195 @@ Run:  python -m blocks.selection
 from __future__ import annotations
 
 import matplotlib
-
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
 from f3dasm import ExperimentData, datagenerator
 from f3dasm.design import Domain
-from matplotlib.patches import Rectangle
 
-from blocks.heteroscedastic import (fit_heteroscedastic, mean_log_density,
-                                    mean_of, sd_of)
+from blocks.heteroscedastic import LINKS, fit, plot_model
 
 D_MEAN_GRID = (1, 2, 3, 4)
 D_NOISE_GRID = (0, 1, 2)
+K_FOLDS = 6          # 60 training points -> 6 folds of 10
+SEED_FOLDS = 7       # fixed, so the study is reproducible and paired
 
-N_SPLITS = 5
-N_REPEATS = 5
-CV_SEED = 2024
-
-
-def cv_score(x, y, d_mean: int, d_noise: int, n_splits: int = N_SPLITS,
-             n_repeats: int = N_REPEATS, seed: int = CV_SEED):
-    """Repeated K-fold CV.  Returns (lpd, lpd_se, rmse, n_failures)."""
-    rng = np.random.default_rng(seed)          # same folds for every candidate
-    n = len(x)
-    repeat_lpd, fold_lpd, sq_err, n_fail = [], [], [], 0
-
-    for _ in range(n_repeats):
-        perm = rng.permutation(n)
-        lpds = []
-        for fold in np.array_split(perm, n_splits):
-            train = np.setdiff1d(perm, fold)
-            a, b, _, res = fit_heteroscedastic(x[train], y[train],
-                                               d_mean, d_noise)
-            if not res.success:
-                n_fail += 1
-            lpd = mean_log_density(x[fold], y[fold], a, b, d_mean, d_noise)
-            lpds.append(lpd)
-            fold_lpd.append(lpd)
-            sq_err.append((y[fold] - mean_of(x[fold], a, d_mean)) ** 2)
-        repeat_lpd.append(np.mean(lpds))
-
-    # Spread across the n_repeats full-CV scores.  Optimistic as a standard
-    # error -- the repeats share all 60 points -- but it does show whether two
-    # candidates are separated by more than fold-shuffling noise.
-    se = float(np.std(repeat_lpd, ddof=1) / np.sqrt(n_repeats))
-    return (float(np.mean(fold_lpd)), se,
-            float(np.sqrt(np.mean(np.concatenate(sq_err)))), n_fail)
+_PER_POINT: dict[tuple, np.ndarray] = {}   # per-point CV lpd, for paired tests
 
 
-def selection_figure(table, d_mean_sel: int, d_noise_sel: int,
-                     path: str = "figures/selection.png") -> None:
-    """Two panels over the same 4x3 grid: the score that can see the noise
-    model, and the score that cannot.  Both are oriented dark = better, one
-    sequential hue each, and every cell carries its own number."""
-    lpd = table.pivot(index="d_mean", columns="d_noise",
-                      values="cv_log_pred_density")
-    rmse = table.pivot(index="d_mean", columns="d_noise", values="cv_rmse")
-
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
-    panels = [
-        (axes[0], lpd, "Blues", "held-out log predictive density",
-         "the proper score: sees mu(x) AND sd(x)", "{:.3f}"),
-        (axes[1], rmse, "Blues_r", "held-out RMSE of the mean [m]",
-         "the blind score: only ever sees mu(x)", "{:.1f}"),
-    ]
-
-    for ax, tab, cmap, cbar_label, subtitle, fmt in panels:
-        values = tab.to_numpy(float)
-        im = ax.imshow(values, cmap=cmap, aspect="auto")
-        norm = plt.Normalize(values.min(), values.max())
-        dark = (cmap == "Blues")
-        for r in range(values.shape[0]):
-            for c in range(values.shape[1]):
-                frac = norm(values[r, c])
-                is_dark = frac > 0.55 if dark else frac < 0.45
-                ax.text(c, r, fmt.format(values[r, c]), ha="center",
-                        va="center", fontsize=9,
-                        color="white" if is_dark else "#1a1a1a")
-        # the selected cell, outlined rather than recoloured
-        r_sel = list(tab.index).index(d_mean_sel)
-        c_sel = list(tab.columns).index(d_noise_sel)
-        ax.add_patch(Rectangle((c_sel - 0.5, r_sel - 0.5), 1, 1, fill=False,
-                               edgecolor="#d62728", lw=2.5, zorder=5))
-        ax.set_xticks(range(len(tab.columns)), [str(c) for c in tab.columns])
-        ax.set_yticks(range(len(tab.index)), [str(i) for i in tab.index])
-        ax.set_xlabel("$d_{noise}$  (0 = the baseline's constant band)")
-        ax.set_ylabel("$d_{mean}$")
-        ax.set_title(subtitle, fontsize=10)
-        for side in ("top", "right", "bottom", "left"):
-            ax.spines[side].set_visible(False)
-        ax.tick_params(length=0)
-        cb = fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04)
-        cb.set_label(f"{cbar_label}\n(dark = better)", fontsize=8)
-        cb.outline.set_visible(False)
-
-    fig.suptitle(f"{N_SPLITS}-fold x {N_REPEATS} cross-validation on data/ "
-                 f"— red box = selected ($d_{{mean}}$={d_mean_sel}, "
-                 f"$d_{{noise}}$={d_noise_sel})", fontsize=11)
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
-    fig.savefig(path, dpi=150)
-    print(f"  wrote {path}")
+def folds_of(n: int, k: int = K_FOLDS, seed: int = SEED_FOLDS):
+    """The same deterministic split for every candidate."""
+    return np.array_split(np.random.default_rng(seed).permutation(n), k)
 
 
+def cv_log_predictive_density(x, y, d_mean, d_noise, link):
+    """K-fold CV: every point is predicted exactly once, by a fit that never saw it."""
+    lpd, sq = np.empty(len(x)), np.empty(len(x))
+    for fold in folds_of(len(x)):
+        keep = np.ones(len(x), dtype=bool)
+        keep[fold] = False
+        m = fit(x[keep], y[keep], d_mean, d_noise, link)
+        mu, sd = m["mu_of"](x[fold]), m["sd_of"](x[fold])
+        lpd[fold] = -0.5 * np.log(2.0 * np.pi * sd ** 2) - 0.5 * ((y[fold] - mu) / sd) ** 2
+        sq[fold] = (y[fold] - mu) ** 2
+    return lpd, sq
+
+
+def candidate_rows():
+    """The 20 candidates.  At d_noise = 0 the link is a no-op, so it is dropped."""
+    return [{"d_mean": dm, "d_noise": dn, "link": lk}
+            for dm in D_MEAN_GRID for dn in D_NOISE_GRID
+            for lk in (("log",) if dn == 0 else LINKS)]
+
+
+def run_study(x, y) -> ExperimentData:
+    """Build the candidate table and score every row into it."""
+    domain = Domain()
+    domain.add_int("d_mean", low=min(D_MEAN_GRID), high=max(D_MEAN_GRID))
+    domain.add_int("d_noise", low=min(D_NOISE_GRID), high=max(D_NOISE_GRID))
+    domain.add_category("link", categories=list(LINKS))
+    study = ExperimentData(domain=domain, input_data=candidate_rows())
+
+    @datagenerator(output_names=["cv_lpd", "cv_lpd_se", "cv_rmse",
+                                 "log_evidence", "train_rmse", "n_params",
+                                 "_source_selection"])
+    def score(d_mean: int, d_noise: int, link: str):
+        d_mean, d_noise = int(d_mean), int(d_noise)
+        lpd, sq = cv_log_predictive_density(x, y, d_mean, d_noise, link)
+        _PER_POINT[(d_mean, d_noise, link)] = lpd
+        full = fit(x, y, d_mean, d_noise, link)          # fitted on all 60 rows
+        train_rmse = float(np.sqrt(np.mean((y - full["mu_of"](x)) ** 2)))
+        return (float(lpd.mean()),
+                float(lpd.std(ddof=1) / np.sqrt(len(lpd))),
+                float(np.sqrt(sq.mean())),
+                float(full["log_evidence"]), train_rmse,
+                float(full["n_params"]), "selection")
+
+    return score.call(study, mode="sequential")
+
+
+def choose(table) -> dict:
+    """One-standard-error rule: the simplest candidate that is not measurably worse."""
+    best = table.loc[table["cv_lpd"].idxmax()]
+    threshold = float(best["cv_lpd"] - best["cv_lpd_se"])
+    within = table[table["cv_lpd"] >= threshold]
+    pick = within.sort_values(["n_params", "cv_lpd"],
+                              ascending=[True, False]).iloc[0]
+    return {"best": best, "threshold": threshold, "within": within, "pick": pick}
+
+
+# ----------------------------------------------------------------------------
 def main() -> None:
     data = ExperimentData.from_file("data")
     input_df, output_df = data.to_pandas()
     x = input_df["x"].to_numpy(float)
     y = output_df["y"].to_numpy(float)
+    sd_b = float(output_df["sd_baseline"].iloc[0])
+    print(f"selecting on data/ only: {len(data)} rows, {K_FOLDS}-fold CV "
+          f"(seed {SEED_FOLDS}), {len(candidate_rows())} candidates")
 
-    print(f"cross-validating on data/ only: {len(x)} points, "
-          f"{N_SPLITS}-fold x {N_REPEATS} repeats = "
-          f"{N_SPLITS * N_REPEATS} fits per candidate, seed {CV_SEED}")
-    print(f"  each fit sees {len(x) - len(x) // N_SPLITS} points, "
-          f"each score uses the {len(x) // N_SPLITS} it never saw\n")
-
-    # --- the candidate table, built by hand: 12 cells, nothing hidden --------
-    domain = Domain()
-    domain.add_int("d_mean", low=min(D_MEAN_GRID), high=max(D_MEAN_GRID))
-    domain.add_int("d_noise", low=min(D_NOISE_GRID), high=max(D_NOISE_GRID))
-    rows = [{"d_mean": a, "d_noise": b}
-            for a in D_MEAN_GRID for b in D_NOISE_GRID]
-    study = ExperimentData(domain=domain, input_data=rows)
-
-    @datagenerator(output_names=["cv_log_pred_density", "cv_lpd_se", "cv_rmse",
-                                 "n_params", "n_fit_failures",
-                                 "_source_selection"])
-    def score(d_mean: int, d_noise: int):
-        lpd, se, rmse, n_fail = cv_score(x, y, int(d_mean), int(d_noise))
-        return (float(lpd), float(se), float(rmse),
-                int(d_mean) + int(d_noise) + 2, int(n_fail), "selection")
-
-    study = score.call(study, mode="sequential")
+    study = run_study(x, y)
     study.store("study_selection")
-
     si, so = study.to_pandas()
-    table = si.join(so).sort_values("cv_log_pred_density", ascending=False)
-    print("\nthe candidate table, best first "
-          "(cv_log_pred_density: higher is better):")
-    print(table.to_string(index=False))
+    table = si.join(so)
+    print("\n  wrote study_selection/ -- the whole table, one row per candidate")
 
-    # --- the pick ------------------------------------------------------------
-    # Taking the plain argmax would over-read the table: the top few cells sit
-    # within fold-shuffling noise of each other, so "best" is not a fact.  The
-    # one-standard-error rule is the usual discipline -- take every candidate
-    # whose score is within 1 se of the best, then choose the SIMPLEST of them.
-    best = table.iloc[0]
-    runner = table.iloc[1]
-    gap = float(best["cv_log_pred_density"] - runner["cv_log_pred_density"])
-    pooled_se = float(np.hypot(best["cv_lpd_se"], runner["cv_lpd_se"]))
+    # --- the record, printed -------------------------------------------------
+    print("\nSTUDY_SELECTION  (sorted by cv_lpd, the criterion; higher is better)")
+    shown = table.sort_values("cv_lpd", ascending=False)
+    print(shown.to_string(float_format=lambda v: f"{v:9.4f}"))
 
-    print(f"\ntop score: d_mean = {int(best['d_mean'])}, "
-          f"d_noise = {int(best['d_noise'])}   "
-          f"cv lpd = {best['cv_log_pred_density']:.4f}")
-    print(f"runner-up: d_mean = {int(runner['d_mean'])}, "
-          f"d_noise = {int(runner['d_noise'])}   "
-          f"cv lpd = {runner['cv_log_pred_density']:.4f}")
-    print(f"  gap = {gap:.4f} nats/point, pooled se = {pooled_se:.4f} "
-          f"-> {'separated' if gap > 2 * pooled_se else 'NOT separated'} "
-          f"by more than fold noise")
+    verdict = choose(table)
+    best, pick = verdict["best"], verdict["pick"]
+    print(f"\n  best cv_lpd        : d_mean={int(best['d_mean'])}, "
+          f"d_noise={int(best['d_noise'])}, link='{best['link']}'  ->  "
+          f"cv_lpd = {best['cv_lpd']:.4f} +/- {best['cv_lpd_se']:.4f}")
+    print(f"  one-s.e. threshold : cv_lpd >= {verdict['threshold']:.4f}  "
+          f"({len(verdict['within'])} of {len(table)} candidates qualify)")
+    print(f"  simplest qualifier : d_mean={int(pick['d_mean'])}, "
+          f"d_noise={int(pick['d_noise'])}, link='{pick['link']}'  ->  "
+          f"{int(pick['n_params'])} parameters  <-- SELECTED")
 
-    threshold = float(best["cv_log_pred_density"] - best["cv_lpd_se"])
-    within = table[table["cv_log_pred_density"] >= threshold]
-    print(f"\none-standard-error rule: keep cv lpd >= {threshold:.4f} "
-          f"({len(within)} candidate(s)), then take the fewest parameters")
-    print(within.to_string(index=False))
-    pick = within.sort_values(["n_params", "cv_log_pred_density"],
-                              ascending=[True, False]).iloc[0]
-    d_mean, d_noise = int(pick["d_mean"]), int(pick["d_noise"])
-    print(f"  -> selected d_mean = {d_mean}, d_noise = {d_noise} "
-          f"({int(pick['n_params'])} parameters)")
-    print(f"  (plain argmax would have said d_mean = {int(best['d_mean'])}, "
-          f"d_noise = {int(best['d_noise'])}; the two rules "
-          f"{'agree' if (d_mean, d_noise) == (int(best['d_mean']), int(best['d_noise'])) else 'DISAGREE'})")
+    # Paired comparison: the same folds scored the same points, so compare
+    # point by point instead of differencing two noisy averages.
+    kb = (int(best["d_mean"]), int(best["d_noise"]), best["link"])
+    kp = (int(pick["d_mean"]), int(pick["d_noise"]), pick["link"])
+    if kb != kp:
+        d = _PER_POINT[kb] - _PER_POINT[kp]
+        print(f"  paired difference (best - selected) = {d.mean():+.4f} +/- "
+              f"{d.std(ddof=1) / np.sqrt(len(d)):.4f} -- the extra parameters "
+              f"do not pay for themselves")
 
-    # --- why the scoring rule had to be the lpd and not RMSE ----------------
-    by_rmse = table.sort_values("cv_rmse").iloc[0]
-    print(f"\nscored by RMSE instead, the pick would be "
-          f"d_mean = {int(by_rmse['d_mean'])}, "
-          f"d_noise = {int(by_rmse['d_noise'])} "
-          f"(cv_rmse = {by_rmse['cv_rmse']:.4f})")
+    # The baseline's noise model is in the table: d_noise = 0.
+    base_row = table[(table["d_mean"] == 2) & (table["d_noise"] == 0)].iloc[0]
+    d = _PER_POINT[kp] - _PER_POINT[(2, 0, base_row["link"])]
+    print(f"\n  the baseline's noise model is candidate d_mean=2, d_noise=0: "
+          f"cv_lpd = {base_row['cv_lpd']:.4f}")
+    print(f"  selected - that candidate = {d.mean():+.4f} +/- "
+          f"{d.std(ddof=1) / np.sqrt(len(d)):.4f}  (paired, {len(d)} points)")
 
-    row = table[table["d_mean"] == d_mean].sort_values("d_noise")
-    r_spread = float(row["cv_rmse"].max() - row["cv_rmse"].min())
-    l_spread = float(row["cv_log_pred_density"].max()
-                     - row["cv_log_pred_density"].min())
-    print(f"  -- it lands on the same cell here, but by a hair and for a "
-          f"borrowed reason.  Along the d_mean = {d_mean} row, RMSE moves "
-          f"{r_spread:.4f} m ({100 * r_spread / row['cv_rmse'].min():.1f}%) "
-          f"while the lpd moves {l_spread:.4f} nats.")
-    print("     RMSE only ever touches mu(x), and d_noise changes mu(x) only "
-          "indirectly, through the 1/sd^2 weights.")
-
-    # --- refit the winner on everything and write it into the record --------
-    a, b, nll, res = fit_heteroscedastic(x, y, d_mean, d_noise)
-    print(f"\nrefit of the winner on all {len(x)} points "
-          f"(converged = {res.success}):")
-    print(f"  mean coefs      = {np.array2string(a, precision=4)}")
-    print(f"  log-noise coefs = {np.array2string(b, precision=4)}")
-    if d_noise == 1:
-        print(f"  => sd(x) = {np.exp(b[0]):.4f} * x^{b[1]:.4f}    "
-              f"(truth: 0.5 * x^1)")
-
-    # The blunt version of the same point: keep mu(x) and multiply the band by
-    # 10.  RMSE cannot tell the difference, because it never looks at sd.
-    mu_sel = mean_of(x, a, d_mean)
-    rmse_sel = float(np.sqrt(np.mean((y - mu_sel) ** 2)))
-    b_inflated = b.copy()
-    b_inflated[0] += np.log(10.0)
-    print("\nthe same mean, with the uncertainty inflated 10x:")
-    print(f"  RMSE:  selected {rmse_sel:.6f}   inflated {rmse_sel:.6f}   "
-          f"(identical -- RMSE never evaluates sd)")
-    print(f"  lpd :  selected "
-          f"{mean_log_density(x, y, a, b, d_mean, d_noise):.4f}   "
-          f"inflated "
-          f"{mean_log_density(x, y, a, b_inflated, d_mean, d_noise):.4f}   "
-          f"(the proper score collapses)")
+    # --- refit the winner on all of data/ and write it into the record -------
+    dm, dn, lk = int(pick["d_mean"]), int(pick["d_noise"]), str(pick["link"])
+    model = fit(x, y, dm, dn, lk, verbose=True)
+    mu_of, sd_of = model["mu_of"], model["sd_of"]
 
     @datagenerator(output_names=["y_pred_selected", "sd_selected",
-                                 "_source_selected"])
+                                 "d_mean_selected", "d_noise_selected",
+                                 "link_selected", "_source_selected"])
     def predict_selected(x: float):
-        return (float(mean_of(np.array([x]), a, d_mean)[0]),
-                float(sd_of(np.array([x]), b, d_noise)[0]),
-                f"selected(d_mean={d_mean},d_noise={d_noise})")
+        return (float(mu_of(x)[0]), float(sd_of(x)[0]),
+                float(dm), float(dn), lk, "selected")
 
     data = predict_selected.call(data.mark_all("open"), mode="sequential")
     data.store("data")
-    print("\n  wrote y_pred_selected, sd_selected, _source_selected into data/")
-    print("  wrote study_selection/ (the 12 candidates and their scores)")
-    selection_figure(table, d_mean, d_noise)
+    print("\n  wrote y_pred_selected, sd_selected, d_mean_selected, "
+          "d_noise_selected,\n  link_selected, _source_selected into data/")
+
+    # --- figures -------------------------------------------------------------
+    fig = plot_selection(table, verdict)
+    fig.savefig("figures/selection.png", dpi=150)
+    print("  wrote figures/selection.png")
+
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    plot_model(ax, x, y, model, sd_b, label="selected")
+    ax.set_title(f"Selected by {K_FOLDS}-fold CV + 1-s.e. rule: "
+                 f"d_mean={dm}, d_noise={dn}, link='{lk}'")
+    fig.tight_layout()
+    fig.savefig("figures/selected.png", dpi=150)
+    print("  wrote figures/selected.png")
+
+
+def plot_selection(table, verdict):
+    """The study, as a picture: the criterion on the left, the evidence right."""
+    pick = verdict["pick"]
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.5), sharex=True)
+    combos = sorted({(int(r.d_noise), r.link) for r in table.itertuples()})
+    colors = plt.cm.viridis(np.linspace(0, 0.85, len(combos)))
+    for ax, col, name in ((axes[0], "cv_lpd", f"{K_FOLDS}-fold CV log predictive density"),
+                          (axes[1], "log_evidence", "training log evidence")):
+        for (dn_i, lk_i), color in zip(combos, colors):
+            sub = table[(table["d_noise"] == dn_i) & (table["link"] == lk_i)]
+            sub = sub.sort_values("d_mean")
+            label = (f"d_noise={dn_i} (constant sd)" if dn_i == 0
+                     else f"d_noise={dn_i}, link='{lk_i}'")
+            ax.plot(sub["d_mean"], sub[col], "o-", color=color, label=label)
+        ax.set_xlabel("d_mean (degree of the mean)")
+        ax.set_ylabel(name)
+        ax.set_xticks(list(D_MEAN_GRID))
+    axes[0].axhline(verdict["threshold"], color="#d62728", ls="--", lw=1.2,
+                    label="best - 1 s.e.")
+    axes[0].plot(pick["d_mean"], pick["cv_lpd"], "*", ms=20, color="#d62728",
+                 zorder=5, label="selected")
+    lo = float(table["cv_lpd"].max()) - 3.0
+    if float(table["cv_lpd"].min()) < lo:
+        axes[0].set_ylim(bottom=lo)
+        axes[0].set_ylabel(f"{name}\n(clipped at best - 3; worse candidates run off)")
+    axes[0].set_title("the criterion: cross-validated, so it pays for parameters")
+    axes[1].set_title("for comparison: training evidence, which does not")
+    axes[0].legend(fontsize=7, loc="lower right")
+    fig.tight_layout()
+    return fig
 
 
 if __name__ == "__main__":

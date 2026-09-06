@@ -1,28 +1,37 @@
-Done. The model is changed, the record and figure are regenerated, and the notebook runs end to end from `data/` alone.
+Done. The model changed in exactly one place — the noise — so the comparison stays clean.
 
-**What was wrong:** the baseline fit the mean by least squares and then called the residual spread "the noise." Least squares *assumes* constant noise — that pipeline could not have found a fanning band no matter how hard it looked. So the fix had to change the fitting, not just the plotting.
+**What replaced the constant sd** (`blocks/heteroscedastic.py`)
 
-**The replacement** (`blocks/heteroscedastic.py`) fits mean and noise jointly by maximum likelihood:
+Same degree-2 mean basis; the noise is now a fitted function with an `exp` link (positive by construction, nothing clipped). Two 2-parameter families were fitted and compared by **log marginal likelihood**, so the choice is evidence rather than my taste:
 
-```
-mu(x)     = sum_j a_j x^j                  (d_mean  = 2)
-log sd(x) = sum_k b_k (log x)^k            (d_noise = 1)
-```
+| noise family | fitted c | log evidence |
+|---|---|---|
+| `power`: log sd = c₀ + c₁·log x | `[-0.7146, +1.0254]` | **-276.3516** |
+| `exp-linear`: log sd = c₀ + c₁·x/83 | `[+1.6678, +2.4803]` | -277.3907 |
 
-The log-link keeps `sd` positive; expanding in `log x` makes the family nest both the old answer (`d_noise=0` → constant band) and the true one (`d_noise=1` → power law). The truth here, `sd = 0.5x`, is the member with `exp(b0)=0.5, b1=1`. The fit was not told that.
+The winner is `sd(x) = e^-0.7146 · x^1.0254`. The mean weights aren't point-estimated but integrated over (weak Gaussian prior, α=1e-6), so the predictive sd carries an epistemic term too — 4.330% of the variance on average. Fitted sd runs 1.97 → 47.15 across x ∈ [3, 83] against a truth of 1.50 → 41.50; the baseline's single 27.5632 covered none of it.
 
-**What it printed** (BFGS converged, ‖grad‖ = 1.08e-07):
+**That it's actually better, not just prettier** (`blocks/holdout_check.py`)
 
-```
-mean coefs [1, x, x^2]          = [-0.3411  1.4159  0.1008]
-log-noise coefs [1, log x]      = [-0.8535  1.0572]
-  => sd(x) = 0.4259 * x^1.0572
-```
+`baseline.py` never saw held-out data, so a fanning band proves nothing by itself. I made `data_test/` (200 rows, seed 456) and scored both models there:
 
-It recovered the fan on its own — exponent 1.0572 against a truth of 1, coefficient 0.4259 against 0.5. At the ends of the range: fitted sd 1.361 vs truth 1.500 at x=3, and 45.5 vs 41.5 at x=83, where the baseline says 27.563 at both.
+| model | mean lpd | RMSE | in 95% band |
+|---|---|---|---|
+| baseline | -4.5716 | 22.5996 | 96.0% |
+| hblr | **-4.2294** | 22.5960 | 97.5% |
 
-Mean log predictive density on the training record went from **−4.7104 to −4.3096**, a gain of 0.40 nats/point. Meanwhile RMSE of the mean is unchanged to five digits (26.865266 → 26.865286, max prediction difference 0.08 m). That is the point worth putting on the slide: **the entire improvement is in the noise model.** The MLE mean is in fact a hair *worse* in RMSE, on purpose — it weights each point by 1/sd(x)², so it stops chasing the noisy fast cars.
+Mean lpd difference **+0.3422 ± 0.0430** (1 s.e., 200 points) — about 8 standard errors, higher density on 69.0% of points. RMSE is unchanged to four decimals, which is the point: the mean was never the problem, and RMSE cannot see the difference.
 
-**Into the record:** `y_pred_model`, `sd_model`, `_source_modeler` in `data/`. `sd_model` is a real column now, one value per row, not a scalar repeated 60 times — which is why the notebook redraws `figures/model.png` and recomputes both scores from stored columns with no re-fitting.
+The aggregate coverage is misleading for both, so I split it by speed:
 
-One limitation to flag: every number above is on the **training** record. `data_test/` still doesn't exist, so nothing here is held-out evidence, and the log-density gain is exactly the quantity the fit maximized. Choosing `d_mean`/`d_noise` honestly needs a held-out record (or a proper information criterion) — that's `figures/selection.png`, and I've left it undone rather than pretend the training score settles it.
+| x range | n | baseline | hblr |
+|---|---|---|---|
+| [3.7, 26.2] | 67 | 100.0% | 97.0% |
+| [26.2, 52.4] | 66 | 100.0% | 100.0% |
+| [52.4, 83.0] | 67 | **88.1%** | 95.5% |
+
+The baseline's band is absurdly wide at low speed (it dips below zero stopping distance in `figures/model.png`) and **too narrow at 52–83 m/s** — it under-reports risk exactly where a stopping distance matters. Averaging those two failures gives a healthy-looking 96%.
+
+**Record and gate.** `data/` now carries `y_pred_hblr, sd_hblr, _source_hblr` next to the baseline's columns; `data_test/` carries both models' predictions plus per-point `lpd_baseline`/`lpd_hblr`, so every number above was read back out of a record. The notebook runs end to end and redraws `figures/model.png` from `data/` alone — its re-fit matches the stored columns to max |Δμ| = 5.68e-14, max |Δsd| = 7.11e-15, asserted rather than eyeballed.
+
+One thing I chose and you may want to overrule: I picked the noise family from a two-way evidence comparison and left the mean at degree 2 untouched. A real selection study over (d_mean, d_noise) is a different, larger move.

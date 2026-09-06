@@ -1,52 +1,53 @@
-## What the two agents did
+Done. Both agents ran, in order, and the notebook still regenerates every figure from `data/` alone.
 
-**`modeler` — changed the model class.** Wrote `blocks/hetero_blr.py`: `HeteroBLR(Block)`, Bayesian linear regression where the mean is a polynomial in `t = x/83` of degree `d_mean` and `log sd(x)` is its own polynomial of degree `d_noise`, so the band can fan. `tau` and the noise coefficients are fit by type-II maximum likelihood on the exact Gaussian log marginal likelihood; the mean posterior is then closed-form. It exposed both degrees as constructor arguments so the selector could refit without editing the block, and it deliberately did not score itself. Its own printed run at the hand-picked `d_mean=2, d_noise=1`:
+## What `modeler` changed
 
-```
-optimizer success = True
-fitted tau = 407.458752,  log-noise coefficients c = [1.668179 2.479733]
-negative log marginal likelihood = 273.8905
-sd(x=3.0) = 5.7997,  sd(x=83.0) = 63.3017   -> grows with x
-```
+Replaced the model class, in `blocks/hetero_blr.py` (`HeteroBLR`): Bayesian linear regression with a degree-`d_mean` polynomial mean **and** `log sd(x)` as a degree-`d_noise` polynomial — the log keeps sd positive and lets the band fan. `tau` and the noise coefficients are fit jointly by type-II marginal likelihood (L-BFGS-B, Woodbury for the likelihood), so nothing is hand-tuned and no held-out data is touched. It ran at hand-picked defaults `d_mean=2, d_noise=1` and printed:
 
-It flagged that this overshoots the true `[1.50, 41.50]` band, partly because `sd_hblr` folds in mean-parameter uncertainty on top of the noise term.
+- fitted `tau = 407.371001`, noise coefficients `c = [1.668271, 2.479521]`
+- negative log marginal likelihood `273.8905`, train RMSE `26.8667`
+- `sd(x)`: **5.80 at x=3 → 63.29 at x=83** — it grows, where the baseline had 27.5632 everywhere
 
-**`selector` — justified the hyperparameters.** Built the held-out record `data_test/` (200 points, seed 456 — training is seed 123), enumerated the 12-candidate `(d_mean, d_noise)` grid by hand as an `ExperimentData`, and scored each on held-out **log predictive density**, not MSE. That choice is the whole demo: look at rows 3–5 below, where MSE is flat at ~505–510 across all three noise models while the log density separates them.
+## What `selector` changed
+
+Built its own held-out record `data_test/` (`make_data.py --test --seed 456`, 200 points — a different seed from the training record's 123), enumerated the 12-candidate grid `d_mean ∈ {1,2,3,4} × d_noise ∈ {0,1,2}` by hand as an `ExperimentData`, and scored every row on the held-out record by mean log predictive density. Printed table:
 
 ```
     d_mean  d_noise  log_pred_density          mse
-0        1        0         -6.440243  2219.081896
-1        1        1         -5.237593  8448.582483
-2        1        2         -5.047882  3537.359643
-3        2        0         -4.576357   505.594556     <- baseline's constant-noise assumption
-4        2        1         -4.260417   510.346529     <- modeler's hand-picked guess
-5        2        2         -4.239501   508.753890     <- winner
-6        3        0         -4.596493   533.069883
-...
-11       4        2         -4.248931   530.449854
+0        1        0         -5.297800  2219.847778
+1        1        1         -5.237595  8448.002884
+2        1        2         -5.047857  3537.268695
+3        2        0         -4.576358   505.594752
+4        2        1         -4.260413   510.344816
+5        2        2         -4.239478   508.749017   <- winner
+6        3        0         -4.596493   533.068639
+7        3        1         -4.274361   551.291264
+8        3        2         -4.255323   553.219471
+9        4        0         -4.592207   525.498690
+10       4        1         -4.268940   527.261675
+11       4        2         -4.248923   530.449656
 ```
 
-Winner `d_mean=2, d_noise=2` beats the modeler's guess by **+0.0209** (small) and the best constant-noise candidate by **+0.3369** (decisive). `d_noise=0` lost at every `d_mean`. The scored grid is stored as its own record in `study_selection/`; the winner was refit on `data/`.
-
-It reported one thing it did not fix: `scipy.optimize.minimize` threw overflow `RuntimeWarning`s on some `d_mean=1` fits (the under-fit corner). All 12 fits completed with finite scores, and it left the modeler's block alone rather than patching it.
+Winner `d_mean=2, d_noise=2` at `log_pred_density = -4.239478`; refit on `data/` gave `tau = 406.228177`, `c = [1.283171, 4.33337, -1.713519]`. The point worth putting on a slide: **every `d_noise=0` row (3, 6, 9) loses to its `d_noise≥1` siblings at the same `d_mean`, while their `mse` is essentially identical** — mse cannot see the difference, held-out log density can. The baseline's error was invisible to the baseline's own score.
 
 ## The record
 
-`data/` now carries three writers side by side, each stamped:
-
-| writer | columns | stamp |
-|---|---|---|
-| `baseline.py` | `y_pred_baseline`, `sd_baseline` | `baseline` |
-| `blocks/hetero_blr.py` | `y_pred_hblr`, `sd_hblr` | `modeler` |
-| `select_model.py` | `y_pred_selected`, `sd_selected` | `selector` |
-
-And the point of the exercise, in two rows of the record:
+`data/` is still 60 rows, now 11 columns, three writers side by side and each stamped:
 
 ```
-x =  3.00   truth 0.5x =  1.50   sd_baseline = 27.56   sd_selected =  4.91
-x = 81.75   truth 0.5x = 40.88   sd_baseline = 27.56   sd_selected = 50.61
+x, y,
+y_pred_baseline, sd_baseline, _source_baseline
+y_pred_hblr,     sd_hblr,     _source_modeler
+y_pred_selected, sd_selected, _source_selected
 ```
 
-The baseline says 27.56 at both ends. The selected model goes 4.91 → 50.61.
+The noise column is the whole story:
 
-`jupyter nbconvert --execute` ran `pipeline.ipynb` end to end without error, regenerating every figure from `data/` alone. New artifacts: `data_test/`, `study_selection/`, `select_model.py`, `blocks/hetero_blr.py`, `figures/model.png`, `figures/selection.png`. `make_data.py`, `baseline.py` and git untouched.
+| | sd_baseline | sd_hblr | sd_selected | truth 0.5x |
+|---|---|---|---|---|
+| x = 3.0 | 27.56 | 6.60 | 4.91 | 1.50 |
+| x = 81.8 | 27.56 | 62.60 | 50.60 | 40.88 |
+
+Plus `study_selection/` (the 12 scored candidates as a record) and `data_test/` (the held-out record). Figures: `baseline.png`, `model.png`, `selection.png`.
+
+One honest caveat from the numbers above: the selected model still overestimates the noise at the low end (4.91 against a true 1.50) — a polynomial in `log sd` fits the fan well where the data is informative but is only loosely pinned at x=3. Both agents reported success; neither reported a failure.

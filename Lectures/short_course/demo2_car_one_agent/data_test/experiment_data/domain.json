@@ -19,6 +19,62 @@
             "load_function": null,
             "load_kwargs": null
         },
+        "y_pred_baseline": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "sd_baseline": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "lpd_baseline": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "_source_baseline": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "y_pred_hblr": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "sd_hblr": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "lpd_hblr": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "_source_hblr": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
         "y_pred_selected": {
             "type": "object",
             "to_disk": false,
@@ -33,21 +89,14 @@
             "load_function": null,
             "load_kwargs": null
         },
-        "y_pred_constant": {
+        "lpd_selected": {
             "type": "object",
             "to_disk": false,
             "store_function": null,
             "load_function": null,
             "load_kwargs": null
         },
-        "sd_constant": {
-            "type": "object",
-            "to_disk": false,
-            "store_function": null,
-            "load_function": null,
-            "load_kwargs": null
-        },
-        "_source_holdout": {
+        "_source_selected": {
             "type": "object",
             "to_disk": false,
             "store_function": null,

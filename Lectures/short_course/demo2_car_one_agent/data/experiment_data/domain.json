@@ -40,21 +40,21 @@
             "load_function": null,
             "load_kwargs": null
         },
-        "y_pred_model": {
+        "y_pred_hblr": {
             "type": "object",
             "to_disk": false,
             "store_function": null,
             "load_function": null,
             "load_kwargs": null
         },
-        "sd_model": {
+        "sd_hblr": {
             "type": "object",
             "to_disk": false,
             "store_function": null,
             "load_function": null,
             "load_kwargs": null
         },
-        "_source_modeler": {
+        "_source_hblr": {
             "type": "object",
             "to_disk": false,
             "store_function": null,
@@ -69,6 +69,27 @@
             "load_kwargs": null
         },
         "sd_selected": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "d_mean_selected": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "d_noise_selected": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "link_selected": {
             "type": "object",
             "to_disk": false,
             "store_function": null,

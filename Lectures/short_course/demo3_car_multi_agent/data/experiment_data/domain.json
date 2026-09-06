@@ -54,7 +54,7 @@
             "load_function": null,
             "load_kwargs": null
         },
-        "_source_hblr": {
+        "_source_modeler": {
             "type": "object",
             "to_disk": false,
             "store_function": null,
