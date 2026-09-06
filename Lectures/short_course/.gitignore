@@ -1,2 +1,4 @@
-# The fresh copy of demo_car that the notebook makes for stage 3 of the agentic demo.
+# The demo folder of the agentic part: the notebook writes it from scratch, so it is
+# never committed. demo_car_stage3/ is the fresh copy the notebook makes for stage 3.
+demo_car/
 demo_car_stage3/
