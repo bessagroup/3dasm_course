@@ -1,0 +1,217 @@
+{
+    "input_space": {
+        "candidate": {
+            "type": "category",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "categories": [
+                "quad_ols",
+                "const",
+                "affine",
+                "power",
+                "exp",
+                "cv",
+                "two_term",
+                "phys"
+            ]
+        },
+        "scheme": {
+            "type": "category",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "categories": [
+                "loo",
+                "skf5x20",
+                "edges"
+            ]
+        }
+    },
+    "output_space": {
+        "n_out": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "n_folds": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "n_params": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "mean_lpd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "lpd_se": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "d_lpd_mean": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "d_lpd_se": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "dens_ratio": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "total_lpd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "fold_lpd_sd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "rmse": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "mae": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "cov50": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "cov90": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "width90_med": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "z_mean": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "z_sd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "z_sd_lowx": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "z_sd_highx": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "pit_ks": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "min_sd_out": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "max_absz": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "worst_lpd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "n_nonfinite_lpd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "n_fit_errors": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "_source_selector": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    }
+}

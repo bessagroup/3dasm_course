@@ -1,11 +1,10 @@
-# demo2_car_one_agent/ is committed: it is what one agent run actually left
+# Both agent folders are committed: they are what those runs actually left
 # behind, so an attendee without a Claude subscription reads the same files,
-# the same record and the same report that are quoted on the slides. The
+# the same records and the same reports that are quoted on the slides. The
 # notebook skips a stage whose stamp is already there, so nothing is paid for
-# twice. Delete the folder to run the demo yourself from scratch.
+# twice. Delete a folder to run that demo yourself from scratch.
 demo2_car_one_agent/__pycache__/
+demo3_car_multi_agent/__pycache__/
 
-# These two the notebook writes on demand: demo 1 costs a second and no agent,
-# demo 3 is the multi-agent run.
+# Demo 1 costs a second and no agent, so the notebook writes it on demand.
 demo1_car_no_agents/
-demo3_car_multi_agent/
