@@ -12,3 +12,6 @@ demo1_car_no_agents/
 # The cheaper-model replication is committed as evidence for the notes at the
 # end of Part 1; only its bytecode is ignored.
 sonnet_run/*/__pycache__/
+
+# Printed for reading on a phone; regenerate with nbconvert + chrome --print-to-pdf.
+aescape_course.pdf
