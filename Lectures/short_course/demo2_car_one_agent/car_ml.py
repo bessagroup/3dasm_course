@@ -14,6 +14,11 @@ with two deliberately separate assumptions:
 Both assumptions are stated here so that they can be checked against the
 record later; nothing in this file adapts them to the data.
 
+The second one did not survive that check. ``car_noise.py`` lets sd depend on
+x, and on stops held out of the fit a noise proportional to x scores better
+than this constant one; see ``transcripts/prompt2_report.md``. This file is
+kept as it was, so its figure and its numbers still reproduce.
+
 Two objects live here:
 
   ``QuadraticConstantNoise``
