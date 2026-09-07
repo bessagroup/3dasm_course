@@ -8,3 +8,7 @@ demo3_car_multi_agent/__pycache__/
 
 # Demo 1 costs a second and no agent, so the notebook writes it on demand.
 demo1_car_no_agents/
+
+# The cheaper-model replication is committed as evidence for the notes at the
+# end of Part 1; only its bytecode is ignored.
+sonnet_run/*/__pycache__/

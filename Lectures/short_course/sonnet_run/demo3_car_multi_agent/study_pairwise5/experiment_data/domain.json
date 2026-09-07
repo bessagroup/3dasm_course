@@ -1,0 +1,88 @@
+{
+    "input_space": {
+        "pair": {
+            "type": "category",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "categories": [
+                "linear_minus_constant",
+                "powerlaw_minus_constant",
+                "proportional_minus_constant",
+                "additive_proportional_minus_constant",
+                "powerlaw_minus_linear",
+                "proportional_minus_linear",
+                "additive_proportional_minus_linear",
+                "proportional_minus_powerlaw",
+                "additive_proportional_minus_powerlaw",
+                "additive_proportional_minus_proportional"
+            ]
+        }
+    },
+    "output_space": {
+        "mean_diff": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "sem_diff": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "t_stat": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "t_pvalue": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "wilcoxon_stat": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "wilcoxon_pvalue": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "bonferroni_alpha": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "significant_bonferroni": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "_source_selector": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    }
+}

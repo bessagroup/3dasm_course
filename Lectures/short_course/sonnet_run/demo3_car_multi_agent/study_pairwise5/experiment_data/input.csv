@@ -1,0 +1,11 @@
+,pair
+0,linear_minus_constant
+1,powerlaw_minus_constant
+2,proportional_minus_constant
+3,additive_proportional_minus_constant
+4,powerlaw_minus_linear
+5,proportional_minus_linear
+6,additive_proportional_minus_linear
+7,proportional_minus_powerlaw
+8,additive_proportional_minus_powerlaw
+9,additive_proportional_minus_proportional
