@@ -1,7 +1,11 @@
-# The three demo folders are written by aescape_course.ipynb and are never
-# committed. With a Claude subscription the notebook rebuilds all of them and
-# really calls the agent; without one, read the notebook's stored outputs
-# rather than running it.
+# demo2_car_one_agent/ is committed: it is what one agent run actually left
+# behind, so an attendee without a Claude subscription reads the same files,
+# the same record and the same report that are quoted on the slides. The
+# notebook skips a stage whose stamp is already there, so nothing is paid for
+# twice. Delete the folder to run the demo yourself from scratch.
+demo2_car_one_agent/__pycache__/
+
+# These two the notebook writes on demand: demo 1 costs a second and no agent,
+# demo 3 is the multi-agent run.
 demo1_car_no_agents/
-demo2_car_one_agent/
 demo3_car_multi_agent/
