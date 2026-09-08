@@ -1,0 +1,46 @@
+<mxfile host="Electron">
+  <diagram name="opencode-oscar-tunnel" id="0">
+    <mxGraphModel dx="1983" dy="1726" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2240" pageHeight="1000" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+
+        <mxCell id="lap" parent="1" vertex="1" value="your laptop" style="swimlane;html=1;startSize=92;fillColor=#FFFFFF;strokeColor=#12161C;strokeWidth=6;fontSize=46;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=4;align=left;spacingLeft=34;">
+          <mxGeometry x="90" y="150" width="780" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="oc" parent="lap" vertex="1" value="opencode" style="rounded=1;arcSize=10;html=1;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=5;fontSize=42;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;">
+          <mxGeometry x="60" y="140" width="660" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="tl" parent="lap" vertex="1" value="tools" style="text;html=1;align=left;fontSize=30;fontStyle=1;fontColor=#3A6EA5;fontFamily=Courier New;">
+          <mxGeometry x="60" y="296" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="t1" parent="lap" vertex="1" value="Bash" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="60" y="346" width="150" height="58" as="geometry" /></mxCell>
+        <mxCell id="t2" parent="lap" vertex="1" value="Read" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="230" y="346" width="150" height="58" as="geometry" /></mxCell>
+        <mxCell id="t3" parent="lap" vertex="1" value="Edit" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="400" y="346" width="150" height="58" as="geometry" /></mxCell>
+        <mxCell id="t4" parent="lap" vertex="1" value="Write" style="rounded=1;arcSize=16;html=1;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="570" y="346" width="150" height="58" as="geometry" /></mxCell>
+
+        <mxCell id="osc" parent="1" vertex="1" value="Oscar" style="swimlane;html=1;startSize=92;fillColor=#FFFFFF;strokeColor=#12161C;strokeWidth=6;fontSize=46;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=4;align=left;spacingLeft=34;">
+          <mxGeometry x="1370" y="150" width="790" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="ln" parent="osc" vertex="1" value="login node" style="rounded=1;arcSize=12;html=1;fillColor=#FFFFFF;strokeColor=#9BB4CC;strokeWidth=3;fontSize=32;fontColor=#6B7684;fontFamily=Courier New;dashed=1;dashPattern=10 8;">
+          <mxGeometry x="60" y="126" width="300" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="gn" parent="osc" vertex="1" value="GPU node&#160;&#160;L40S" style="swimlane;html=1;startSize=64;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=5;fontSize=34;fontStyle=1;fontColor=#3A6EA5;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=8;align=left;spacingLeft=22;">
+          <mxGeometry x="60" y="210" width="660" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="os" parent="gn" vertex="1" value="ollama serve" style="rounded=1;arcSize=12;html=1;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=4;fontSize=34;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;">
+          <mxGeometry x="40" y="82" width="580" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="mo" parent="gn" vertex="1" value="qwen3.8:27b&#160;&#160;256k" style="rounded=1;arcSize=12;html=1;fillColor=#FFFFFF;strokeColor=#12161C;strokeWidth=4;fontSize=32;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;">
+          <mxGeometry x="40" y="182" width="580" height="76" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pipe" parent="1" edge="1" source="lap" target="osc" style="edgeStyle=none;rounded=0;html=1;strokeColor=#12161C;strokeWidth=14;startArrow=block;startFill=1;startSize=5;endArrow=block;endFill=1;endSize=5;exitX=1;exitY=0.5;entryX=0;entryY=0.5;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pl" parent="1" vertex="1" value="ssh -L 127.0.0.1:PORT" style="text;html=1;align=center;fontSize=34;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;">
+          <mxGeometry x="870" y="316" width="500" height="50" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

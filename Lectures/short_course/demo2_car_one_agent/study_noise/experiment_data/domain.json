@@ -1,0 +1,97 @@
+{
+    "input_space": {
+        "noise": {
+            "type": "category",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "categories": [
+                "affine",
+                "const",
+                "power",
+                "prop"
+            ]
+        },
+        "mean_degree": {
+            "type": "constant",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "value": 2
+        }
+    },
+    "output_space": {
+        "loo_lpd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "loo_rmse": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "loo_coverage_2sd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "loo_z_sd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "kfold_lpd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "kfold_lpd_sd": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "n_params": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "nll": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "aic": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        },
+        "_source_study": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    }
+}

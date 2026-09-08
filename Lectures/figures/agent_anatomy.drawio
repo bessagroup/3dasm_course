@@ -1,0 +1,46 @@
+<mxfile host="Electron">
+  <diagram name="agent-anatomy" id="0">
+    <mxGraphModel dx="1983" dy="1726" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2100" pageHeight="1120" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="agent" parent="1" vertex="1" value="Agent" style="swimlane;html=1;startSize=104;fillColor=#FFFFFF;strokeColor=#12161C;strokeWidth=6;fontSize=58;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=3;verticalAlign=middle;align=left;spacingLeft=44;">
+          <mxGeometry x="150" y="60" width="1800" height="912" as="geometry" />
+        </mxCell>
+
+        <mxCell id="pb" parent="agent" vertex="1" value="backend" style="swimlane;html=1;startSize=54;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=34;fontStyle=1;fontColor=#3A6EA5;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=6;align=left;spacingLeft=22;">
+          <mxGeometry x="44" y="128" width="1712" height="132" as="geometry" />
+        </mxCell>
+        <mxCell id="b1" parent="pb" vertex="1" value="claude" style="rounded=1;arcSize=14;html=1;fillColor=#3A6EA5;strokeColor=#3A6EA5;strokeWidth=2;fontSize=32;fontStyle=1;fontColor=#FFFFFF;fontFamily=Courier New;"><mxGeometry x="40" y="66" width="250" height="52" as="geometry" /></mxCell>
+        <mxCell id="b2" parent="pb" vertex="1" value="openrouter" style="rounded=1;arcSize=14;html=1;fillColor=#FFFFFF;strokeColor=#9BB4CC;strokeWidth=2;fontSize=32;fontColor=#6B7684;fontFamily=Courier New;"><mxGeometry x="320" y="66" width="290" height="52" as="geometry" /></mxCell>
+        <mxCell id="b3" parent="pb" vertex="1" value="ollama" style="rounded=1;arcSize=14;html=1;fillColor=#FFFFFF;strokeColor=#9BB4CC;strokeWidth=2;fontSize=32;fontColor=#6B7684;fontFamily=Courier New;"><mxGeometry x="640" y="66" width="250" height="52" as="geometry" /></mxCell>
+
+        <mxCell id="ps" parent="agent" vertex="1" value="system prompt" style="swimlane;html=1;startSize=54;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=34;fontStyle=1;fontColor=#3A6EA5;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=6;align=left;spacingLeft=22;">
+          <mxGeometry x="44" y="288" width="1712" height="222" as="geometry" />
+        </mxCell>
+        <mxCell id="ps1" parent="ps" vertex="1" value="" style="rounded=0;html=1;fillColor=#F1F5F9;strokeColor=none;"><mxGeometry x="40" y="66" width="1630" height="132" as="geometry" /></mxCell>
+        <mxCell id="ps2" parent="ps" vertex="1" value="" style="rounded=0;html=1;fillColor=#3A6EA5;strokeColor=none;"><mxGeometry x="40" y="66" width="9" height="132" as="geometry" /></mxCell>
+        <mxCell id="ps3" parent="ps" vertex="1" value="You are a scientist doing data-driven design.&lt;br&gt;Register a falsifiable prediction before you look&lt;br&gt;at the data. Cite a clause by number ..." style="text;html=1;align=left;verticalAlign=middle;fontSize=32;fontColor=#12161C;fontFamily=Courier New;spacingLeft=8;"><mxGeometry x="78" y="66" width="1580" height="132" as="geometry" /></mxCell>
+
+        <mxCell id="tl" parent="agent" vertex="1" value="tools" style="swimlane;html=1;startSize=54;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=34;fontStyle=1;fontColor=#3A6EA5;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=6;align=left;spacingLeft=22;">
+          <mxGeometry x="44" y="538" width="1712" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="t1i" parent="tl" vertex="1" value="" style="shape=note;size=16;html=1;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=3;"><mxGeometry x="46" y="70" width="56" height="66" as="geometry" /></mxCell>
+        <mxCell id="t1" parent="tl" vertex="1" value="Read" style="text;html=1;align=left;verticalAlign=middle;fontSize=34;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="118" y="70" width="200" height="66" as="geometry" /></mxCell>
+        <mxCell id="t2i" parent="tl" vertex="1" value="&gt;_" style="rounded=1;arcSize=16;html=1;fillColor=#12161C;strokeColor=#12161C;fontSize=30;fontStyle=1;fontColor=#FFFFFF;fontFamily=Courier New;"><mxGeometry x="360" y="76" width="66" height="54" as="geometry" /></mxCell>
+        <mxCell id="t2" parent="tl" vertex="1" value="Bash" style="text;html=1;align=left;verticalAlign=middle;fontSize=34;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="442" y="70" width="200" height="66" as="geometry" /></mxCell>
+        <mxCell id="t3i" parent="tl" vertex="1" value="" style="shape=singleArrow;html=1;arrowWidth=0.5;arrowSize=0.4;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=3;"><mxGeometry x="684" y="78" width="76" height="50" as="geometry" /></mxCell>
+        <mxCell id="t3" parent="tl" vertex="1" value="Delegate" style="text;html=1;align=left;verticalAlign=middle;fontSize=34;fontStyle=1;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="776" y="70" width="300" height="66" as="geometry" /></mxCell>
+
+        <mxCell id="rp" parent="agent" vertex="1" value="report format" style="swimlane;html=1;startSize=54;fillColor=#FFFFFF;strokeColor=#3A6EA5;strokeWidth=3;fontSize=34;fontStyle=1;fontColor=#3A6EA5;fontFamily=Courier New;swimlaneFillColor=#FFFFFF;rounded=1;arcSize=6;align=left;spacingLeft=22;">
+          <mxGeometry x="44" y="724" width="1712" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="r1" parent="rp" vertex="1" value="### Findings" style="rounded=1;arcSize=14;html=1;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=2;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="40" y="60" width="300" height="52" as="geometry" /></mxCell>
+        <mxCell id="r2" parent="rp" vertex="1" value="### Verdict" style="rounded=1;arcSize=14;html=1;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=2;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="370" y="60" width="280" height="52" as="geometry" /></mxCell>
+        <mxCell id="r3" parent="rp" vertex="1" value="### Numbers" style="rounded=1;arcSize=14;html=1;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=2;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="680" y="60" width="300" height="52" as="geometry" /></mxCell>
+        <mxCell id="r4" parent="rp" vertex="1" value="### Retrospective" style="rounded=1;arcSize=14;html=1;fillColor=#DCE8F5;strokeColor=#3A6EA5;strokeWidth=2;fontSize=30;fontColor=#12161C;fontFamily=Courier New;"><mxGeometry x="1010" y="60" width="400" height="52" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

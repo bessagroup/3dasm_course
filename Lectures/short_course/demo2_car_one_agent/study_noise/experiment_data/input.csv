@@ -1,0 +1,5 @@
+,noise,mean_degree
+0,const,2
+1,prop,2
+2,affine,2
+3,power,2
