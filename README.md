@@ -114,7 +114,7 @@ git clone https://github.com/bessagroup/3dasm_course
 3. Create a virtual environment for this course called '3dasm':
 
 ```
-mamba create -n 3dasm python=3.11 "setuptools<81" notebook nb_conda rise numpy scipy matplotlib pandas scikit-learn ipykernel ipywidgets requests
+mamba create -n 3dasm -c conda-forge python=3.12 "jupyterlab>=4.1,<5" ipykernel "ipywidgets>=8.1" ipympl jupyterlab-mathjax3 numpy scipy matplotlib pandas scikit-learn requests "optuna>=4.4"
 ```
 
 4. Activate the '3dasm' virtual environment:
@@ -135,19 +135,19 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 pip install "f3dasm[scipy]==2.4.0"
 ```
 
-7. Install optuna package:
+7. Install the RISE extension, which turns these notebooks into slides:
 
 ```
-pip install optuna
+pip install jupyterlab-rise==0.43.1
 ```
 
 After you installed every package, you are ready to go! Reboot your computer.
 
-* Open a (mamba) command window, activate the '3dasm' environment and start jupyter notebook (it will open in your internet browser):
+* Open a (mamba) command window, activate the '3dasm' environment and start JupyterLab (it will open in your internet browser):
 
 ```
 mamba activate 3dasm
-jupyter notebook
+jupyter lab
 ```
 
 - Open notebook (for example: *3dasm_course/Lectures/Lecture01/3dasm_Lecture1.ipynb*).
