@@ -91,3 +91,12 @@ per-machine and does not travel in the file — which is why the static cells ex
 Not for the plots any more — they are immune. But the notebooks still contain ordinary
 matplotlib figures, and the same output-routing race can misplace those. Open the notebook
 and run down it in order.
+
+---
+
+*Written by Claude (Opus 5) with Miguel Bessa, September 2026, alongside the renderers it
+describes. Recorded here because the approach did not come from either side alone: the
+failure took several wrong turns to diagnose, and computing the plots in the browser only
+surfaced after Miguel refused to accept that a three-slider plot could not be interactive.
+If something here is wrong, the static plot beside each interactive one is the thing to
+trust.*
