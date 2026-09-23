@@ -63,7 +63,7 @@ became a function of `x`.
 
 **The slider changes the model.** Then there is no fixed field, and a formula has to live
 in the renderer. This happens four times in the whole course: a sigmoid in Lecture 22's
-Bernoulli plot, closed-form least squares in Lecture 11's outlier demo, the Gaussian
+Bernoulli plot, closed-form least squares in Lecture 9's outlier demo, the Gaussian
 posterior plus the bias-variance formula of the PPD mean in Lecture 7's prior plots, and the
 Gaussian posterior of Lecture 8's interactive PPD teaser (sliders for N and the prior std). All are
 small enough to read at a glance. The least-squares one was checked against `np.linalg.lstsq`
