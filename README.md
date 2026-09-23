@@ -25,6 +25,12 @@ Miguel A. Bessa | <miguel_bessa@brown.edu> | Associate Professor
     3. The `Lectures/data` and `Lectures/figures` folders hold datasets and figures shared by several lectures.
 * The preferred method to follow the course is to look directly into the jupyter notebook, as it contains additional notes and working code.
 
+> [!NOTE]
+> **Prefer to write the code yourself?** From Fall 2026, some practical lectures are taught with an AI coding agent.
+> The version of the course in which every practical lecture is coded by hand, including all corrections up to
+> September 2026, is kept at the tag [`v2026-non-agentic`](https://github.com/bessagroup/3dasm_course/tree/v2026-non-agentic).
+> The 2025 course is at [`v2025-pre-agentic`](https://github.com/bessagroup/3dasm_course/tree/v2025-pre-agentic).
+
 **Grading**
 
 The [syllabus](Lectures/Syllabus/3dasm_syllabus.pdf) is the official course document; office hours and classroom are listed on the Canvas course page and on [Courses@Brown](https://cab.brown.edu/).
