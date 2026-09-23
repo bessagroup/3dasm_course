@@ -58,10 +58,11 @@ slides it along the mean curve. That is exact here and would be wrong the moment
 became a function of `x`.
 
 **The slider changes the model.** Then there is no fixed field, and a formula has to live
-in the renderer. This happens twice in the whole course: a sigmoid in Lecture 22's
-Bernoulli plot, and closed-form least squares in Lecture 11's outlier demo. Both are small
-enough to read at a glance, and the least-squares one was checked against
-`np.linalg.lstsq` to ten decimal places.
+in the renderer. This happens three times in the whole course: a sigmoid in Lecture 22's
+Bernoulli plot, closed-form least squares in Lecture 11's outlier demo, and the Gaussian
+posterior plus the bias-variance formula of the PPD mean in Lecture 7's prior plot. All are
+small enough to read at a glance. The least-squares one was checked against `np.linalg.lstsq`
+to ten decimal places, and Lecture 7's formula is checked against a Monte Carlo in its static cell.
 
 ## Slider steps
 
