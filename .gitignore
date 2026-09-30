@@ -7,6 +7,8 @@ STUFF_NOT_TO_UPLOAD/
 **/your_Assignments/*
 # the instructions file that a lecture notebook writes for its agents (the notebook is the source of truth)
 Lectures/Lecture*/CLAUDE.md
+# the task folders where the agents of a lecture work (each student runs their own)
+**/agent_work/
 # but do not ignore the placeholder file such that some folders exist for students, yet remain empty
 !.gitkeep
 

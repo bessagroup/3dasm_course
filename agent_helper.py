@@ -5,12 +5,12 @@ Usage in a notebook (the path points to the folder that contains this file):
     import sys; sys.path.insert(0, "../..")
     from agent_helper import set_model, set_workspace, run_agent, results, figures, show
     set_model("sonnet")          # the model you use; whoever re-runs your notebook uses the same one
-    set_workspace("your_data")   # where the task folders go (default: the notebook's own folder)
+    set_workspace("agent_work")  # where the task folders go (default: the notebook's own folder)
 
     TASK_1 = "car_quadratic"
     PROMPT_1 = '''Fit ... and plot it. results.json keys: "w".'''
-    run_agent(TASK_1, PROMPT_1)  # a fresh agent, working in its own task folder: your_data/car_quadratic/
-    r = results(TASK_1)          # your_data/car_quadratic/results.json
+    run_agent(TASK_1, PROMPT_1)  # a fresh agent, working in its own task folder: agent_work/car_quadratic/
+    r = results(TASK_1)          # agent_work/car_quadratic/results.json
     show(*figures(TASK_1))       # every figure this agent made
 
 Every call to run_agent starts a NEW agent (`claude -p`) in its own task folder. It knows only the prompt, the
