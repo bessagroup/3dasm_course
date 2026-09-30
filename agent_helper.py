@@ -213,9 +213,21 @@ def files_in(folder):
     return sorted(p for p in Path(folder).rglob("*") if p.is_file() and ".ipynb_checkpoints" not in p.parts)
 
 
-def results(task):
-    """Load the numbers of a task from <workspace>/<task>/results.json."""
-    return json.loads((task_folder(task) / "results.json").read_text())
+def results(task, keys=None):
+    """Load the numbers of a task from <workspace>/<task>/results.json.
+
+    With `keys`, check first that the agent stored all of them, and say plainly which ones are missing.
+    """
+    path = task_folder(task) / "results.json"
+    if not path.exists():
+        raise FileNotFoundError(f"[{task}] the agent did not write {path}: say so in your prompt "
+                                f"(or in your CLAUDE.md), and run the prompt again.")
+    values = json.loads(path.read_text())
+    missing = [k for k in (keys or []) if k not in values]
+    if missing:
+        raise KeyError(f"[{task}] results.json has no key {', '.join(repr(k) for k in missing)}: "
+                       f"add it to your prompt and run the prompt again.")
+    return values
 
 
 def figures(task):
