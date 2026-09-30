@@ -35,13 +35,16 @@ from pathlib import Path
 
 STAMP, REPORT, TRANSCRIPT = "agent_stamp.json", "agent_report.md", "agent_transcript.jsonl"
 HELPER_VERSION = "2026-09-29"                # part of every fingerprint: changing how agents run invalidates old runs
+ALLOWED_MODELS = ("sonnet", "haiku")         # the models of this course (the TA re-runs your notebook with the same one)
 TOOLS = "Read Glob Grep Write Edit Bash"     # the only tools the agent has: read, write and run code
 _model, _workspace, _warned = None, Path("."), False
 
 
 def set_model(model):
-    """Declare the model used for every prompt of this notebook (e.g. "sonnet", "haiku", "opus")."""
+    """Declare the model used for every prompt of this notebook: "sonnet" or "haiku"."""
     global _model
+    if model not in ALLOWED_MODELS:
+        raise ValueError(f"model {model!r}: this course uses {' or '.join(map(repr, ALLOWED_MODELS))}.")
     _model = model
 
 
@@ -100,7 +103,8 @@ def run_agent(task, prompt):
     if stamp.exists():
         done = json.loads(stamp.read_text())
         if done.get("fingerprint") == fingerprint:
-            print(f"[{task}] skipped: this prompt already ran ({done['wall_s']:.0f} s, model {done['model']}). "
+            print(f"[{task}] skipped: this prompt already ran ({done['wall_s']:.0f} s, model {done['model']} "
+                  f"({done.get('model_id')})). "
                   f"To run it again from scratch, delete the folder {folder}.")
             _print_outcome(folder)
             return
@@ -131,8 +135,10 @@ def run_agent(task, prompt):
     (folder / REPORT).write_text((final[-1] if final else "") + (f"\n\nSTDERR:\n{out.stderr}" if out.stderr else ""))
     if out.returncode != 0:
         raise RuntimeError(f"[{task}] the agent failed after {wall:.0f} s; see {folder / REPORT}")
-    stamp.write_text(json.dumps({"wall_s": wall, "model": _model, "fingerprint": fingerprint}, indent=1))
-    print(f"[{task}] ran in {wall:.0f} s with model {_model}.")
+    model_id = next((e.get("model") for e in _events(folder) if e.get("subtype") == "init"), None)
+    stamp.write_text(json.dumps({"wall_s": wall, "model": _model, "model_id": model_id,
+                                 "fingerprint": fingerprint}, indent=1))
+    print(f"[{task}] ran in {wall:.0f} s with model {_model} ({model_id}).")
     _print_outcome(folder)
 
 
