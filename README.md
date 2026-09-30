@@ -55,7 +55,7 @@ This is why:
 2. The midterm is closed-book (no computer, no Internet, and... no LLM).
 3. The Final Project has an open-ended component. Working with an LLM is encouraged. The question is: how great can that project become?
 
-Practical instructions for setting up an AI coding agent (with an Anthropic account, or with free open-weight models) will be given in class during the first weeks.
+The lecture and homework notebooks run [Claude Code](https://code.claude.com/docs/en/overview), Anthropic's coding agent, with the Sonnet or Haiku models. How to install it, and two short free courses that teach how to use it, are in the [installation instructions](#installation-instructions) below (step 8).
 
 **Course outline**
 
@@ -147,6 +147,19 @@ pip install "f3dasm[scipy]==2.4.0"
 pip install jupyterlab-rise==0.43.1
 ```
 
+8. Install [Claude Code](https://code.claude.com/docs/en/setup), the AI coding agent used by the lecture and homework notebooks (from Lecture 10 on). In a terminal, run:
+
+    * macOS, Linux or WSL: `curl -fsSL https://claude.ai/install.sh | bash`
+    * Windows PowerShell: `irm https://claude.ai/install.ps1 | iex`
+
+   Then open a **new** terminal and check that `claude --version` prints a version number. Run `claude` once and log in with your Claude account (the course seat invited on your brown.edu address, or your own Pro or Max plan: the free plan does not include Claude Code). Anthropic's [installation page](https://code.claude.com/docs/en/setup) has the other options (Homebrew, WinGet) and a troubleshooting guide.
+
+   Start JupyterLab from a terminal where `claude --version` works: the notebooks call `claude` to run their agents.
+
+   If you have not used Claude before, two short free courses from Anthropic cover what you need, and both issue a certificate. They are optional, but strongly recommended:
+    * [Claude 101](https://anthropic.skilljar.com/claude-101) (about 1 hour): the web and desktop apps, projects, and how to get good results.
+    * [Claude Code 101](https://anthropic.skilljar.com/claude-code-101) (2 to 3 hours): installing and using Claude Code in the terminal, and the explore → plan → code → commit workflow that we follow for coding assignments.
+
 After you installed every package, you are ready to go! Reboot your computer.
 
 * Open a (mamba) command window, activate the '3dasm' environment and start JupyterLab (it will open in your internet browser):
@@ -161,6 +174,8 @@ jupyter lab
 You're all set!
 
 ### **OPTION 2**. Use **Google's Colab** (no installation required, but Colab session times out if idle)
+
+Colab cannot run the AI coding agents of the notebooks (from Lecture 10 on): there, you can read the recorded outputs, but to run a prompt yourself you need Option 1.
 
 1. go to [Google Colab](https://colab.research.google.com)
 2. Login with your credentials
