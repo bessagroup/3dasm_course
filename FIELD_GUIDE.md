@@ -10,7 +10,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 ### Probability
 
-- **An unknown is treated as a random variable (rv).** Continuous rv's are described by a pdf, i.e. a probability density, from which probability results by integrating the pdf in an interval. Discrete rv's are described by a pmf, i.e. a probability value. (L1, L21)
+- **An unknown is treated as a random variable (rv).** Continuous rv's are described by a pdf, i.e. a probability density, from which probability results by integrating the pdf in an interval. Discrete rv's are described by a pmf, i.e. a probability value. (L1, L22)
 - **Joint, marginal and conditional distributions.** Marginalizing a variable means integrating it out. (L1, L3, L4)
 - **Moments**: the expected value is linear; the variance of a sum of independent variables is the sum of their variances; mean and mode differ for asymmetric distributions. (L3)
 - **Change of variables**: how a pdf transforms when its variable is transformed. (L3)
@@ -33,6 +33,10 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Most machine learning models are defined by the observation distribution and respective likelihood, prior distribution and the choice between calculating the point estimate or conducting Bayesian inference**: For example, Ridge regression assumed a Gaussian observation distribution, a choice of basis functions to describe the distribution parameters, a Gaussian prior on the weights, and the MAP point estimate. Lasso is the same but considering a Laplace prior. Robust regression considers a different observation distribution (e.g., leading to a Laplace or Student-$t$ likelihood). (L12)
 - **The shape of the prior matters**: a Gaussian prior shrinks every weight smoothly; the cusp of a Laplace prior makes the MAP of weakly supported weights exactly zero (a sparse model), although the posterior mean is never zero. (L12)
 - **Closed form or numerical optimization**: Few ML models have closed forms for their point estimates. For example, Least Squares and Ridge have closed forms (Ridge is invertible for any $\alpha > 0$), but even Lasso must be solved numerically. Most ML models need numerical optimization to find their point estimates. (L9, L12)
+- **The kernel trick**: the PPD of Bayesian linear regression uses the basis functions only through the inner products $k(\mathbf{x}, \mathbf{x}') = \boldsymbol{\phi}(\mathbf{x})^T\overset{\scriptscriptstyle <}{\boldsymbol{\Sigma}}_w\boldsymbol{\phi}(\mathbf{x}')$. Replacing them by a kernel allows infinitely many basis functions (e.g. the RBF kernel), at the cost of solving an $N\times N$ linear system instead of an $M\times M$ one. (L14)
+- **A prior on the weights is a prior on functions, and the kernel is its covariance**: with random weights, $f(\mathbf{x}) = \boldsymbol{\phi}(\mathbf{x})^T\mathbf{w}$ is a random function, and its values at any set of inputs are jointly Gaussian with covariance $k(\mathbf{x}, \mathbf{x}') = \boldsymbol{\phi}(\mathbf{x})^T\overset{\scriptscriptstyle <}{\boldsymbol{\Sigma}}_w\boldsymbol{\phi}(\mathbf{x}')$ (the same prior seen from the weights or from the functions). A kernel gives this covariance directly, gathering the basis functions and the prior on their weights into one object, possibly with infinitely many basis functions; with a zero mean it fully specifies the prior (a Gaussian process). Its hyperparameters are fixed numbers that set the prior variances of the weights: $s$ the amplitude of the functions, $l$ the length scale over which they change. (L14, L15)
+- **Non-parametric does not mean without coefficients**: the mean prediction of a Gaussian process is a weighted sum of kernels centred at the training points, $\sum_n \alpha_n k(\mathbf{x}^*, \mathbf{x}_n)$, with one coefficient per training point, $\boldsymbol{\alpha} = (\mathbf{K}+\boldsymbol{\Lambda})^{-1}\mathbf{y}$. The model grows with the data, instead of having a fixed number of weights. (L14)
+- **Not every function is a kernel**: a kernel must be positive semi-definite (Mercer's theorem). Sums and products of valid kernels are valid kernels: a sum gives the properties of either kernel, a product of both. (L14, L15)
 
 ### Generalization
 
@@ -40,6 +44,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Underfitting and overfitting; interpolation and extrapolation.** (L11)
 - **Curse of dimensionality**: Training a model with more inputs requires many more points. (L12)
 - **Raw polynomial features become ill-conditioned at high degree**: a numerical failure, not only overfitting. (L11)
+- **Gaussian processes are expensive** (review): fitting one solves an $N\times N$ linear system, $O(N^3)$ operations and $O(N^2)$ memory, repeated at every step of the hyperparameter optimization. They are excellent with few data, and impractical with many. (L16)
 
 ## Good practices
 
@@ -47,19 +52,19 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 - **Write the model down explicitly**: the observation distribution and corresponding likelihood, the prior, point estimate or Bayesian inference of the posterior, and the PPD. (L5, L9)
 - **If you know nothing about an unknown, start with a Uniform prior**, then check how much the prior changes the prediction. (L5, L7)
-- **What do you know about the noise?**: is the problem noiseless or noisy? Is the noise the same everywhere (homoscedastic) or does it change with the input
-  (heteroscedastic)? Is it given, or must it be estimated? (L12, L13)
+- **What do you know about the noise?**: is the problem noiseless or noisy? Is the noise the same everywhere (homoscedastic) or does it change with the input (heteroscedastic)? Is it given, or must it be estimated? (L12, L13, L14)
 - **Interpolation is much easier than extrapolation**: overparameterized models can behave well between the training points (interpolation) but poorly outside their range (extrapolation). Keep the simple picture of the divergence that occurs in Linear Regression for a high-degree polynomial (it is surprisingly descriptive even for the most sophisticated models). (L11)
 
 ### 2. Prepare the data
 
 - **Judge a model on data it has not seen**: split into training and test sets before anything else. (L10)
-- **Rescale the inputs (before building the basis) and, when useful, the outputs**, with scalers fitted on the training points only. It also puts the weights on comparable scales, which a penalty on the weights needs. (L11, L12)
+- **Rescale the inputs (before building the basis) and, when useful, the outputs**, with scalers fitted on the training points only. It also puts the weights on comparable scales, which a penalty on the weights needs, and keeps the data near the zero mean that most priors assume (a Gaussian process far from its prior mean fails). (L11, L12, L16)
 
 ### 3. Choose the model
 
 - **The model is your decision**: the likelihood, the prior and the basis functions, as well as the decision to use a point estimate or Bayesian inference.  (L10, L12)
-- **Choose model structures such as basis functions, kernels or model architecture from what you know about the problem**: for example, a smooth problem benefits from differentiable basis functions or kernels. Image data benefits from convolutions or attention. History-dependent data benefits from recurrent units or attention. (L9)
+- **Choose model structures such as basis functions, kernels or model architecture from what you know about the problem**: for example, a smooth problem benefits from differentiable basis functions or kernels. Image data benefits from convolutions or attention. History-dependent data benefits from recurrent units or attention. (L9, L14)
+- **Look at draws from the prior before fitting**: do functions sampled from the prior, through the basis functions or the kernel, look like the functions you expect (smoothness, periodicity, amplitude)? (L14)
 - **Many weights for few points**: get more data, or constrain the weights with a prior. (L12)
 - **With outliers, change the likelihood, not the prior.** (L9, L12)
 
@@ -174,7 +179,21 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - Disentangling the aleatoric and epistemic uncertainties is difficult but possible *(practice: Quantify the uncertainty)*
     - Check the uncertainty locally, not only on average *(practice: Quantify the uncertainty)*
     - A residual at a training point underestimates the noise there *(practice: Quantify the uncertainty)*
-- **Lecture 21**
+- **Lecture 14**
+    - The kernel trick *(concept: Models)*
+    - A prior on the weights is a prior on functions, and the kernel is its covariance *(concept: Models)*
+    - Non-parametric does not mean without coefficients *(concept: Models)*
+    - Not every function is a kernel *(concept: Models)*
+    - What do you know about the noise? *(practice: Frame the problem)*
+    - Choose model structures such as basis functions, kernels or model architecture from what you know about the problem *(practice: Choose the model)*
+    - Look at draws from the prior before fitting *(practice: Choose the model)*
+- **Lecture 15**
+    - A prior on the weights is a prior on functions, and the kernel is its covariance *(concept: Models)*
+    - Not every function is a kernel *(concept: Models)*
+- **Lecture 16**
+    - Gaussian processes are expensive *(concept: Generalization)*
+    - Rescale the inputs (before building the basis) and, when useful, the outputs *(practice: Prepare the data)*
+- **Lecture 22**
     - An unknown is treated as a random variable (rv) *(concept: Probability)*
 
 <!-- END INDEX -->

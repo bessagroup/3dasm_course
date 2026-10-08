@@ -2,7 +2,7 @@
 
 For every lecture that some item of FIELD_GUIDE.md cites, as in "(L10, L12)", this script writes one notes cell,
 "Field guide: what this lecture adds", with that lecture's items grouped by stage, and a link to the whole guide. The
-cell is placed just before the lecture's last cell ("See you next class") and replaced on every run. It also
+cell is placed just before "See you next class" (or the last cell; appendices may follow it) and replaced on every run. It also
 regenerates the index by lecture at the end of FIELD_GUIDE.md.
 
 Usage, from the root of the repository:  python Lectures/sync_field_guide.py
@@ -74,7 +74,8 @@ def sync_lecture(n, items):
     cell = nbformat.v4.new_markdown_cell(cell_text(n, items))
     cell.metadata.update({TAG: True, "slideshow": {"slide_type": "notes"}})
     cell["id"] = f"field-guide-l{n}"
-    nb.cells.insert(len(nb.cells) - 1, cell)            # before the last cell ("See you next class")
+    ends = [i for i, c in enumerate(nb.cells) if "See you next class" in c.source]
+    nb.cells.insert(ends[-1] if ends else len(nb.cells) - 1, cell)   # before "See you next class" (appendices may follow)
     nbformat.write(nb, path)
     return path
 

@@ -56,13 +56,13 @@ array and the conditional slices are a row and a column of it. No formula in the
 in Lecture 8 hand over the posterior, the mode and mean positions, and the slider bounds.
 No formula in the renderer.
 
-A variant: in Lecture 22's regression PPD the density has a *fixed shape* because its
+A variant: in Lecture 23's regression PPD the density has a *fixed shape* because its
 standard deviation does not depend on `x`, so one profile is injected and the renderer
 slides it along the mean curve. That is exact here and would be wrong the moment sigma
 became a function of `x`.
 
 **The slider changes the model.** Then there is no fixed field, and a formula has to live
-in the renderer. This happens four times in the whole course: a sigmoid in Lecture 22's
+in the renderer. This happens four times in the whole course: a sigmoid in Lecture 23's
 Bernoulli plot, closed-form least squares in Lecture 9's outlier demo, the Gaussian
 posterior plus the bias-variance formula of the PPD mean in Lecture 7's prior plots, and the
 Gaussian posterior of Lecture 8's interactive PPD teaser (sliders for N and the prior std). All are
