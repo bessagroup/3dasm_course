@@ -23,7 +23,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Predictions come from the posterior predictive distribution (PPD)**, which integrates the unknowns out against the posterior. Its variance has the noise of the data (aleatoric uncertainty) plus the uncertainty about the unknowns (epistemic uncertainty), which shrinks as $1/N$. (L5, L6, L7)
 - **The prior matters with few data points, and fades away with many.** (L7)
 - **A point estimate (MLE, MAP, posterior mean) replaces the posterior by a Dirac delta**: its plug-in PPD drops the epistemic uncertainty, and is overconfident with few data. MLE is MAP with a Uniform prior. (L8)
-- **Credible, confidence and prediction intervals** answer different questions. (L3, L6, L7)
+- **Credible, confidence and prediction intervals** answer different questions. (L3, L6, L7, L15)
 
 ### Models
 
@@ -52,8 +52,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 - **Write the model down explicitly**: the observation distribution and corresponding likelihood, the prior, point estimate or Bayesian inference of the posterior, and the PPD. (L5, L9)
 - **If you know nothing about an unknown, start with a Uniform prior**, then check how much the prior changes the prediction. (L5, L7)
-- **What do you know about the noise?**: is the problem noiseless or noisy? Is the noise the same everywhere (homoscedastic) or does it change with the input (heteroscedastic)? Is it given, or must it be estimated? (L12, L13, L14)
-- **Interpolation is much easier than extrapolation**: overparameterized models can behave well between the training points (interpolation) but poorly outside their range (extrapolation). Keep the simple picture of the divergence that occurs in Linear Regression for a high-degree polynomial (it is surprisingly descriptive even for the most sophisticated models). (L11)
+- **What do you know about the noise?**: is the problem noiseless or noisy? Is the noise the same everywhere (homoscedastic) or does it change with the input (heteroscedastic)? Is it given, or must it be estimated? (L12, L13, L14, L15)
+- **Interpolation is much easier than extrapolation**: overparameterized models can behave well between the training points (interpolation) but poorly outside their range (extrapolation). Keep the simple picture of the divergence that occurs in Linear Regression for a high-degree polynomial (it is surprisingly descriptive even for the most sophisticated models). (L11, L15)
 
 ### 2. Prepare the data
 
@@ -71,6 +71,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 ### 4. Fit the model
 
 - **When two unknowns depend on each other** (e.g. the mean and the noise), finding the point estimate may require a staggered scheme (alternating optimization): fix one, solve for the other, and repeat. Solving for both at once can fail. (L13)
+- **Read the optimizer's warnings**: a hyperparameter that ends at its bound says that the prior does not match the data (e.g. outputs far from the zero mean of a Gaussian process); rescale the data or reconsider the bounds instead of ignoring it. (L16)
 
 ### 5. Validate and select
 
@@ -83,6 +84,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 - **Disentangling the aleatoric and epistemic uncertainties is difficult but possible**. (L8, L12, L13)
 - **The Bayesian PPD is useful for data scarce cases and when you need to estimate the epistemic uncertainty**: a point estimate misses the epistemic uncertainty (we don't know what we don't know). (L8)
+- **Know whether your band includes the noise**: a credible interval for $\mu_{y|z}(\mathbf{x}^*)$ excludes it, a posterior predictive interval for $y^*$ includes it, and only the latter should contain 95% of new measurements. In scikit-learn, noise given through `alpha` is excluded from the predicted standard deviation, and noise learned with a White kernel is included. (L15)
 - **Check the uncertainty locally, not only on average**: a single noise level can be right on average and wrong everywhere, too wide where the data are clean and too narrow where they are noisy. (L13)
 - **A residual at a training point underestimates the noise there**, by the epistemic variance at that point: the model was fitted to that point's own noise. (L11, L13)
 
@@ -90,7 +92,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 - **What is the same for every task goes in the instructions file** (packages, where files go, how to report); **what is specific to the task goes in the prompt** (the model, the data, what to plot). (L10)
 - **Read the code the agent writes**: the documentation, and the agent itself, can explain it. (L10)
-- **Check against something you know**, not against "the code runs": e.g. the normal equations, or "the training error cannot increase with the degree". (L10, L11)
+- **Check against something you know**, not against "the code runs": e.g. the normal equations, or "the training error cannot increase with the degree". (L10, L11, L15)
 - **Pin every choice that can change a number you report**, including the randomness of the split. Read the agent's **Assumptions** and **open its files**: they may contain things that your prompt should have defined. (L10)
 - **The agent's own explanation, or its flag, is not a check.** The math is. (L10)
 
@@ -188,11 +190,17 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - Choose model structures such as basis functions, kernels or model architecture from what you know about the problem *(practice: Choose the model)*
     - Look at draws from the prior before fitting *(practice: Choose the model)*
 - **Lecture 15**
+    - Credible, confidence and prediction intervals *(concept: Bayesian inference)*
     - A prior on the weights is a prior on functions, and the kernel is its covariance *(concept: Models)*
     - Not every function is a kernel *(concept: Models)*
+    - What do you know about the noise? *(practice: Frame the problem)*
+    - Interpolation is much easier than extrapolation *(practice: Frame the problem)*
+    - Know whether your band includes the noise *(practice: Quantify the uncertainty)*
+    - Check against something you know *(practice: Work with an AI coding agent)*
 - **Lecture 16**
     - Gaussian processes are expensive *(concept: Generalization)*
     - Rescale the inputs (before building the basis) and, when useful, the outputs *(practice: Prepare the data)*
+    - Read the optimizer's warnings *(practice: Fit the model)*
 - **Lecture 22**
     - An unknown is treated as a random variable (rv) *(concept: Probability)*
 
