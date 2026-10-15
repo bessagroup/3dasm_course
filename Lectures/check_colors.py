@@ -10,7 +10,8 @@ The convention: color by the distribution a quantity comes from, and by the spac
   decomposition of the PPD variance (law of total variance): total solid orange, epistemic part dashed orange (it only
   exists inside the PPD), aleatoric part blue (the variance of the observation distribution). Draws from a prior are
   shades of red.
-Everything else is neutral: ground truth black dotted, data black, ranges and frames grey. Colors that only
+Everything else is neutral: ground truth black dotted, data black, ranges and frames gray. In equations, gray marks
+a quantity held fixed (the hyperparameters at the first level of Bayesian model selection, Lecture 17). Colors that only
 highlight (the variables y, z, x in the first lectures, a term in a derivation, curves compared with each other) use
 purple, teal and brown, which carry no Bayes meaning. Colormaps (cmap=...) are not checked.
 
