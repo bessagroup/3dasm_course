@@ -1,0 +1,20 @@
+{
+    "input_space": {
+        "x": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    },
+    "output_space": {
+        "y": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    }
+}

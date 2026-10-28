@@ -1,0 +1,3 @@
+- Used all 30 Measure calls (x across [3, 83], with replicates at 3, 23, 53, 73, 83). Mean fits mu(x) = 1.498x + 0.0985x^2 (reaction-time plus braking term).
+- Spread grows with speed: sd(x) = 0.336·x^1.05 (sd about 1.1 m at x=3, 35 m at x=83), by Gaussian maximum likelihood. In-sample, 29 of 30 points fall within mu ± 1.96 sd.
+- predict.py is at car_tool/predict.py, returning (mu, sd). Uncertain: the sd form is a 2-parameter power law fitted to 30 points, so the 95% band is not validated out of sample; the mean is also a 2-parameter fit.

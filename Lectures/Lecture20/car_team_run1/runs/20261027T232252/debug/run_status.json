@@ -1,0 +1,65 @@
+{
+  "status": "UNGATED",
+  "model": "haiku",
+  "model_resolved": "claude-haiku-5-5",
+  "node_models": {
+    "coordinator": {
+      "model": "haiku",
+      "backend": "claude",
+      "model_resolved": "claude-haiku-5-5"
+    },
+    "builder": {
+      "model": "haiku",
+      "backend": "claude",
+      "model_resolved": "claude-haiku-5-5"
+    },
+    "checker": {
+      "model": "haiku",
+      "backend": "claude",
+      "model_resolved": "claude-haiku-5-5"
+    }
+  },
+  "total_cost_usd": 0.02983286,
+  "cost_usd_computed": 0.03454974,
+  "evals_used": 0,
+  "timestamp": "2026-10-27T23:24:48+00:00",
+  "run": "/home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture20/car_team_run1/runs/20261027T232252",
+  "thread_id": "bb070eb7-0bb9-47ff-87cb-2e815a027a91",
+  "stop_reason": null,
+  "termination": "done",
+  "reviewed": false,
+  "graph_has_reviewer": false,
+  "wall_s": 115.6,
+  "paused_s": 0.0,
+  "output_tokens_used": 28631,
+  "token_budget": null,
+  "budget_s": 1200,
+  "overrun_s": 0.0,
+  "arms": {
+    "budget_notes": true,
+    "constraint_screen_nudge": false,
+    "delegation_contract": true,
+    "deliverable_check": false,
+    "doe_playbook": true,
+    "f3dasm_api": true,
+    "hypothesis_ledger": false,
+    "math_expert_node": false,
+    "method_selection": false,
+    "milestones_enabled": false,
+    "model_verification": true,
+    "node_threads": true,
+    "objective_search": false,
+    "peer_interaction": false,
+    "pending_oracle_validation": false,
+    "pipeline_deliverable": false,
+    "reproduction_gate": false,
+    "reprompt_unfinished": true,
+    "runtime_topology": false,
+    "science_monitor": false,
+    "soundness_criteria": false,
+    "test_first_oracles": false,
+    "tool_proposals": false,
+    "toolbox": false,
+    "max_awake_nodes": 5
+  }
+}

@@ -1,0 +1,4 @@
+Built the car stopping-distance dataset and surrogate in /home/mbessa/Dropbox/GitHub/3dasm_course/Lectures/Lecture19/car_f3dasm.
+- data/ holds an ExperimentData store of 30 Sobol speeds (seed 0, x in [3, 80.5]) with y = z*x + 0.1*x², where z is drawn per driver from numpy default_rng(0) as N(1.5, 0.5²). Only x and y are stored; z is hidden. It reloads correctly via ExperimentData.from_file.
+- predict.py (next to the problem statement) fits a degree-2 sklearn PolynomialFeatures + LinearRegression pipeline on data/ and exposes predict(x) for scalars or arrays. Fitted coefficients are (intercept 7.17, linear 0.774, quadratic 0.109), so predict(20) ≈ 66.4 against the noise-free 70 at E[z]=1.5.
+- Uncertainty: the linear coefficient is below the population value 1.5 because only 30 drivers were drawn, and the sample mean of z is 1.44. y was computed directly from the stated formula, not through a registered evaluator, so 0 ledgered evaluations are reported.

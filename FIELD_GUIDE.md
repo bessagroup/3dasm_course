@@ -24,6 +24,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **The prior matters with few data points, and fades away with many.** (L7)
 - **A point estimate (MLE, MAP, posterior mean) replaces the posterior by a Dirac delta**: its plug-in PPD drops the epistemic uncertainty, and is overconfident with few data. MLE is MAP with a Uniform prior. (L8)
 - **Credible, confidence and prediction intervals** answer different questions. (L3, L6, L7, L15)
+- **Bayesian model selection applies Bayes' rule level by level**: the parameters $\mathbf{z}$, then the hyperparameters $\boldsymbol{\theta}$, then the model structures $\mathcal{M}_i$; the marginal likelihood of one level is the likelihood of the next. (L17)
+- **The marginal likelihood balances data fit and complexity**: its logarithm is a data-fit term plus a complexity penalty, so Occam's razor comes out of the probability calculus, without a penalty added by hand. (L17)
 
 ### Models
 
@@ -37,6 +39,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **A prior on the weights is a prior on functions, and the kernel is its covariance**: with random weights, $\mu_{y|z}(\mathbf{x}) = \boldsymbol{\phi}(\mathbf{x})^T\mathbf{w}$ (the mean of the observation distribution) is a random function, and its values at any set of inputs are jointly Gaussian with covariance $k(\mathbf{x}, \mathbf{x}') = \boldsymbol{\phi}(\mathbf{x})^T\overset{\scriptscriptstyle <}{\boldsymbol{\Sigma}}_w\boldsymbol{\phi}(\mathbf{x}')$ (the same prior seen from the weights or from the functions). A kernel gives this covariance directly, gathering the basis functions and the prior on their weights into one object, possibly with infinitely many basis functions; with a zero mean it fully specifies the prior (a Gaussian process). Its hyperparameters are fixed numbers that set the prior variances of the weights: $s$ the amplitude of the functions, $l$ the length scale over which they change. (L14, L15)
 - **Non-parametric does not mean without coefficients**: the mean prediction of a Gaussian process is a weighted sum of kernels centered at the training points, $\sum_n \alpha_n k(\mathbf{x}^*, \mathbf{x}_n)$, with one coefficient per training point, $\boldsymbol{\alpha} = (\mathbf{K}+\boldsymbol{\Lambda})^{-1}\mathbf{y}$. The model grows with the data, instead of having a fixed number of weights. (L14)
 - **Not every function is a kernel**: a kernel must be positive semi-definite (Mercer's theorem). Sums and products of valid kernels are valid kernels: a sum gives the properties of either kernel, a product of both. (L14, L15)
+- **Hyperparameter or model structure**: a hyperparameter is one of a fixed set of knobs of a model; a model structure changes the set of knobs (for example an RBF kernel or a periodic one). The mathematics does not distinguish them, so where the line goes is partly our choice. (L17)
 
 ### Generalization
 
@@ -54,6 +57,10 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **If you know nothing about an unknown, start with a Uniform prior**, then check how much the prior changes the prediction. (L5, L7)
 - **What do you know about the noise?**: is the problem noiseless or noisy? Is the noise the same everywhere (homoscedastic) or does it change with the input (heteroscedastic)? Is it given, or must it be estimated? (L12, L13, L14, L15)
 - **Interpolation is much easier than extrapolation**: overparameterized models can behave well between the training points (interpolation) but poorly outside their range (extrapolation). Keep the simple picture of the divergence that occurs in Linear Regression for a high-degree polynomial (it is surprisingly descriptive even for the most sophisticated models). (L11, L15)
+- **Design the experiments for the dimension and the budget**: in many dimensions a regular grid gives each input only a few values (the points pile up in every projection); space-filling designs (random, Sobol sequence) give every input as many values as there are points. A Sobol sequence fills the domain most evenly (lowest discrepancy) and can be extended. (L18)
+- **Find which inputs matter with a sensitivity analysis**: the first-order Sobol' index of an input is the fraction of the output variance it explains alone, the total index the fraction it takes part in (alone or through interactions). It needs many evaluations, so compute it on a surrogate when the data generator is expensive. (L18)
+- **Run independent experiments in parallel**: with $p$ processes, $N$ runs of $t$ seconds take about $\lceil N/p \rceil\, t$. The limits are the cores, the licenses, and experiments that depend on each other. (L18)
+- **Let one `ExperimentData` travel through the process**: the inputs with their `Domain`, the outputs, and the status of each experiment (open, finished, error), stored to disk. The status says what to run again, and nothing runs twice by accident. (L18)
 
 ### 2. Prepare the data
 
@@ -72,12 +79,15 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 - **When two unknowns depend on each other** (e.g. the mean and the noise), finding the point estimate may require a staggered scheme (alternating optimization): fix one, solve for the other, and repeat. Solving for both at once can fail. (L13)
 - **Read the optimizer's warnings**: a hyperparameter that ends at its bound says that the prior does not match the data (e.g. outputs far from the zero mean of a Gaussian process); rescale the data or reconsider the bounds instead of ignoring it. (L16)
+- **Choose hyperparameters by maximizing the marginal likelihood** (MLE-II), or MAP-II with a prior on them: no data are held out, which is why it is the usual choice for Gaussian processes. Cross-validation is the alternative. (L17)
+- **With few data, do not trust one optimum of the marginal likelihood**: its landscape is flat or has several local optima. Restart the optimizer from several starting points and compare. (L17)
 
 ### 5. Validate and select
 
 - **Never choose a model on its training error**: it keeps falling as the model grows, and it is biased below the noise. (L11)
 - **Overfitting shows as a training error that keeps falling while the error on unseen data grows.** (L11)
 - **Choose models and hyperparameters on validation data**, with cross-validation on the training set, reading the means together with their spread. Use the test set once, at the end, to report the chosen model. (L11)
+- **Compare many models as one experiment**: each experiment is a model (for example the degree of a polynomial), its outputs are the errors on the validation data, and the choice is read from the record. (L18)
 - **Report error metrics on the test set, and know how to read them**: for example, in supervised regression use MSE and $R^2$ (a negative $R^2$ is worse than simply predicting the mean of the data). (L10, L11)
 
 ### 6. Quantify the uncertainty
@@ -92,9 +102,17 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 - **What is the same for every task goes in the instructions file** (packages, where files go, how to report); **what is specific to the task goes in the prompt** (the model, the data, what to plot). (L10)
 - **Read the code the agent writes**: the documentation, and the agent itself, can explain it. (L10)
-- **Check against something you know**, not against "the code runs": e.g. the normal equations, or "the training error cannot increase with the degree". (L10, L11, L15)
-- **Pin every choice that can change a number you report**, including the randomness of the split. Read the agent's **Assumptions** and **open its files**: they may contain things that your prompt should have defined. (L10)
+- **Check against something you know**, not against "the code runs": e.g. the normal equations, or "the training error cannot increase with the degree". (L10, L11, L15, L19, L20)
+- **Pin every choice that can change a number you report**, including the randomness of the split. Read the agent's **Assumptions** and **open its files**: they may contain things that your prompt should have defined. (L10, L20)
+- **A team of agents is a graph**: each node is an agent with its own prompt, tools and model, and each edge says who may hand work to whom. Start with one node. (L19, L20)
+- **The statement is the specification**: state the objective, the inputs with bounds and units, the budget, and the deliverables. (L19)
+- **Put the experiment behind a tool**: the tool decides what an evaluation returns, refuses calls past the budget, and records each one. It does not hide its own code: an agent can read every file it reaches, including your notebook. To hide something, keep it where the agent cannot reach it. (L19)
+- **A limit in a tool is a limit, if no other tool goes around it**: a tool can refuse a call, while a limit written in the statement is only a request; but an agent that can run commands can still write and compute anywhere it reaches. (L19)
+- **Decide before you prompt**: a table of decisions in the statement, so that the agents implement and do not interpret. (L20)
+- **Give the checker a different job from the builder**: it recomputes the results without the builder's code. Builder and checker read the same statement, so they can agree on a choice it left open: check one number yourself. (L20)
+- **Fix the statement, not the output**, and run again: a result corrected by hand is not reproduced by the notebook. (L20)
 - **The agent's own explanation, or its flag, is not a check.** The math is. (L10)
+- **Explore a new method in a cycle**: state the need, try the obvious solution, find the key ideas in the literature (ask an agent for the map, and check that its references exist), understand how the method works, let the agent implement it, then predict the outcome and check it, including what the agent claims it did. (L18)
 
 <!-- BEGIN INDEX (generated by Lectures/sync_field_guide.py: do not edit by hand) -->
 
@@ -201,6 +219,32 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - Gaussian processes are expensive *(concept: Generalization)*
     - Rescale the inputs (before building the basis) and, when useful, the outputs *(practice: Prepare the data)*
     - Read the optimizer's warnings *(practice: Fit the model)*
+- **Lecture 17**
+    - Bayesian model selection applies Bayes' rule level by level *(concept: Bayesian inference)*
+    - The marginal likelihood balances data fit and complexity *(concept: Bayesian inference)*
+    - Hyperparameter or model structure *(concept: Models)*
+    - Choose hyperparameters by maximizing the marginal likelihood *(practice: Fit the model)*
+    - With few data, do not trust one optimum of the marginal likelihood *(practice: Fit the model)*
+- **Lecture 18**
+    - Design the experiments for the dimension and the budget *(practice: Frame the problem)*
+    - Find which inputs matter with a sensitivity analysis *(practice: Frame the problem)*
+    - Run independent experiments in parallel *(practice: Frame the problem)*
+    - Let one `ExperimentData` travel through the process *(practice: Frame the problem)*
+    - Compare many models as one experiment *(practice: Validate and select)*
+    - Explore a new method in a cycle *(practice: Work with an AI coding agent)*
+- **Lecture 19**
+    - Check against something you know *(practice: Work with an AI coding agent)*
+    - A team of agents is a graph *(practice: Work with an AI coding agent)*
+    - The statement is the specification *(practice: Work with an AI coding agent)*
+    - Put the experiment behind a tool *(practice: Work with an AI coding agent)*
+    - A limit in a tool is a limit, if no other tool goes around it *(practice: Work with an AI coding agent)*
+- **Lecture 20**
+    - Check against something you know *(practice: Work with an AI coding agent)*
+    - Pin every choice that can change a number you report *(practice: Work with an AI coding agent)*
+    - A team of agents is a graph *(practice: Work with an AI coding agent)*
+    - Decide before you prompt *(practice: Work with an AI coding agent)*
+    - Give the checker a different job from the builder *(practice: Work with an AI coding agent)*
+    - Fix the statement, not the output *(practice: Work with an AI coding agent)*
 - **Lecture 22**
     - An unknown is treated as a random variable (rv) *(concept: Probability)*
 

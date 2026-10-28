@@ -1,0 +1,95 @@
+{
+  "coordinator": {
+    "node": "coordinator",
+    "source": "class",
+    "declared": [
+      "Done",
+      "Glob",
+      "Grep",
+      "Read",
+      "Wait"
+    ],
+    "resolved": [
+      "Done",
+      "Glob",
+      "Grep",
+      "Read",
+      "Wait"
+    ],
+    "added": [],
+    "removed": [],
+    "withheld": [],
+    "feature_withheld": {
+      "SendMessage": "peer_interaction"
+    },
+    "effective": [
+      "Done",
+      "Glob",
+      "Grep",
+      "Read",
+      "Wait"
+    ]
+  },
+  "builder": {
+    "node": "builder",
+    "source": "class",
+    "declared": [
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ],
+    "resolved": [
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ],
+    "added": [],
+    "removed": [],
+    "withheld": [],
+    "feature_withheld": {
+      "SendMessage": "peer_interaction"
+    },
+    "effective": [
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ]
+  },
+  "checker": {
+    "node": "checker",
+    "source": "class",
+    "declared": [
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ],
+    "resolved": [
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ],
+    "added": [],
+    "removed": [],
+    "withheld": [],
+    "feature_withheld": {
+      "SendMessage": "peer_interaction"
+    },
+    "effective": [
+      "Bash",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ]
+  }
+}

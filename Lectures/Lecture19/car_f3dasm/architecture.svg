@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 345" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B4690E"/>
+    </marker>
+  </defs>
+  <rect width="900" height="345" fill="#FBF7EE"/>
+  <g></g>
+  <g><g transform="translate(250.0,60)">
+<rect x="4" y="6" width="400" height="225" rx="14" fill="#231F1B" opacity="0.10"/>
+<rect width="400" height="225" rx="14" fill="#FBF7EE" stroke="#6B6558" stroke-width="2.4"/>
+<rect width="400" height="46" rx="14" fill="#E7E3D8"/>
+<rect y="32" width="400" height="14" fill="#E7E3D8"/>
+<text x="20" y="31" font-family="'Iowan Old Style', Palatino, 'Palatino Linotype', Georgia, serif" font-size="23" font-weight="700" fill="#231F1B">analyst</text>
+<text x="382" y="20" text-anchor="end" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="10.5" font-weight="700" fill="#6B6558">Agent</text>
+<text x="382" y="37" text-anchor="end" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="9.5" font-weight="700" letter-spacing="1.2" fill="#6B6558">ENTRY · CLOSES THE RUN</text>
+<text x="20" y="70" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="11" font-weight="700" letter-spacing="1" fill="#6B6558">BACKEND <tspan font-weight="400" fill="#231F1B">claude · haiku</tspan></text>
+<rect x="12" y="83" width="376" height="27" rx="4" fill="#F1ECDF" stroke="#DCD4BF" stroke-width="1"/>
+<text x="20" y="96" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="11" fill="#5B564C">Writes and runs the code of the study.</text>
+<text x="20" y="121" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="11" font-weight="700" letter-spacing="1" fill="#6B6558">TOOLS (14)</text>
+<text x="20" y="141" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="12"><tspan fill="#6B6558" font-weight="400">Bash</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">ConsultHandbook</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">ConsultLiterature</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">Done</tspan></text>
+<text x="20" y="161" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="12"><tspan fill="#6B6558" font-weight="400">Edit</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">Glob</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">Grep</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">KillOwnJobs</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">Read</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">RecallHistory</tspan></text>
+<text x="20" y="181" font-family="'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace" font-size="12"><tspan fill="#6B6558" font-weight="400">ReportEvals</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">SendMessage</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">Wait</tspan><tspan fill="#6B6558">, </tspan><tspan fill="#6B6558" font-weight="400">Write</tspan></text>
+</g></g>
+</svg>
