@@ -58,9 +58,9 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **What do you know about the noise?**: is the problem noiseless or noisy? Is the noise the same everywhere (homoscedastic) or does it change with the input (heteroscedastic)? Is it given, or must it be estimated? (L12, L13, L14, L15)
 - **Interpolation is much easier than extrapolation**: overparameterized models can behave well between the training points (interpolation) but poorly outside their range (extrapolation). Keep the simple picture of the divergence that occurs in Linear Regression for a high-degree polynomial (it is surprisingly descriptive even for the most sophisticated models). (L11, L15)
 - **Design the experiments for the dimension and the budget**: in many dimensions a regular grid gives each input only a few values (the points pile up in every projection); space-filling designs (random, Sobol sequence) give every input as many values as there are points. A Sobol sequence fills the domain most evenly (lowest discrepancy) and can be extended. (L18)
-- **Find which inputs matter with a sensitivity analysis**: the first-order Sobol' index of an input is the fraction of the output variance it explains alone, the total index the fraction it takes part in (alone or through interactions). It needs many evaluations, so compute it on a surrogate when the data generator is expensive. (L18)
-- **Run independent experiments in parallel**: with $p$ processes, $N$ runs of $t$ seconds take about $\lceil N/p \rceil\, t$. The limits are the cores, the licenses, and experiments that depend on each other. (L18)
-- **Let one `ExperimentData` travel through the process**: the inputs with their `Domain`, the outputs, and the status of each experiment (open, finished, error), stored to disk. The status says what to run again, and nothing runs twice by accident. (L18)
+- **Find which inputs matter with a sensitivity analysis**: the first-order Sobol' index of an input is the fraction of the output variance it explains alone, the total index the fraction it takes part in (alone or through interactions). It needs many evaluations, so compute it on a surrogate when the data generator is expensive. (L18, L19)
+- **Run independent experiments in parallel**: with $p$ processes, $N$ runs of $t$ seconds take about $\lceil N/p \rceil\, t$. The limits are the cores, the licenses, and experiments that depend on each other. (L18, L19)
+- **Let one `ExperimentData` travel through the process**: the inputs with their `Domain`, the outputs, and the status of each experiment (open, finished, error), stored to disk. The status says what to run again, and nothing runs twice by accident. (L18, L19)
 
 ### 2. Prepare the data
 
@@ -104,10 +104,10 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Read the code the agent writes**: the documentation, and the agent itself, can explain it. (L10)
 - **Check against something you know**, not against "the code runs": e.g. the normal equations, or "the training error cannot increase with the degree". (L10, L11, L15, L19, L20)
 - **Pin every choice that can change a number you report**, including the randomness of the split. Read the agent's **Assumptions** and **open its files**: they may contain things that your prompt should have defined. (L10, L20)
-- **A team of agents is a graph**: each node is an agent with its own prompt, tools and model, and each edge says who may hand work to whom. Start with one node. (L19, L20)
-- **The statement is the specification**: state the objective, the inputs with bounds and units, the budget, and the deliverables. (L19)
+- **A team of agents is a graph**: each node is an agent with its own prompt, tools and model, and each edge says who may hand work to whom. Give each agent only the tools of its job: a literature reviewer that cannot run code, an analyst that cannot search the web. (L19, L20)
+- **The statement is the specification**: state the objective, the inputs with bounds and units, the budget, and the deliverables. Do not fix a choice before the method that depends on it: a design pinned in the statement can block the method the agents find. (L19)
+- **Let an agent find the method in the literature, and check its sources**: ask for the candidate methods, a recommendation and the papers it quoted; check that each quote is in its paper, and predict the result before you read it. (L19)
 - **Put the experiment behind a tool**: the tool decides what an evaluation returns, refuses calls past the budget, and records each one. It does not hide its own code: an agent can read every file it reaches, including your notebook. To hide something, keep it where the agent cannot reach it. (L19)
-- **A limit in a tool is a limit, if no other tool goes around it**: a tool can refuse a call, while a limit written in the statement is only a request; but an agent that can run commands can still write and compute anywhere it reaches. (L19)
 - **Decide before you prompt**: a table of decisions in the statement, so that the agents implement and do not interpret. (L20)
 - **Give the checker a different job from the builder**: it recomputes the results without the builder's code. Builder and checker read the same statement, so they can agree on a choice it left open: check one number yourself. (L20)
 - **Fix the statement, not the output**, and run again: a result corrected by hand is not reproduced by the notebook. (L20)
@@ -233,11 +233,14 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - Compare many models as one experiment *(practice: Validate and select)*
     - Explore a new method in a cycle *(practice: Work with an AI coding agent)*
 - **Lecture 19**
+    - Find which inputs matter with a sensitivity analysis *(practice: Frame the problem)*
+    - Run independent experiments in parallel *(practice: Frame the problem)*
+    - Let one `ExperimentData` travel through the process *(practice: Frame the problem)*
     - Check against something you know *(practice: Work with an AI coding agent)*
     - A team of agents is a graph *(practice: Work with an AI coding agent)*
     - The statement is the specification *(practice: Work with an AI coding agent)*
+    - Let an agent find the method in the literature, and check its sources *(practice: Work with an AI coding agent)*
     - Put the experiment behind a tool *(practice: Work with an AI coding agent)*
-    - A limit in a tool is a limit, if no other tool goes around it *(practice: Work with an AI coding agent)*
 - **Lecture 20**
     - Check against something you know *(practice: Work with an AI coding agent)*
     - Pin every choice that can change a number you report *(practice: Work with an AI coding agent)*

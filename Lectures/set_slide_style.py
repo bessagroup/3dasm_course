@@ -1,6 +1,7 @@
 """Write the slideshow style into every lecture notebook (the notebook is the source of truth for its slides).
 
 JupyterLab's RISE reads the notebook metadata "rise" and inserts its "overlay" on every slide: here, a <style> block.
+It also reads "slideNumber" there, so every viewer sees the slide numbers (not only those who set it in their settings).
 It changes only the slideshow, never the notebook view. Sizes are fractions of the screen height (vh), so the slides
 look the same on any screen (tested on a 1920x1080 laptop and an iPad); browser zoom no longer changes slide text.
 The script also saves the cells that run an agent in scroll mode, so their long report starts collapsed.
@@ -29,6 +30,7 @@ CSS = [
     f"{S} .jp-Cell{{max-width:85%;margin-left:auto !important;margin-right:auto !important;}}",
 ]
 OVERLAY = "<style>" + "".join(CSS) + "</style>"
+SLIDE_NUMBER = "c/t" # the slide number and the total, bottom right (the pace of a lecture at a glance)
 
 
 def main():
@@ -37,6 +39,7 @@ def main():
         raw = path.read_text()
         nb = json.loads(raw)
         nb["metadata"].setdefault("rise", {})["overlay"] = OVERLAY
+        nb["metadata"]["rise"]["slideNumber"] = SLIDE_NUMBER
         agents = 0
         for cell in nb["cells"]:
             if cell["cell_type"] == "code" and "run_agent(" in "".join(cell["source"]):

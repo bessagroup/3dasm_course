@@ -28,3 +28,9 @@ Untitled.ipynb
 .jupyter/
 .jupyter_ystore.db
 .virtual_documents/
+
+# what adda's literature reviewer downloads (full texts of papers, their chunks, its web cache): stays local
+**/lit_reviewer_notes/papers/
+**/lit_reviewer_notes/chunks.jsonl
+**/lit_reviewer_notes/.http_cache/
+**/lit_reviewer_notes/.lock

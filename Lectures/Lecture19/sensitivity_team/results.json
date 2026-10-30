@@ -1,0 +1,18 @@
+{
+  "method": "Gaussian-process surrogate (ARD Matern 5/2 + white noise, sklearn) fitted on the 64 Sobol-type experiments; first-order indices by Saltelli (2010) and total-order indices by Jansen (1999) pick-freeze estimators evaluated on the surrogate with N=200000 Monte Carlo samples. Surrogate check: 8-fold CV R^2=0.960, RMSE=0.327 (std of y = 1.630). The reviewer's pick-freeze design needs 63 runs and could not be applied to the mandated 64-point Sobol design. Indices are only as accurate as the surrogate.",
+  "first_order": [
+    0.4334,
+    0.1514,
+    0.1239,
+    -0.0022,
+    -0.0
+  ],
+  "total": [
+    0.432,
+    0.4492,
+    0.1688,
+    0.2564,
+    0.0
+  ],
+  "n_experiments": 64
+}

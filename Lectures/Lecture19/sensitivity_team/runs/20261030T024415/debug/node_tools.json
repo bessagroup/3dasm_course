@@ -1,0 +1,64 @@
+{
+  "analyst": {
+    "node": "analyst",
+    "source": "class",
+    "declared": [
+      "Bash",
+      "Done",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ],
+    "resolved": [
+      "Bash",
+      "Done",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ],
+    "added": [],
+    "removed": [],
+    "withheld": [],
+    "feature_withheld": {
+      "SendMessage": "peer_interaction"
+    },
+    "effective": [
+      "Bash",
+      "Done",
+      "Edit",
+      "Glob",
+      "Grep",
+      "Read"
+    ]
+  },
+  "reviewer": {
+    "node": "reviewer",
+    "source": "class",
+    "declared": [
+      "Glob",
+      "Grep",
+      "Read",
+      "ReadProblemStatement"
+    ],
+    "resolved": [
+      "Glob",
+      "Grep",
+      "Read",
+      "ReadProblemStatement"
+    ],
+    "added": [],
+    "removed": [],
+    "withheld": [],
+    "feature_withheld": {
+      "SendMessage": "peer_interaction"
+    },
+    "effective": [
+      "Glob",
+      "Grep",
+      "Read",
+      "ReadProblemStatement"
+    ]
+  }
+}
