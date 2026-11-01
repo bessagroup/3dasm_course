@@ -1,0 +1,83 @@
+{
+    "input_space": {
+        "x1": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "log": false
+        },
+        "x2": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "log": false
+        },
+        "x3": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "log": false
+        },
+        "x4": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "log": false
+        },
+        "x5": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "log": false
+        },
+        "x6": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "log": false
+        },
+        "x7": {
+            "type": "float",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null,
+            "lower_bound": 0.0,
+            "upper_bound": 1.0,
+            "log": false
+        }
+    },
+    "output_space": {
+        "y": {
+            "type": "object",
+            "to_disk": false,
+            "store_function": null,
+            "load_function": null,
+            "load_kwargs": null
+        }
+    }
+}

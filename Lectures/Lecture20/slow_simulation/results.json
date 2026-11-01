@@ -1,0 +1,13 @@
+{
+  "wall_time_sequential_s": 128.01664212701144,
+  "wall_time_parallel_s": 16.04261167900404,
+  "status_counts_first": {
+    "finished": 61,
+    "error": 3
+  },
+  "n_rerun": 3,
+  "wall_time_rerun_s": 2.0276021949830465,
+  "status_counts_final": {
+    "finished": 64
+  }
+}

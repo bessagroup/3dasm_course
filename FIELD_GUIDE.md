@@ -58,9 +58,9 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **What do you know about the noise?**: is the problem noiseless or noisy? Is the noise the same everywhere (homoscedastic) or does it change with the input (heteroscedastic)? Is it given, or must it be estimated? (L12, L13, L14, L15)
 - **Interpolation is much easier than extrapolation**: overparameterized models can behave well between the training points (interpolation) but poorly outside their range (extrapolation). Keep the simple picture of the divergence that occurs in Linear Regression for a high-degree polynomial (it is surprisingly descriptive even for the most sophisticated models). (L11, L15)
 - **Design the experiments for the dimension and the budget**: in many dimensions a regular grid gives each input only a few values (the points pile up in every projection); space-filling designs (random, Sobol sequence) give every input as many values as there are points. A Sobol sequence fills the domain most evenly (lowest discrepancy) and can be extended. (L18)
-- **Find which inputs matter with a sensitivity analysis**: the first-order Sobol' index of an input is the fraction of the output variance it explains alone, the total index the fraction it takes part in (alone or through interactions). It needs many evaluations, so compute it on a surrogate when the data generator is expensive. (L18, L19)
-- **Run independent experiments in parallel**: with $p$ processes, $N$ runs of $t$ seconds take about $\lceil N/p \rceil\, t$. The limits are the cores, the licenses, and experiments that depend on each other. (L18, L19)
-- **Let one `ExperimentData` travel through the process**: the inputs with their `Domain`, the outputs, and the status of each experiment (open, finished, error), stored to disk. The status says what to run again, and nothing runs twice by accident. (L18, L19)
+- **Find which inputs matter with a sensitivity analysis**: the first-order Sobol' index of an input is the fraction of the output variance it explains alone, the total index the fraction it takes part in (alone or through interactions). It needs many evaluations, so compute it on a surrogate when the data generator is expensive. (L19)
+- **Run independent experiments in parallel**: with $p$ processes, $N$ runs of $t$ seconds take about $\lceil N/p \rceil\, t$. The limits are the cores, the licenses, and experiments that depend on each other. (L20)
+- **Let one `ExperimentData` travel through the process**: the inputs with their `Domain`, the outputs, and the status of each experiment (open, finished, error), stored to disk. The status says what to run again, and nothing runs twice by accident. (L18, L20)
 
 ### 2. Prepare the data
 
@@ -227,21 +227,19 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - With few data, do not trust one optimum of the marginal likelihood *(practice: Fit the model)*
 - **Lecture 18**
     - Design the experiments for the dimension and the budget *(practice: Frame the problem)*
-    - Find which inputs matter with a sensitivity analysis *(practice: Frame the problem)*
-    - Run independent experiments in parallel *(practice: Frame the problem)*
     - Let one `ExperimentData` travel through the process *(practice: Frame the problem)*
     - Compare many models as one experiment *(practice: Validate and select)*
     - Explore a new method in a cycle *(practice: Work with an AI coding agent)*
 - **Lecture 19**
     - Find which inputs matter with a sensitivity analysis *(practice: Frame the problem)*
-    - Run independent experiments in parallel *(practice: Frame the problem)*
-    - Let one `ExperimentData` travel through the process *(practice: Frame the problem)*
     - Check against something you know *(practice: Work with an AI coding agent)*
     - A team of agents is a graph *(practice: Work with an AI coding agent)*
     - The statement is the specification *(practice: Work with an AI coding agent)*
     - Let an agent find the method in the literature, and check its sources *(practice: Work with an AI coding agent)*
     - Put the experiment behind a tool *(practice: Work with an AI coding agent)*
 - **Lecture 20**
+    - Run independent experiments in parallel *(practice: Frame the problem)*
+    - Let one `ExperimentData` travel through the process *(practice: Frame the problem)*
     - Check against something you know *(practice: Work with an AI coding agent)*
     - Pin every choice that can change a number you report *(practice: Work with an AI coding agent)*
     - A team of agents is a graph *(practice: Work with an AI coding agent)*

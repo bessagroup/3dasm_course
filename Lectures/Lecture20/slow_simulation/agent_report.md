@@ -1,0 +1,1 @@
+That notification is just the earlier wait loop finishing. It changes nothing: `results.json`, `stored_first/` and `stored_final/` are complete from the last run, and the summary above still holds.
