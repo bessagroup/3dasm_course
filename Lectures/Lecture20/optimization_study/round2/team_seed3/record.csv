@@ -1,0 +1,31 @@
+n,agent,round,x1,x2,x3,y,reason
+1,LHS,0,0.660956722190425,0.5175459662269267,0.6799150356529069,1.4887538997253524,initial Latin hypercube
+2,LHS,0,0.5611891975957088,0.06039142385064005,0.10445820398423508,0.46782266975169573,initial Latin hypercube
+3,LHS,0,0.03472991345727773,0.12268407235752811,0.617694856572719,0.5074091767662263,initial Latin hypercube
+4,LHS,0,0.9924218653385731,0.5739181206336226,0.23221732115857574,1.180485189362654,initial Latin hypercube
+5,LHS,0,0.5046247986390549,0.42754676190412394,0.01747748084718932,1.020324309426176,initial Latin hypercube
+6,LHS,0,0.33624884967759344,0.9143865890834139,0.890096852861345,1.575410502755773,initial Latin hypercube
+7,LHS,0,0.886918933555323,0.7138186167325009,0.5332339944327443,1.4439862483137347,initial Latin hypercube
+8,LHS,0,0.2017693150155725,0.31343991846554164,0.4457342665310442,0.8400207056624291,initial Latin hypercube
+9,LHS,0,0.8072192619703228,0.6276558040072727,0.9685793556545446,1.544589222185589,initial Latin hypercube
+10,LHS,0,0.7484481993567456,0.7979769328225019,0.15286899362295844,1.0861403696177032,initial Latin hypercube
+11,LHS,0,0.17505041110143527,0.8606098190997161,0.289299995504807,1.2492154303367535,initial Latin hypercube
+12,LHS,0,0.6712357430172431,0.3861872554612666,0.35799398668097715,1.0721615876290596,initial Latin hypercube
+13,LHS,0,0.11345579395617168,0.21721622132871132,0.7518556794571921,0.673902375811457,initial Latin hypercube
+14,LHS,0,0.4520856383620797,0.9446742083817126,0.5561565192751171,1.5777710185048373,initial Latin hypercube
+15,LHS,0,0.2878134061426433,0.14532828332196432,0.8380951397134359,0.6666133462032309,initial Latin hypercube
+16,agent1,1,0.4,0.95,0.75,1.589,Best LHS points cluster at high x2 (~0.9+) with x1 in 0.34–0.45 and x3 in 0.56–0.89; this point sits in the gap between them to test whether the peak lies there.
+17,agent2,1,0.45,0.95,0.7,1.6195000000000002,"Best LHS points cluster at high x2 (0.91–0.94) with x1≈0.3–0.8 and x3 mid-to-high, so I probe the centre of that cluster pushed to the x2 edge to test whether y keeps rising there."
+18,agent3,1,0.5,0.9,0.7,1.67,"Records show high x2 (0.9+) with mid-to-high x1 and x3 giving the top y values (~1.58), so I probe the centre of that region to test whether it improves on them."
+19,agent2,2,0.6,0.85,0.65,1.6280000000000001,"Round 1 best is (0.5, 0.9, 0.7) at y=1.67 and the neighbours at x2=0.95 are lower, so I probe a step further in +x1 with x2 and x3 pulled slightly down to see whether the ridge keeps rising in that direction."
+20,agent1,2,0.6,0.88,0.66,1.6315199999999999,"Round-1 points show y rising as x1 goes from 0.4 to 0.5 (best 1.67 at (0.5,0.9,0.7)), so I step further along x1 with x2 and x3 nudged slightly down to test whether y keeps increasing."
+21,agent3,2,0.6,0.85,0.65,1.6280000000000001,"The best point (0.5, 0.9, 0.7) sits among neighbours at x1 0.4–0.45 and x2 0.95, so I probe higher x1 and slightly lower x2 and x3 to test whether the peak lies in that direction."
+22,agent1,3,0.5,0.9,0.8,1.7,"Current best (0.5,0.9,0.7) is the only point near this x1/x2 pair, and the x1 and x2 steps are already tested, so I vary x3 upward to 0.8 to check whether the peak lies at higher x3."
+23,agent2,3,0.5,0.8,0.7,1.68,"Round 2 probes moved along +x1 and flattened near 1.63, so I test the off-axis direction of lower x2 at the best x1 and x3 (0.5, 0.8, 0.7) to see whether the peak lies below x2=0.9."
+24,agent3,3,0.4,0.9,0.65,1.563,"Tests the downward side of the x1 ridge at the current best's x2 (0.9), with x3 at 0.65, a point no probe has covered yet and not a repeat of the round-2 cluster near (0.6, 0.85–0.88)."
+25,agent2,4,0.55,0.85,0.85,1.7665,"Current best is (0.5, 0.9, 0.8) at y=1.70 and x3 rising from 0.7 to 0.8 gave a gain, so I step x3 further to 0.85 with x1 nudged up to 0.55 and x2 lowered to 0.85 to test whether the peak lies at higher x3."
+26,agent1,4,0.5,0.92,0.9,1.728,"Continues the x3 direction that raised y from 1.67 to 1.70 (0.7 to 0.8 at x1=0.5, x2=0.9), pushing x3 to 0.9 with x2 nudged to 0.92; this point is not recorded yet."
+27,agent3,4,0.48,0.97,0.8,1.67488,"Tests the x2 edge at high x3 near the current best (0.5, 0.9, 0.8) with x1 held near 0.5; no recorded point sits at x2 = 0.97 with x3 = 0.8."
+28,agent1,5,0.55,0.82,0.83,1.7637999999999998,"Small local refinement around the current best (0.55, 0.85, 0.85, y=1.7665) with x2 lowered to 0.82 and x3 to 0.83, a point no recorded run has covered."
+29,agent2,5,0.6,0.83,0.87,1.8214000000000004,"Best is (0.55, 0.85, 0.85) at y=1.7665; I step x1 up to 0.6 and x3 up to 0.87 with x2 at 0.83 to test whether the local gradient in x1 and x3 keeps increasing y."
+30,agent3,5,0.52,0.87,0.88,1.74552,"Local step near the current best (0.55, 0.85, 0.85; y=1.7665) toward higher x3 and x2 near 0.87, a point no recorded run has covered."

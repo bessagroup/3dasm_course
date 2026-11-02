@@ -1,0 +1,31 @@
+n,agent,round,x1,x2,x3,y,reason
+1,LHS,0,0.3658785583533162,0.06996908691160432,0.5237226924853577,0.5556889252389376,initial Latin hypercube
+2,LHS,0,0.9367567035241837,0.5792112365326343,0.5717782367351616,1.4789696163045336,initial Latin hypercube
+3,LHS,0,0.47815316041197053,0.7727200575753893,0.16336042082179603,1.2134240944398353,initial Latin hypercube
+4,LHS,0,0.7981627257837954,0.6830991260883462,0.29745711245204814,1.258532953247306,initial Latin hypercube
+5,LHS,0,0.24468455223339386,0.21410475310477306,0.4464536780472237,0.6834968359986481,initial Latin hypercube
+6,LHS,0,0.10310014070128991,0.19106388685018902,0.7731258009035248,0.6315600772345021,initial Latin hypercube
+7,LHS,0,0.9197696506215901,0.44917911063721,0.8833090218246632,1.2535478639215165,initial Latin hypercube
+8,LHS,0,0.5813060828009307,0.6343206017045576,0.3346175200132508,1.4090722247630518,initial Latin hypercube
+9,LHS,0,0.6025561870890809,0.8183473372817645,0.6305848762968378,1.6159605533593053,initial Latin hypercube
+10,LHS,0,0.1815405863969753,0.9892898660816581,0.0686716391189245,1.1843768842913402,initial Latin hypercube
+11,LHS,0,0.4322620942968081,0.3256089591686153,0.6917673496308333,0.9881737614031634,initial Latin hypercube
+12,LHS,0,0.6815544590438468,0.35913311326313063,0.8055134863472732,1.2028853830423838,initial Latin hypercube
+13,LHS,0,0.06402714155571981,0.4980940491159985,0.03604427447430642,1.0748648304154216,initial Latin hypercube
+14,LHS,0,0.3291766947233416,0.8905781220573751,0.20982447743462287,1.2877323174432789,initial Latin hypercube
+15,LHS,0,0.8271372654597144,0.049326836817518455,0.9440078985979061,0.8925961617619431,initial Latin hypercube
+16,agent1,1,0.7,0.8,0.5,1.452,"Best LHS point (#9, y=1.616) sits at (0.60, 0.82, 0.63); this nearby point moves x1 up and x3 down to probe whether the high-y region extends in that direction."
+17,agent2,1,0.65,0.85,0.55,1.508,"Local exploration near the current best (LHS #9, y=1.616 at x=(0.60,0.82,0.63)), shifting slightly toward higher x1 and lower x3 to test whether the high-y region extends there."
+18,agent3,1,0.65,0.85,0.55,1.508,"Round 1: the best LHS point (0.60, 0.82, 0.63; y=1.62) sits in a high-x2 region with high-y neighbours at x1 ~0.6-0.9, so I probe a nearby point shifted slightly up in x1 and x2 and down in x3 to test whether the ridge continues upward."
+19,agent1,2,0.55,0.8,0.7,1.712,"Round 2: both round-1 probes moved toward higher x1 and lower x3 and came in below LHS #9 (1.616), so I test the opposite local direction (x1 down, x3 up) around the best point (0.603, 0.818, 0.631) to see whether the high-y region lies that way."
+20,agent2,2,0.25,0.75,0.75,1.4625,"Round 2: the region with low x1, high x2 and high x3 has no samples yet (LHS #10 and #14 sit at low x3), so this point tests whether a second high-y basin exists there."
+21,agent3,2,0.55,0.95,0.4,1.3820000000000001,"Round 2: x2 above 0.9 has only one sample (LHS #10 at x1=0.18), and x3 around 0.4 near the good points at x1 ~0.55-0.6 is unexplored, so I probe (0.55, 0.95, 0.40) to test the high-x2 edge at mid x1."
+22,agent1,3,0.45,0.8,0.8,1.663,"Round 3: the current best (0.55, 0.80, 0.70) gave y=1.712, the highest so far, and the round-2 move toward lower x1 and higher x3 improved on LHS #9; I continue that local step to (0.45, 0.80, 0.80) to see whether the gain keeps going in that direction. This point is not in the record."
+23,agent3,3,0.55,0.65,0.7,1.7435,"Round 3: local step from the current best (0.55, 0.80, 0.70; y=1.712) in the x2-downward direction, as the coordinator asked, to see whether y keeps rising when x2 drops at fixed x1 and x3."
+24,agent2,3,0.55,0.75,0.85,1.7774999999999999,"Round 3: a ridge-regularized quadratic fit on all 21 records (residual RMSE 0.085) has its unconstrained maximum at the box corner (0.58, 1, 1), which is an unreliable extrapolation, so I probe the nearby interior point (0.55, 0.75, 0.85) that the model predicts at about 1.69 and that is unrecorded."
+25,agent1,4,0.6,0.72,0.95,1.8586,"Round 4: the current best (0.55, 0.75, 0.85) gave y=1.7775; I probe the unrecorded nearby point (0.60, 0.72, 0.95) to test whether y keeps rising toward higher x3 with slightly higher x1 and lower x2."
+26,agent3,4,0.58,0.68,0.8,1.7991199999999998,"Round 4: local probe in the x2-low/x3-high direction from the recorded best region, as the coordinator asked; (0.58, 0.68, 0.80) is not in the record."
+27,agent2,4,0.87,1,1,1.123733286462374,"Round 4: a ridge-regularized quadratic (lambda=1e-2) fit on all 25 records (residual RMSE 0.086) has its predicted maximum at (0.87, 1.00, 1.00) with predicted value about 2.18; this point is not a repeat (nearest record is 0.39 away), and it tests whether the high-y ridge extends toward the upper corner of the box, though the model is extrapolating there."
+28,agent1,5,0.63,0.74,0.92,1.87576,"Round 5 (final): small local refinement around the current best (0.60, 0.72, 0.95, y=1.8586), moving x1 up and x2 up slightly while pulling x3 back from the boundary, to check whether the peak lies at higher x1 with x3 slightly below 1. This point is not in the record."
+29,agent3,5,0.59,0.7,0.88,1.8304,"Round 5 (final): local point between the two best recorded points (0.60, 0.72, 0.95; y=1.8586) and (0.58, 0.68, 0.80; y=1.799), as the coordinator asked; (0.59, 0.70, 0.88) is not in the record."
+30,agent2,5,0.6,0.65,0.9,1.852,"Round 5 (final): the local quadratic on the 8 points within 0.35 of the best is underdetermined (8 points, 10 parameters) and its predicted maximum at the corner (1, 0, 1) is an unreliable extrapolation, so I probe the fallback (0.60, 0.65, 0.90), which is unrecorded and lies between the best (0.60, 0.72, 0.95) and the x2-lower point (0.58, 0.68, 0.80)."

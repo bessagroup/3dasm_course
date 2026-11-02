@@ -1,0 +1,3 @@
+paper_id,title,authors,year,doi,arxiv_id,venue,abstract,local_pdf_path,local_md_path,added_at,source,citation_count,full_text,metadata_note
+arxiv_1911_07285,A hierarchical expected improvement method for Bayesian optimization,"Zhehui Chen, Simon Mak, C. F. Jeff Wu",2019,,1911.07285,arXiv,,runs/lit_reviewer_notes/papers/arxiv_1911_07285/paper.pdf,runs/lit_reviewer_notes/papers/arxiv_1911_07285/paper.md,2026-11-02T02:12:28+00:00,arxiv,0,true,
+arxiv_2302_08612,Robust expected improvement for Bayesian optimization,"Ryan B. Christianson, Robert B. Gramacy",2023,,2302.08612,arXiv,,runs/lit_reviewer_notes/papers/arxiv_2302_08612/paper.pdf,runs/lit_reviewer_notes/papers/arxiv_2302_08612/paper.md,2026-11-02T02:12:32+00:00,arxiv,0,true,

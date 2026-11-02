@@ -1,0 +1,8 @@
+Ran 5 probe rounds (15 probes, one per agent per round) on top of the 15 LHS points. Best experiment actually run: x=(0.63, 0.74, 0.92), y=1.87576 (agent1, round 5, record row 28), up from LHS best 1.616. Written to workspace/best.json, NOT next to PROBLEM_STATEMENT.md: my write tool rejected the study-root path, so the file is in the study's workspace/ folder and needs moving to the study root. I did not re-read record.csv with code; the max was checked by eye against the reported values.
+
+What each agent tried:
+- agent1: R1 (0.70,0.80,0.50)=1.452; R2 (0.55,0.80,0.70)=1.712; R3 (0.45,0.80,0.80)=1.663; R4 (0.60,0.72,0.95)=1.859; R5 (0.63,0.74,0.92)=1.876 (best). Local steps from the best, moving x3 up and x1 down.
+- agent2: R1 (0.65,0.85,0.55)=1.508 (duplicated by agent3); R2 (0.25,0.75,0.75)=1.4625; R3 (0.55,0.75,0.85)=1.7775; R4 (0.87,1.00,1.00)=1.124 (model-guided corner extrapolation, poor); R5 (0.60,0.65,0.90)=1.852. Model-guided after R3.
+- agent3: R1 (0.65,0.85,0.55)=1.508 (duplicate); R2 (0.55,0.95,0.40)=1.382; R3 (0.55,0.65,0.70)=1.7435; R4 (0.58,0.68,0.80)=1.799; R5 (0.59,0.70,0.88)=1.830. Local steps.
+
+Remaining uncertainty: the peak is likely near x1≈0.6, x2≈0.7–0.75, x3≈0.9–0.95, but it is not pinned down. Round 1 duplicated a point, which wasted one probe. Several agents' replies claimed probe results without a visible tool call; the record rows are the evidence I used.

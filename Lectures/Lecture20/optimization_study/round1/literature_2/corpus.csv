@@ -1,0 +1,3 @@
+paper_id,title,authors,year,doi,arxiv_id,venue,abstract,local_pdf_path,local_md_path,added_at,source,citation_count,full_text,metadata_note
+arxiv_2502_19006,Gaussian Process Upper Confidence Bound Achieves Nearly-Optimal Regret in Noise-Free Gaussian Process Bandits,Shogo Iwazaki,2025,,2502.19006,,,runs/lit_reviewer_notes/papers/arxiv_2502_19006/paper.pdf,runs/lit_reviewer_notes/papers/arxiv_2502_19006/paper.md,2026-11-02T02:12:28+00:00,arxiv,0,true,
+arxiv_2506_01393,Improved Regret Bounds for Gaussian Process Upper Confidence Bound in Bayesian Optimization,Shogo Iwazaki,2025,,2506.01393,,,runs/lit_reviewer_notes/papers/arxiv_2506_01393/paper.pdf,runs/lit_reviewer_notes/papers/arxiv_2506_01393/paper.md,2026-11-02T02:12:31+00:00,arxiv,0,true,

@@ -1,0 +1,31 @@
+n,agent,round,x1,x2,x3,y,reason
+1,LHS,0,0.9158925243833789,0.7134339237723918,0.47905161729371465,1.378390700375953,initial Latin hypercube
+2,LHS,0,0.12720560385766022,0.22665996493562307,0.15142929821254703,0.6489598847318474,initial Latin hypercube
+3,LHS,0,0.5874732617755598,0.19632355817779545,0.781668708806264,0.8668989619460414,initial Latin hypercube
+4,LHS,0,0.9561711323416271,0.4958489558146381,0.056662515779644256,1.077528683125546,initial Latin hypercube
+5,LHS,0,0.17115794727968087,0.955380180095032,0.6384810217819915,1.347113866442895,initial Latin hypercube
+6,LHS,0,0.8244543733817256,0.8021709365004216,0.42112901184602497,1.3226563331854309,initial Latin hypercube
+7,LHS,0,0.3072250111279982,0.12084982868532679,0.9769359556285512,0.6725089811732377,initial Latin hypercube
+8,LHS,0,0.6992622684286949,0.4072527060332947,0.6816290705018206,1.2577489184425834,initial Latin hypercube
+9,LHS,0,0.24545689329230838,0.6050522068995451,0.3686060076389495,1.3508815379161807,initial Latin hypercube
+10,LHS,0,0.3537494105198513,0.3928528461030941,0.9263637627711372,1.1383312339313956,initial Latin hypercube
+11,LHS,0,0.6532061701647033,0.27437002175411374,0.2880125692343611,0.8290540544091859,initial Latin hypercube
+12,LHS,0,0.4767175784257044,0.7570375820529656,0.5728971734882975,1.624079863736056,initial Latin hypercube
+13,LHS,0,0.7655614537250003,0.8937704321496063,0.8091921343394914,1.6270959383286365,initial Latin hypercube
+14,LHS,0,0.037454255589391666,0.5405173260022238,0.2257522041064942,1.1048764075645627,initial Latin hypercube
+15,LHS,0,0.4113762582795612,0.03346292967218347,0.08716545787800177,0.4349816105413255,initial Latin hypercube
+16,agent1,1,0.62,0.82,0.68,1.6579199999999998,Top LHS points (y≈1.62) sit at high x2 and mid-to-high x1 and x3; this point lies between points 12 and 13 in that region to test whether the high-y area is a connected ridge or peak.
+17,agent3,1,0.62,0.82,0.68,1.6579199999999998,"Center of the two best LHS points (12 and 13, y≈1.62) to test whether the high-y region is a smooth peak between them."
+18,agent2,1,0.55,0.9,0.5,1.488,"agent1 is exploring around (0.62,0.82,0.68); I probe the high-x2 band at mid x1 and mid x3, a gap between LHS points 12, 13 and 5, to check whether the high-y region extends to lower x3 and x1."
+19,agent1,2,0.5,0.9,0.75,1.6849999999999998,"Spread probe in the high-x2 band at lower x1 and high x3, a region with no record points yet (agent2's (0.55,0.90,0.50) is lower in x3), to test whether the high-y region extends along x3 and x1 away from the current best."
+20,agent3,2,0.7,0.88,0.6,1.5315199999999998,"Spread probe in the high-x2 band at higher x1 and lower x3 than the current best, to test whether the good region extends in that direction without repeating any recorded point."
+21,agent2,2,0.5,0.86,0.75,1.6889999999999998,"Fills the gap between LHS point 12 (0.48,0.76,0.57; y=1.62) and the current best region at higher x2 and x3, a point not yet in record.csv, to test whether the high-y band extends to higher x3 at mid x1."
+22,agent1,3,0.42,0.84,0.82,1.63744,"Refines the peak neighbourhood at lower x1 and higher x3 than the current best (0.50,0.86,0.75), a point not yet sampled, to test whether y keeps rising toward x3 ≈ 0.8 with x1 ≈ 0.4."
+23,agent2,3,0.38,0.84,0.84,1.60616,"Refines the peak neighbourhood at lower x1 (0.38) and higher x3 (0.84) than the current best (0.50,0.86,0.75), a point not in record.csv, to test whether the high-y region continues toward lower x1 and higher x3."
+24,agent3,3,0.56,0.92,0.86,1.77096,"Refines the peak neighbourhood at mid x1, high x2 and high x3 (x3 above the current best's 0.75, which agent1's (0.42,0.84,0.82) also tests), a point not yet in record.csv, to check whether y keeps rising toward higher x2 and x3."
+25,agent1,4,0.6,0.97,0.92,1.8100915119890768,"Pushes the rise found at (0.56,0.92,0.86) further toward the high-x2, high-x3 corner, at x1=0.6 (a point not yet sampled), to test whether y keeps increasing toward the boundary."
+26,agent2,4,0.72,0.94,0.98,1.563284011674507,"Agent1's round-4 point (0.60,0.97,0.92) is the new best at 1.81; I probe the high-x3 boundary at higher x1 (0.72) and slightly lower x2 (0.94), a point not in record.csv, to check whether the rise continues along x3 and x1 rather than only along x2."
+27,agent3,4,0.5,0.96,0.95,1.7389999999999999,"Local step toward the high-x2, high-x3 corner at x1=0.50, between the round-3 point (0.56,0.92,0.86) and agent1's round-4 point (0.60,0.97,0.92), to test whether y keeps rising at lower x1 near the boundary; this point is not in record.csv."
+28,agent1,5,0.64,0.99,0.9,1.7265869812651098,"Local refinement of the best (0.60,0.97,0.92), stepping to x1=0.64, x2=0.99, x3=0.90, a point not yet sampled, to test whether the peak sits slightly further along x1 and toward the x2 boundary."
+29,agent2,5,0.57,0.95,0.89,1.7857,"Local refinement in the box between the current best (0.60,0.97,0.92) and the round-3 point (0.56,0.92,0.86), at a point not yet sampled, to test whether the peak sits inside the segment rather than at the boundary corner."
+30,agent3,5,0.62,0.95,0.93,1.7886110191719633,"Final-round local refinement just above the best (0.60,0.97,0.92) at x1=0.62, x2=0.95, x3=0.93, a point not in record.csv and distinct from agent1's round-5 point (0.64,0.99,0.90), to check whether the peak lies at slightly lower x2 with higher x3."

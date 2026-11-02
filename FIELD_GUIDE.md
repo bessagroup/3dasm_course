@@ -87,7 +87,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Never choose a model on its training error**: it keeps falling as the model grows, and it is biased below the noise. (L11)
 - **Overfitting shows as a training error that keeps falling while the error on unseen data grows.** (L11)
 - **Choose models and hyperparameters on validation data**, with cross-validation on the training set, reading the means together with their spread. Use the test set once, at the end, to report the chosen model. (L11)
-- **Compare many models as one experiment**: each experiment is a model (for example the degree of a polynomial), its outputs are the errors on the validation data, and the choice is read from the record. (L18)
+- **Compare many models or methods as one experiment**: each experiment is one candidate (a polynomial degree, or an optimization strategy from one starting design), its outputs are its scores (validation errors, the best value found), and the choice is read from the record. (L20)
+- **Judge methods, not runs**: rerun each strategy from many starting designs, with the same budget, and compare the distributions. One run can crown the wrong method, and two agents with the same method can look different by luck. (L20)
 - **Report error metrics on the test set, and know how to read them**: for example, in supervised regression use MSE and $R^2$ (a negative $R^2$ is worse than simply predicting the mean of the data). (L10, L11)
 
 ### 6. Quantify the uncertainty
@@ -103,14 +104,13 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **What is the same for every task goes in the instructions file** (packages, where files go, how to report); **what is specific to the task goes in the prompt** (the model, the data, what to plot). (L10)
 - **Read the code the agent writes**: the documentation, and the agent itself, can explain it. (L10)
 - **Check against something you know**, not against "the code runs": e.g. the normal equations, or "the training error cannot increase with the degree". (L10, L11, L15, L19, L20)
-- **Pin every choice that can change a number you report**, including the randomness of the split. Read the agent's **Assumptions** and **open its files**: they may contain things that your prompt should have defined. (L10, L20)
+- **Pin every choice that can change a number you report**, including the randomness of the split. Read the agent's **Assumptions** and **open its files**: they may contain things that your prompt should have defined. (L10)
 - **A team of agents is a graph**: each node is an agent with its own prompt, tools and model, and each edge says who may hand work to whom. Give each agent only the tools of its job: a literature reviewer that cannot run code, an analyst that cannot search the web. (L19, L20)
+- **Have the agent write its method as code that a tool runs once**: the tool keeps the budget and the record, the agent cannot steer the run by hand, and you can rerun the code to judge it. (L20)
+- **Alone or together is a decision**: independent agents keep their ideas apart; a shared record lets them learn, and herd (and agents acting at the same time can duplicate each other's experiments). Agents use the tools the statement asks for, not all the tools they have. (L20)
 - **The statement is the specification**: state the objective, the inputs with bounds and units, the budget, and the deliverables. Do not fix a choice before the method that depends on it: a design pinned in the statement can block the method the agents find. (L19)
 - **Let an agent find the method in the literature, and check its sources**: ask for the candidate methods, a recommendation and the papers it quoted; check that each quote is in its paper, and predict the result before you read it. (L19)
 - **Put the experiment behind a tool**: the tool decides what an evaluation returns, refuses calls past the budget, and records each one. It does not hide its own code: an agent can read every file it reaches, including your notebook. To hide something, keep it where the agent cannot reach it. (L19)
-- **Decide before you prompt**: a table of decisions in the statement, so that the agents implement and do not interpret. (L20)
-- **Give the checker a different job from the builder**: it recomputes the results without the builder's code. Builder and checker read the same statement, so they can agree on a choice it left open: check one number yourself. (L20)
-- **Fix the statement, not the output**, and run again: a result corrected by hand is not reproduced by the notebook. (L20)
 - **The agent's own explanation, or its flag, is not a check.** The math is. (L10)
 - **Explore a new method in a cycle**: state the need, try the obvious solution, find the key ideas in the literature (ask an agent for the map, and check that its references exist), understand how the method works, let the agent implement it, then predict the outcome and check it, including what the agent claims it did. (L18)
 
@@ -228,7 +228,6 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Lecture 18**
     - Design the experiments for the dimension and the budget *(practice: Frame the problem)*
     - Let one `ExperimentData` travel through the process *(practice: Frame the problem)*
-    - Compare many models as one experiment *(practice: Validate and select)*
     - Explore a new method in a cycle *(practice: Work with an AI coding agent)*
 - **Lecture 19**
     - Find which inputs matter with a sensitivity analysis *(practice: Frame the problem)*
@@ -240,12 +239,12 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Lecture 20**
     - Run independent experiments in parallel *(practice: Frame the problem)*
     - Let one `ExperimentData` travel through the process *(practice: Frame the problem)*
+    - Compare many models or methods as one experiment *(practice: Validate and select)*
+    - Judge methods, not runs *(practice: Validate and select)*
     - Check against something you know *(practice: Work with an AI coding agent)*
-    - Pin every choice that can change a number you report *(practice: Work with an AI coding agent)*
     - A team of agents is a graph *(practice: Work with an AI coding agent)*
-    - Decide before you prompt *(practice: Work with an AI coding agent)*
-    - Give the checker a different job from the builder *(practice: Work with an AI coding agent)*
-    - Fix the statement, not the output *(practice: Work with an AI coding agent)*
+    - Have the agent write its method as code that a tool runs once *(practice: Work with an AI coding agent)*
+    - Alone or together is a decision *(practice: Work with an AI coding agent)*
 - **Lecture 22**
     - An unknown is treated as a random variable (rv) *(concept: Probability)*
 

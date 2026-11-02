@@ -1,0 +1,31 @@
+n,agent,round,x1,x2,x3,y,reason
+1,LHS,0,0.29086922084523636,0.7153475524157419,0.597268431737587,1.4575221554100932,initial Latin hypercube
+2,LHS,0,0.7988981576314313,0.3457819840533152,0.07248296151481855,0.8820720473296512,initial Latin hypercube
+3,LHS,0,0.15955761494885465,0.2847002292677335,0.2304250005689718,0.7562580687368498,initial Latin hypercube
+4,LHS,0,0.8709951717474822,0.47894309639189786,0.0664840999886568,1.1352862687277943,initial Latin hypercube
+5,LHS,0,0.4095063815608287,0.1310942949796357,0.35135630357133707,0.590753118855694,initial Latin hypercube
+6,LHS,0,0.0549562919598294,0.6091214051766742,0.8305692519833939,1.3029276859944563,initial Latin hypercube
+7,LHS,0,0.6466858739641743,0.9718208519201561,0.9314453552569691,1.7127122429617727,initial Latin hypercube
+8,LHS,0,0.5917144482333624,0.021958372353757978,0.4235206992283833,0.5575205044460319,initial Latin hypercube
+9,LHS,0,0.49230765923458303,0.8410881630492077,0.4668526709473859,1.4901319847920127,initial Latin hypercube
+10,LHS,0,0.06794431074825133,0.7542972010346204,0.2899693815821456,1.1514795156129936,initial Latin hypercube
+11,LHS,0,0.3541035512952707,0.9074052384013931,0.657660232998506,1.5225488928479767,initial Latin hypercube
+12,LHS,0,0.8185674439870613,0.23164304516828496,0.9793172082960696,1.126256347337795,initial Latin hypercube
+13,LHS,0,0.2342776427445474,0.5407008110434001,0.6710637656029167,1.3690273010486413,initial Latin hypercube
+14,LHS,0,0.976146986886062,0.4285646779513493,0.7785420405949371,1.152452612905078,initial Latin hypercube
+15,LHS,0,0.6937133313200202,0.17747258496619114,0.17389206663145593,0.6368612071680185,initial Latin hypercube
+16,agent1,1,0.45,0.95,0.98,1.7035000000000002,"Best LHS point (#7, y=1.71) sits at high x2 and x3; probing nearby with x1 lowered tests whether the high-y ridge extends in that direction."
+17,agent2,1,0.5,0.9,0.95,1.7449999999999999,"The top LHS points all have high x2 (0.84–0.97) and high x3 (0.66–0.93) with mid-range x1, so I probe the upper corner of that region at x1=0.5 to test whether y keeps rising toward x3=1."
+18,agent3,1,0.2,0.95,0.98,1.476,"The best LHS points (n=7 at y=1.71, n=11 at y=1.52) have high x2 and x3, so I probe the high-x2/high-x3 corner at a lower x1 (0.2) to test whether x1 should be low there."
+19,agent1,2,0.55,0.85,0.85,1.7665,"Round-1 best is (0.5, 0.9, 0.95) at y=1.745 and the x3=0.98 corner at x1=0.45 gave 1.70, so the x3 peak may be interior; probing slightly lower x2 and x3 at x1=0.55 tests whether the ridge peaks inside the box rather than at the corner."
+20,agent2,2,0.6,0.9,0.92,1.828,"Round-1 results show y rising with x1 in the high-x2/high-x3 corner (x1=0.2 gave 1.476, x1=0.45 gave 1.70, x1=0.5 gave 1.745), so I step x1 up to 0.6 while keeping x2=0.9 and pulling x3 slightly down to 0.92 to test whether the peak lies at larger x1."
+21,agent3,2,0.55,0.85,0.88,1.7755,"Round-1 results put the high region at x1 about 0.45-0.65 with x2 and x3 near 0.9 (best y=1.745 at (0.5,0.9,0.95)); x1=0.2 was worse, so I probe slightly lower x2 and x3 at x1=0.55 to see whether the peak sits inside the high-x2/x3 corner or below it."
+22,agent1,3,0.7,0.9,0.9,1.7018439181327532,"Best so far is row 20 (0.6, 0.9, 0.92) at y=1.828, and y rose with x1 across rows 16-20 (x1 0.2→1.48, 0.45→1.70, 0.5→1.745, 0.6→1.828), so I step x1 further to 0.7 with x2 and x3 held near 0.9 to find where the x1 gain peaks."
+23,agent2,3,0.7,0.9,0.92,1.687843918132753,"The round-2 best (0.6, 0.9, 0.92) gave 1.828, up from 1.70 and 1.745 at smaller x1, so I step x1 further to 0.7 holding x2 and x3 fixed to test whether the x1 gain continues before the peak."
+24,agent3,3,0.6,0.9,0.96,1.84,"Best so far is row 20 at (0.6, 0.9, 0.92) with y=1.828, and agent1's x1=0.7 probe dropped to 1.70, so x1 peaks near 0.6; I hold x1=0.6 and x2=0.9 and raise x3 to 0.96 to test whether x3 gains past 0.92."
+25,agent1,4,0.6,0.95,0.96,1.8042110191719634,"Best so far is row 24 (0.6, 0.9, 0.96) at y=1.84, and x2 has been held at 0.9 in every recent probe; moving x2 up to 0.95 with x1 and x3 fixed tests whether x2 also gains past 0.9."
+26,agent2,4,0.6,0.95,0.96,1.8042110191719634,"Best run is (0.6, 0.9, 0.96) at y=1.84, and x1 and x3 have been probed around it while x2 has only been varied in the LHS, so I raise x2 to 0.95 holding x1=0.6 and x3=0.96 to test whether x2 gains past 0.9."
+27,agent3,4,0.6,0.97,0.95,1.789091511989077,"With x1 near 0.6 and x3 near 0.95 the best is 1.84 at x2=0.9, and x2 has not been varied there; I probe x2=0.97 to test whether y keeps rising in x2 (LHS #7 at x2=0.97 was high too)."
+28,agent2,5,0.6,0.85,0.96,1.846,"Best run is (0.6, 0.9, 0.96) at y=1.84, and x2 has only been tested upward (0.95 gave 1.804); with x1=0.6 and x3=0.96 held fixed, I lower x2 to 0.85 to check whether the x2 optimum lies below 0.9."
+29,agent1,5,0.6,0.875,0.96,1.8430000000000002,"Best is row 24 (0.6, 0.9, 0.96) at y=1.84; x2=0.95 dropped to 1.804 at the same x1 and x3, so the x2 peak may lie just below 0.9, and this final probe tests x2=0.875 with x1 and x3 fixed."
+30,agent3,5,0.6,0.9,1,1.826843918132753,"Holding the best point's x1=0.6 and x2=0.9, raising x3 from 0.96 (y=1.84) to the boundary 1.0 tests whether the small x3 gain continues to the edge of the box."
