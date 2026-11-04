@@ -61,6 +61,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Find which inputs matter with a sensitivity analysis**: the first-order Sobol' index of an input is the fraction of the output variance it explains alone, the total index the fraction it takes part in (alone or through interactions). It needs many evaluations, so compute it on a surrogate when the data generator is expensive. (L19)
 - **Run independent experiments in parallel**: with $p$ processes, $N$ runs of $t$ seconds take about $\lceil N/p \rceil\, t$. The limits are the cores, the licenses, and experiments that depend on each other. (L20)
 - **Let one `ExperimentData` travel through the process**: the inputs with their `Domain`, the outputs, and the status of each experiment (open, finished, error), stored to disk. The status says what to run again, and nothing runs twice by accident. (L18, L20)
+- **Know how each row of your data was made**: which inputs were designed, which were drawn at random (e.g. an imperfection), and what each label means. A random input that is not a design variable makes the outputs that depend on it random too. (L21)
 
 ### 2. Prepare the data
 
@@ -89,6 +90,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Choose models and hyperparameters on validation data**, with cross-validation on the training set, reading the means together with their spread. Use the test set once, at the end, to report the chosen model. (L11)
 - **Compare many models or methods as one experiment**: each experiment is one candidate (a polynomial degree, or an optimization strategy from one starting design), its outputs are its scores (validation errors, the best value found), and the choice is read from the record. (L20)
 - **Judge methods, not runs**: rerun each strategy from many starting designs, with the same budget, and compare the distributions. One run can crown the wrong method, and two agents with the same method can look different by luck. (L20)
+- **Report the best experiment you already have**: it is the baseline that a model-based design has to beat, and sometimes nothing beats it. (L21)
+- **A test error inside the data says nothing outside it**: models with the same validation error can disagree far from the data. Bring other evidence: what you know about the problem, a test that imitates the question (hold out the edge of the data), and the disagreement between sensible models. (L21)
 - **Report error metrics on the test set, and know how to read them**: for example, in supervised regression use MSE and $R^2$ (a negative $R^2$ is worse than simply predicting the mean of the data). (L10, L11)
 
 ### 6. Quantify the uncertainty
@@ -98,6 +101,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Know whether your band includes the noise**: a credible interval for $\mu_{y|z}(\mathbf{x}^*)$ excludes it, a posterior predictive interval for $y^*$ includes it, and only the latter should contain 95% of new measurements. In scikit-learn, noise given through `alpha` is excluded from the predicted standard deviation, and noise learned with a White kernel is included. (L15)
 - **Check the uncertainty locally, not only on average**: a single noise level can be right on average and wrong everywhere, too wide where the data are clean and too narrow where they are noisy. (L13)
 - **A residual at a training point underestimates the noise there**, by the epistemic variance at that point: the model was fitted to that point's own noise. (L11, L13)
+- **An optimizer goes where the model is least reliable**: with a constraint learned by a classifier, the best design sits on the boundary, where the classifier errs most. Ask for a probability, choose how sure you must be, and check that the probabilities are calibrated on data the classifier has not seen. (L21)
+- **When the outcome is random, predict its distribution**: if a design is scored by the median of repeated runs, what matters is the probability that a run fails, not the label of one run. (L21)
 
 ### 7. Work with an AI coding agent
 
@@ -245,6 +250,12 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - A team of agents is a graph *(practice: Work with an AI coding agent)*
     - Have the agent write its method as code that a tool runs once *(practice: Work with an AI coding agent)*
     - Alone or together is a decision *(practice: Work with an AI coding agent)*
+- **Lecture 21**
+    - Know how each row of your data was made *(practice: Frame the problem)*
+    - Report the best experiment you already have *(practice: Validate and select)*
+    - A test error inside the data says nothing outside it *(practice: Validate and select)*
+    - An optimizer goes where the model is least reliable *(practice: Quantify the uncertainty)*
+    - When the outcome is random, predict its distribution *(practice: Quantify the uncertainty)*
 - **Lecture 22**
     - An unknown is treated as a random variable (rv) *(concept: Probability)*
 

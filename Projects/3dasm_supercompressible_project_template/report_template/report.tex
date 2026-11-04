@@ -1,0 +1,293 @@
+% Report template of the supercompressible project (ENGN 2350). You do not need to use LaTeX: any tool works, as
+% long as the PDF has the same structure (cover page, one bold label per answer, in the order of the statement).
+% Build: pdflatex report.tex (twice, for the references to figures and tables). Put your figures in figs/.
+%
+% The rules (statement, section Deliverables): a cover page, then at most 15 pages (11pt, 2.5 cm margins),
+% excluding the references; an appendix, if any, counts towards the 15 pages. Show results in tables and figures
+% and use the text to explain them. Make each figure at the size it is printed (about 16 cm wide for the full
+% text width), so that its labels can be read. Every number and figure names the notebook and section it comes
+% from, with \nb{4}{4.4} -> (task4, 4.4).
+%
+% The tables below have the shape the graders expect for the results that every report has; fill them and
+% add rows as needed. Everything else (more tables, figures, how you explain) is yours.
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx,booktabs,amsmath,array,tabularx,caption}
+\usepackage[hidelinks]{hyperref}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{4pt}\setlength{\parindent}{0pt}
+\newcommand{\sig}{\sigma_{\rm crit}}
+\newcommand{\ans}[1]{\textbf{Answer #1.}}            % start every answer with it
+\newcommand{\nb}[2]{{\small(task#1, #2)}}            % where a result comes from
+\newcommand{\placeholder}[1]{\fbox{\parbox[c][3cm][c]{0.9\linewidth}{\centering\small #1}}}  % delete when you add the figure
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\begin{document}
+
+%------------------------------------------------------------------ cover page (not counted)
+\begin{titlepage}
+\centering
+\vspace*{5cm}
+{\LARGE\bfseries Data-driven design of a supercompressible metamaterial\par}
+\vspace{1.5cm}
+{\large ENGN 2350: Data-Driven Design and Analysis of Structures and Materials\par}
+\vspace{1cm}
+{\large Final Project report\par}
+\vspace{2cm}
+{\large Student name\par}
+{\large Student ID\par}
+\vspace{1cm}
+{\large \today\par}
+\end{titlepage}
+\setcounter{page}{1}
+
+%==================================================================
+\section{Data characterization}
+
+\ans{1.1} % ranges of the inputs and number of points of each output
+
+\begin{table}[htb]\centering\small
+\caption{Range of each input in \texttt{input.csv} \nb{1}{1.1}.}
+\begin{tabular}{@{}llcc@{}}\toprule
+dataset & input & minimum & maximum\\\midrule
+3-d & $d/D_1$ & & \\
+    & $P/D_1$ & & \\
+    & $(D_1-D_2)/D_1$ & & \\\midrule
+7-d & $A/D_1^2$ & & \\
+    & $I_x/D_1^4$ & & \\
+    & $I_y/D_1^4$ & & \\
+    & $J/D_1^4$ & & \\
+    & $P/D_1$ & & \\
+    & $(D_1-D_2)/D_1$ & & \\
+    & $G/E$ & & \\\bottomrule
+\end{tabular}
+\end{table}
+
+\ans{1.2} % the design of experiments
+
+\ans{1.3} % histograms of the outputs, counts of the categories, what they mean for Task 2
+
+\begin{table}[htb]\centering\small
+\caption{Number of designs in each category of \texttt{coilable} \nb{1}{1.3}.}
+\begin{tabular}{@{}lccc@{}}\toprule
+dataset & 0: not coilable & 1: coilable & 2: coilable but yields\\\midrule
+3-d & & & \\
+7-d & & & \\\bottomrule
+\end{tabular}
+\end{table}
+
+\ans{1.4} % the best reversibly coilable designs of the 3-d data
+
+\begin{table}[htb]\centering\small
+\caption{Best reversibly coilable designs of the 3-d data \nb{1}{1.4}.}
+\begin{tabular}{@{}lcccccc@{}}\toprule
+goal & $d/D_1$ & $P/D_1$ & $(D_1-D_2)/D_1$ & $\sig$ (kPa) & energy (kJ/m$^3$) & imperfection (rad)\\\midrule
+max.\ $\sig$ & & & & & & \\
+max.\ energy & & & & & & \\\bottomrule
+\end{tabular}
+\end{table}
+
+%==================================================================
+\section{Finding good machine learning models}
+
+% The split, the preprocessing you compared, and where every model is (task2_models.csv).
+
+\begin{table}[htb]\centering\small
+\caption{Classification: worst, median and best model of each problem by test accuracy (N classifiers per problem) \nb{2}{2.1.1, 2.2}.}
+\begin{tabular}{@{}llllcccc@{}}\toprule
+problem & rank & model & preprocessing & accuracy & precision & recall & F1\\\midrule
+3-d, 3 classes & worst & & & & & & \\
+ & median & & & & & & \\
+ & best & & & & & & \\\midrule
+3-d, 2 categories & worst & & & & & & \\
+ & median & & & & & & \\
+ & best & & & & & & \\\midrule
+7-d, 2 categories & worst & & & & & & \\
+ & median & & & & & & \\
+ & best & & & & & & \\\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]\centering\small
+\caption{Regression: worst, median and best model of each output by test MSE (N regressors per output) \nb{2}{2.1.2, 2.2}.}
+\begin{tabular}{@{}llllrc@{}}\toprule
+output & rank & model & preprocessing & MSE & $R^2$\\\midrule
+3-d $\sig$ & worst & & & & \\
+ & median & & & & \\
+ & best & & & & \\\midrule
+3-d energy & worst & & & & \\
+ & median & & & & \\
+ & best & & & & \\\midrule
+7-d $\sig$ & worst & & & & \\
+ & median & & & & \\
+ & best & & & & \\\midrule
+7-d energy & worst & & & & \\
+ & median & & & & \\
+ & best & & & & \\\bottomrule
+\end{tabular}
+\end{table}
+% The hyperparameters and the number of training and testing points of these models: in a table here or in an appendix.
+
+\ans{2.1.1} % classification, 3-d: why the worst, median and best performed as they did; your choice
+
+\ans{2.1.2} % regression, 3-d: the same; noisy and noiseless problems; a model not covered in class
+
+\ans{2.2} % the 7-d dataset
+
+%==================================================================
+\section{Evaluating the best machine learning models}
+
+\ans{3.1.1} % number of training points
+
+\ans{3.1.2} % C of the SVC and nu of the Matern kernel
+
+\ans{3.1.3} % hyperparameter optimization of the SVC and the GPR
+
+\begin{table}[htb]\centering\small
+\caption{Hyperparameter optimization: best cross-validated objective after the last iteration (mean, min and max over the runs of each algorithm) and test error of the optimized model \nb{3}{3.1.3}.}
+\begin{tabular}{@{}llccc@{}}\toprule
+model (objective) & algorithm & mean & min & max\\\midrule
+SVC (CV accuracy) & random search & & & \\
+ & TPE & & & \\
+ & & & & \\
+ & \multicolumn{4}{l}{optimum: \ldots; test accuracy \ldots}\\\midrule
+GPR (CV MSE) & random search & & & \\
+ & TPE & & & \\
+ & & & & \\
+ & \multicolumn{4}{l}{optimum: \ldots; test MSE \ldots}\\\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htb]\centering
+\placeholder{best objective so far against the iteration, one curve per run}
+% \includegraphics[width=\linewidth]{figs/your_figure.png}
+\caption{Hyperparameter optimization \nb{3}{3.1.3}.}
+\end{figure}
+
+\ans{3.2} % your best classifier and regressor of 2.1.1 and 2.1.2, optimized (the models of 4.4)
+
+%==================================================================
+\section{Optimization}
+
+\ans{4.1} % search in the data with the SVC
+
+\ans{4.2} % the campaign; your table of decisions (it is part of the answer)
+
+\begin{table}[htb]\centering\small
+\caption{Decisions before any prompt: campaign 4.2 \nb{4}{4.2}.}
+\begin{tabularx}{\linewidth}{@{}lY@{}}\toprule
+decision & choice and reason\\\midrule
+optimizers added & \\
+constraint & \\
+repetitions and starting points & \\
+evaluation budget & \\
+seeds & \\
+recorded for every run & \\
+agents & \\\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{table}[htb]\centering\small
+\caption{Campaign 4.2: best feasible predicted value over the repetitions of each optimizer \nb{4}{4.2}.}
+\begin{tabular}{@{}lcccc@{}}\toprule
+ & \multicolumn{2}{c}{$\sig$ (kPa)} & \multicolumn{2}{c}{energy (kJ/m$^3$)}\\\cmidrule(lr){2-3}\cmidrule(l){4-5}
+optimizer & median & worst & median & worst\\\midrule
+Nelder--Mead & & & & \\
+CMA-ES & & & & \\
+ & & & & \\
+ & & & & \\\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htb]\centering
+\placeholder{objective against the number of iterations, for each optimizer, over all its repetitions}
+\caption{Campaign 4.2 \nb{4}{4.2}.}
+\end{figure}
+
+\ans{4.3} % comparison of 1.4, 4.1 and 4.2; what you checked independently of the agents; corrections
+
+\ans{4.4} % the campaign with your best models; the two designs; their probability of staying reversibly coilable
+
+\begin{table}[htb]\centering\small
+\caption{Designs of 1.4, 4.1, 4.2 and 4.4 (the 4.4 designs are submitted in \texttt{designs\_3d.csv}) \nb{4}{4.4}.}
+\begin{tabular}{@{}llcccccc@{}}\toprule
+source & goal & $d/D_1$ & $P/D_1$ & $\frac{D_1-D_2}{D_1}$ & $\sig$ (kPa) & energy (kJ/m$^3$) & $P(\text{reversible})$\\\midrule
+1.4 & & & & & & & \\
+4.1 & & & & & & & \\
+4.2 & & & & & & & \\
+4.4 & $\sig$ & & & & & & \\
+4.4 & energy & & & & & & \\\bottomrule
+\end{tabular}
+\end{table}
+
+%==================================================================
+\section{Optimization considering a new material (extrapolation)}
+
+\ans{5.1} % the campaign; your decisions (part of the answer); your conclusions
+
+\ans{5.2} % how you chose the five designs
+
+\begin{table}[htb]\centering\small
+\caption{The five submitted 7-d designs (\texttt{submission.csv}) \nb{5}{5.2}.}
+\begin{tabular}{@{}ccccccccc@{}}\toprule
+\# & $A/D_1^2$ & $I_x/D_1^4$ & $I_y/D_1^4$ & $J/D_1^4$ & $P/D_1$ & $\frac{D_1-D_2}{D_1}$ & $G/E$ & predicted $\sig$ (kPa)\\\midrule
+1 & & & & & & & & \\
+2 & & & & & & & & \\
+3 & & & & & & & & \\
+4 & & & & & & & & \\
+5 & & & & & & & & \\\bottomrule
+\end{tabular}
+\end{table}
+
+\ans{5.3} % distance to the data; epistemic uncertainty
+
+%==================================================================
+\section{Letting the agents decide}
+
+\ans{6.1} % the problem statement, the team (table or diagram) and why; the run
+
+\begin{table}[htb]\centering\small
+\caption{The team of agents (all Claude Haiku) \nb{6}{6.1}.}
+\begin{tabularx}{\linewidth}{@{}lYY@{}}\toprule
+agent & role & why\\\midrule
+ & & \\
+ & & \\\bottomrule
+\end{tabularx}
+\end{table}
+
+\ans{6.2} % the strategies; worst, median and best; the best one as an algorithm; do you trust the assessment?
+
+\begin{table}[htb]\centering\small
+\caption{Worst, median and best strategy of the agents by their own assessment ($\star$: delivered) \nb{6}{6.2}.}
+\begin{tabularx}{\linewidth}{@{}llYr@{}}\toprule
+problem & rank & strategy & score\\\midrule
+3-d & worst & & \\
+ & median & & \\
+ & best & & \\\midrule
+7-d & worst & & \\
+ & median & & \\
+ & best & & \\\bottomrule
+\end{tabularx}
+\end{table}
+
+\ans{6.3} % the agents' designs against yours
+
+\begin{table}[htb]\centering\small
+\caption{Your designs and the agents' designs \nb{6}{6.3}.}
+\begin{tabular}{@{}lll@{}}\toprule
+problem & designs & what you expect, and why\\\midrule
+3-d & yours (4.4) & \\
+ & agents (6.1) & \\\midrule
+7-d & yours (5.2) & \\
+ & agents (6.1) & \\\bottomrule
+\end{tabular}
+\end{table}
+
+%------------------------------------------------------------------ references (not counted)
+\begin{thebibliography}{9}\small
+\bibitem{bessa2019} M.A. Bessa, P. Glowacki, M. Houlder. Bayesian machine learning in metamaterial design: fragile becomes supercompressible. \emph{Advanced Materials}, 31(48):1904845, 2019.
+\end{thebibliography}
+
+\end{document}

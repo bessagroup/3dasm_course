@@ -1,0 +1,15 @@
+# Final Project: what to deliver
+
+The statement (`3dasm_supercompressible_project_statement.pdf`, sections How the project is graded and Deliverables) is authoritative; this file summarizes it for you and your agents.
+
+- Work in `your_Project/`, where you copied this template. Submit it as one ZIP-file containing: `report.pdf`, `task1.ipynb` to `task6.ipynb`, `task2_models.csv`, `designs_3d.csv`, `submission.csv`, `designs_3d_agents.csv`, `submission_agents.csv`, `environment.yml`, `data/`, `cache/` (at most 50 MB) and `studies/`. Nothing else is graded; `check_submission.py`, `DELIVERABLES.md`, `report_template/` and `CLAUDE.md` may stay.
+- The report is what is graded; the notebooks are read to check that they did the work the report describes. Every answer must be gradeable from the report alone.
+- `report.pdf`: a cover page (title, course name, student name, student ID, date), then at most 15 pages (11pt, 2.5 cm margins), excluding the references; an appendix counts towards the 15. Results go in tables and figures, the text explains them; figures are made at their printed size, with readable labels. `report_template/report.tex` is a LaTeX template with this structure and the tables every report needs; LaTeX is not required. Each answer starts with its number in bold (**Answer 1.1.**, **Answer 1.2.**, ...), in the order of the statement. Every number and figure names the notebook and section it comes from, for example (task4, 4.4).
+- One notebook per task, started from the skeleton given. Keep its first cell and every heading (`## 4.2 ...`); add as many cells as you need under each heading. Close each section with its **Answer** cell, written in your own words.
+- Each notebook is self-contained: it imports only installed packages, never your own `.py` files, and reads only `data/`, `cache/` and `studies/`.
+- Notebooks show saved runs, as the lectures do. The adda campaigns live in `studies/`, one study folder per campaign, each holding the run reported: `task4_2`, `task4_4`, `task5_1` and `task6`. The cell that starts a campaign runs only if `RUN_AGENTS = True`; with `False` the notebook reads the records of the study folder. Every adda agent uses Claude Haiku, and the notebook shows that from the run records.
+- In Tasks 4 and 5 the student makes every choice and the agents only implement it. In Task 6 the problem statement gives the agents the goal, data, rules, scoring and budget, and no methods or findings of Tasks 1 to 5.
+- Expensive results go through `cached(...)` (defined in the first cell). With `RECOMPUTE = False` each notebook runs top to bottom in under 10 minutes.
+- `task2.ipynb` writes `task2_models.csv`, `task4.ipynb` writes `designs_3d.csv`, `task5.ipynb` writes `submission.csv` and `task6.ipynb` writes `designs_3d_agents.csv` and `submission_agents.csv`, with the cells provided in the skeletons.
+- Submit the notebooks executed, top to bottom, with their outputs, and with `RUN_AGENTS = False` and `RECOMPUTE = False`.
+- Before you submit, run `python check_submission.py` in `your_Project/` and fix everything it reports: it is the first thing the TAs run on your submission.
