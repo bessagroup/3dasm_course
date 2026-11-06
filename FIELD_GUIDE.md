@@ -40,13 +40,14 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Non-parametric does not mean without coefficients**: the mean prediction of a Gaussian process is a weighted sum of kernels centered at the training points, $\sum_n \alpha_n k(\mathbf{x}^*, \mathbf{x}_n)$, with one coefficient per training point, $\boldsymbol{\alpha} = (\mathbf{K}+\boldsymbol{\Lambda})^{-1}\mathbf{y}$. The model grows with the data, instead of having a fixed number of weights. (L14)
 - **Not every function is a kernel**: a kernel must be positive semi-definite (Mercer's theorem). Sums and products of valid kernels are valid kernels: a sum gives the properties of either kernel, a product of both. (L14, L15)
 - **Hyperparameter or model structure**: a hyperparameter is one of a fixed set of knobs of a model; a model structure changes the set of knobs (for example an RBF kernel or a periodic one). The mathematics does not distinguish them, so where the line goes is partly our choice. (L17)
+- **Classification predicts a category**: a classifier divides the input space into decision regions, one per class. Many regression models have a classification version (basis functions in logistic regression, kernels in support vector machines and Gaussian processes); decision trees ask yes/no questions about one feature at a time. (L22)
 
 ### Generalization
 
 - **The expected error on unseen data is noise + bias$^2$ + variance**: noise is the aleatoric uncertainty that cannot be reduced, bias results from the model misspecification (if any), and the variance term is the epistemic uncertainty that can be reduced when considering more data. (L11)
-- **Underfitting and overfitting; interpolation and extrapolation.** (L11)
+- **Underfitting and overfitting; interpolation and extrapolation.** In classification too: as a classifier becomes more flexible, its training accuracy keeps rising and its decision regions turn into islands around single points, while its cross-validated accuracy falls. (L11, L22)
 - **Curse of dimensionality**: Training a model with more inputs requires many more points. (L12)
-- **Raw polynomial features become ill-conditioned at high degree**: a numerical failure, not only overfitting. (L11)
+- **Raw polynomial features become ill-conditioned at high degree**: a numerical failure, not only overfitting. Standardize the inputs before the polynomial. (L11, L22)
 - **Gaussian processes are expensive** (review): fitting one solves an $N\times N$ linear system, $O(N^3)$ operations and $O(N^2)$ memory, repeated at every step of the hyperparameter optimization. They are excellent with few data, and impractical with many. (L16)
 
 ## Good practices
@@ -93,6 +94,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Report the best experiment you already have**: it is the baseline that a model-based design has to beat, and sometimes nothing beats it. (L21)
 - **A test error inside the data says nothing outside it**: models with the same validation error can disagree far from the data. Bring other evidence: what you know about the problem, a test that imitates the question (hold out the edge of the data), and the disagreement between sensible models. (L21)
 - **Report error metrics on the test set, and know how to read them**: for example, in supervised regression use MSE and $R^2$ (a negative $R^2$ is worse than simply predicting the mean of the data). (L10, L11)
+- **Judge a classifier by more than its accuracy**: read the confusion matrix, and report per class the precision (of the points predicted in the class, how many are in it), the recall (of the points in the class, how many were found) and the F1 score. With a rare class, a classifier that never predicts it can be very accurate. (L22)
+- **Know what your test set can resolve**: with $n$ test points an accuracy $p$ is measured to about $\sqrt{p(1-p)/n}$; models closer than that are not ranked by it. Say so, and repeat the split or cross-validate to see the spread. (L22)
 
 ### 6. Quantify the uncertainty
 
@@ -258,5 +261,10 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - When the outcome is random, predict its distribution *(practice: Quantify the uncertainty)*
 - **Lecture 22**
     - An unknown is treated as a random variable (rv) *(concept: Probability)*
+    - Classification predicts a category *(concept: Models)*
+    - Underfitting and overfitting; interpolation and extrapolation *(concept: Generalization)*
+    - Raw polynomial features become ill-conditioned at high degree *(concept: Generalization)*
+    - Judge a classifier by more than its accuracy *(practice: Validate and select)*
+    - Know what your test set can resolve *(practice: Validate and select)*
 
 <!-- END INDEX -->
