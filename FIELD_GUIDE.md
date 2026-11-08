@@ -10,7 +10,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 
 ### Probability
 
-- **An unknown is treated as a random variable (rv).** Continuous rv's are described by a pdf, i.e. a probability density, from which probability results by integrating the pdf in an interval. Discrete rv's are described by a pmf, i.e. a probability value. (L1, L22)
+- **An unknown is treated as a random variable (rv).** Continuous rv's are described by a pdf, i.e. a probability density, from which probability results by integrating the pdf in an interval. Discrete rv's are described by a pmf, i.e. a probability value (e.g. the Bernoulli and Categorical distributions of a class label). (L1, L22, L23, L24)
 - **Joint, marginal and conditional distributions.** Marginalizing a variable means integrating it out. (L1, L3, L4)
 - **Moments**: the expected value is linear; the variance of a sum of independent variables is the sum of their variances; mean and mode differ for asymmetric distributions. (L3)
 - **Change of variables**: how a pdf transforms when its variable is transformed. (L3)
@@ -34,13 +34,14 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Least Squares is the MLE with Gaussian noise**: it has a closed form (the normal equations), its estimate of the noise is biased low, and it is sensitive to outliers. (L9)
 - **Most machine learning models are defined by the observation distribution and respective likelihood, prior distribution and the choice between calculating the point estimate or conducting Bayesian inference**: For example, Ridge regression assumed a Gaussian observation distribution, a choice of basis functions to describe the distribution parameters, a Gaussian prior on the weights, and the MAP point estimate. Lasso is the same but considering a Laplace prior. Robust regression considers a different observation distribution (e.g., leading to a Laplace or Student-$t$ likelihood). (L12)
 - **The shape of the prior matters**: a Gaussian prior shrinks every weight smoothly; the cusp of a Laplace prior makes the MAP of weakly supported weights exactly zero (a sparse model), although the posterior mean is never zero. (L12)
-- **Closed form or numerical optimization**: Few ML models have closed forms for their point estimates. For example, Least Squares and Ridge have closed forms (Ridge is invertible for any $\alpha > 0$), but even Lasso must be solved numerically. Most ML models need numerical optimization to find their point estimates. (L9, L12)
+- **Closed form or numerical optimization**: Few ML models have closed forms for their point estimates. For example, Least Squares and Ridge have closed forms (Ridge is invertible for any $\alpha > 0$), but even Lasso must be solved numerically. Most ML models need numerical optimization to find their point estimates. For example, the NLL of logistic regression has no closed-form minimizer, but it is convex, so a gradient-based optimizer (e.g. L-BFGS) cannot get stuck in a local minimum. (L9, L12, L24)
 - **The kernel trick**: the PPD of Bayesian linear regression uses the basis functions only through the inner products $k(\mathbf{x}, \mathbf{x}') = \boldsymbol{\phi}(\mathbf{x})^T\overset{\scriptscriptstyle <}{\boldsymbol{\Sigma}}_w\boldsymbol{\phi}(\mathbf{x}')$. Replacing them by a kernel allows infinitely many basis functions (e.g. the RBF kernel), at the cost of solving an $N\times N$ linear system instead of an $M\times M$ one. (L14)
 - **A prior on the weights is a prior on functions, and the kernel is its covariance**: with random weights, $\mu_{y|z}(\mathbf{x}) = \boldsymbol{\phi}(\mathbf{x})^T\mathbf{w}$ (the mean of the observation distribution) is a random function, and its values at any set of inputs are jointly Gaussian with covariance $k(\mathbf{x}, \mathbf{x}') = \boldsymbol{\phi}(\mathbf{x})^T\overset{\scriptscriptstyle <}{\boldsymbol{\Sigma}}_w\boldsymbol{\phi}(\mathbf{x}')$ (the same prior seen from the weights or from the functions). A kernel gives this covariance directly, gathering the basis functions and the prior on their weights into one object, possibly with infinitely many basis functions; with a zero mean it fully specifies the prior (a Gaussian process). Its hyperparameters are fixed numbers that set the prior variances of the weights: $s$ the amplitude of the functions, $l$ the length scale over which they change. (L14, L15)
 - **Non-parametric does not mean without coefficients**: the mean prediction of a Gaussian process is a weighted sum of kernels centered at the training points, $\sum_n \alpha_n k(\mathbf{x}^*, \mathbf{x}_n)$, with one coefficient per training point, $\boldsymbol{\alpha} = (\mathbf{K}+\boldsymbol{\Lambda})^{-1}\mathbf{y}$. The model grows with the data, instead of having a fixed number of weights. (L14)
 - **Not every function is a kernel**: a kernel must be positive semi-definite (Mercer's theorem). Sums and products of valid kernels are valid kernels: a sum gives the properties of either kernel, a product of both. (L14, L15)
 - **Hyperparameter or model structure**: a hyperparameter is one of a fixed set of knobs of a model; a model structure changes the set of knobs (for example an RBF kernel or a periodic one). The mathematics does not distinguish them, so where the line goes is partly our choice. (L17)
 - **Classification predicts a category**: a classifier divides the input space into decision regions, one per class. Many regression models have a classification version (basis functions in logistic regression, kernels in support vector machines and Gaussian processes); decision trees ask yes/no questions about one feature at a time. (L22)
+- **Logistic regression is built like linear regression, with a different observation distribution**: a Bernoulli (or Categorical) distribution whose parameter is the sigmoid (or softmax) of a linear model $\mathbf{w}^T\boldsymbol{\phi}(\mathbf{x})$, which keeps it between 0 and 1. Its NLL is the (binary) cross entropy, and the predicted class is the mode of the PPD. (L23, L24)
 
 ### Generalization
 
@@ -83,6 +84,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Read the optimizer's warnings**: a hyperparameter that ends at its bound says that the prior does not match the data (e.g. outputs far from the zero mean of a Gaussian process); rescale the data or reconsider the bounds instead of ignoring it. (L16)
 - **Choose hyperparameters by maximizing the marginal likelihood** (MLE-II), or MAP-II with a prior on them: no data are held out, which is why it is the usual choice for Gaussian processes. Cross-validation is the alternative. (L17)
 - **With few data, do not trust one optimum of the marginal likelihood**: its landscape is flat or has several local optima. Restart the optimizer from several starting points and compare. (L17)
+- **Perfectly separable classes make the MLE weights grow without bound**, turning the sigmoid into a step. A Gaussian prior on the weights (the regularization `C` of scikit-learn, the inverse of its strength) keeps them finite. Separation becomes more likely as the model becomes more flexible. (L24)
 
 ### 5. Validate and select
 
@@ -266,5 +268,13 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - Raw polynomial features become ill-conditioned at high degree *(concept: Generalization)*
     - Judge a classifier by more than its accuracy *(practice: Validate and select)*
     - Know what your test set can resolve *(practice: Validate and select)*
+- **Lecture 23**
+    - An unknown is treated as a random variable (rv) *(concept: Probability)*
+    - Logistic regression is built like linear regression, with a different observation distribution *(concept: Models)*
+- **Lecture 24**
+    - An unknown is treated as a random variable (rv) *(concept: Probability)*
+    - Closed form or numerical optimization *(concept: Models)*
+    - Logistic regression is built like linear regression, with a different observation distribution *(concept: Models)*
+    - Perfectly separable classes make the MLE weights grow without bound *(practice: Fit the model)*
 
 <!-- END INDEX -->
