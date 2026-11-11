@@ -42,6 +42,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Hyperparameter or model structure**: a hyperparameter is one of a fixed set of knobs of a model; a model structure changes the set of knobs (for example an RBF kernel or a periodic one). The mathematics does not distinguish them, so where the line goes is partly our choice. (L17)
 - **Classification predicts a category**: a classifier divides the input space into decision regions, one per class. Many regression models have a classification version (basis functions in logistic regression, kernels in support vector machines and Gaussian processes); decision trees ask yes/no questions about one feature at a time. (L22)
 - **Logistic regression is built like linear regression, with a different observation distribution**: a Bernoulli (or Categorical) distribution whose parameter is the sigmoid (or softmax) of a linear model $\mathbf{w}^T\boldsymbol{\phi}(\mathbf{x})$, which keeps it between 0 and 1. Its NLL is the (binary) cross entropy, and the predicted class is the mode of the PPD. (L23, L24)
+- **In classification the noise is the Bernoulli draw itself**: there is no additive noise term, and $\rho(\mathbf{x})$ sets both the class probabilities and the noise, the variance $\rho(1-\rho)$. A smooth sigmoid encodes classes that overlap (noise); a step encodes no noise. The noise of logistic regression is symmetric around its decision boundary, the true noise need not be. (L24)
 - **A generative classifier models the inputs too**: Gaussian discriminant analysis models $p(y,\mathbf{x}|\mathbf{z}) = p(\mathbf{x}|y)\,p(y)$ with one Gaussian per class. It fits in closed form (class fractions, means and covariances), gives the probability of each class by Bayes' rule, and can generate new inputs. With a covariance shared by all classes (LDA) the class probability has exactly the form of logistic regression, fitted differently. (L25)
 
 ### Generalization
@@ -277,6 +278,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
     - An unknown is treated as a random variable (rv) *(concept: Probability)*
     - Closed form or numerical optimization *(concept: Models)*
     - Logistic regression is built like linear regression, with a different observation distribution *(concept: Models)*
+    - In classification the noise is the Bernoulli draw itself *(concept: Models)*
     - Perfectly separable classes make the MLE weights grow without bound *(practice: Fit the model)*
 - **Lecture 25**
     - A generative classifier models the inputs too *(concept: Models)*
