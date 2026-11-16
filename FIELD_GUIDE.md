@@ -44,6 +44,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Logistic regression is built like linear regression, with a different observation distribution**: a Bernoulli (or Categorical) distribution whose parameter is the sigmoid (or softmax) of a linear model $\mathbf{w}^T\boldsymbol{\phi}(\mathbf{x})$, which keeps it between 0 and 1. Its NLL is the (binary) cross entropy, and the predicted class is the mode of the PPD. (L23, L24)
 - **In classification the noise is the Bernoulli draw itself**: there is no additive noise term, and $\rho(\mathbf{x})$ sets both the class probabilities and the noise, the variance $\rho(1-\rho)$. A smooth sigmoid encodes classes that overlap (noise); a step encodes no noise. The noise of logistic regression is symmetric around its decision boundary, the true noise need not be. (L24)
 - **A generative classifier models the inputs too**: Gaussian discriminant analysis models $p(y,\mathbf{x}|\mathbf{z}) = p(\mathbf{x}|y)\,p(y)$ with one Gaussian per class. It fits in closed form (class fractions, means and covariances), gives the probability of each class by Bayes' rule, and can generate new inputs. With a covariance shared by all classes (LDA) the class probability has exactly the form of logistic regression, fitted differently. (L25)
+- **In a convex problem every local minimum is global**: least squares, Ridge, Lasso and logistic regression are convex, so any starting point works; the marginal likelihood of a Gaussian process, neural networks and most design problems are not. (L26)
 
 ### Generalization
 
@@ -88,6 +89,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Choose hyperparameters by maximizing the marginal likelihood** (MLE-II), or MAP-II with a prior on them: no data are held out, which is why it is the usual choice for Gaussian processes. Cross-validation is the alternative. (L17)
 - **With few data, do not trust one optimum of the marginal likelihood**: its landscape is flat or has several local optima. Restart the optimizer from several starting points and compare. (L17)
 - **Perfectly separable classes make the MLE weights grow without bound**, turning the sigmoid into a step. A Gaussian prior on the weights keeps them finite (scikit-learn's `C` is the variance of that prior: a larger `C` regularizes less). Separation becomes more likely as the model becomes more flexible. (L24)
+- **Judge an optimizer over many repetitions, for a fixed budget of evaluations**: one run can crown the wrong method. A local optimizer restarted $k$ times from random points finds the global minimum with probability $1-(1-p)^k$, where $p$ is the share of the design space that drains into it. Count every evaluation, including the ones spent on finite-difference gradients. (L26)
 
 ### 5. Validate and select
 
@@ -283,5 +285,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Lecture 25**
     - A generative classifier models the inputs too *(concept: Models)*
     - Generative or discriminative *(practice: Choose the model)*
+- **Lecture 26**
+    - In a convex problem every local minimum is global *(concept: Models)*
+    - Judge an optimizer over many repetitions, for a fixed budget of evaluations *(practice: Fit the model)*
 
 <!-- END INDEX -->
