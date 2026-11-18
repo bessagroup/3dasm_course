@@ -29,10 +29,10 @@ PALETTE = {
     "posterior": {"green", "#82e0aa", "#1e8449", "#3ba768", "rgba(30,132,73"},
     "ppd": {"orange", "#f5b041", "#c0580b", "rgba(192,88,11"},
     "empirical": {"magenta", "m"},
-    "highlight": {"purple", "teal", "brown", "saddlebrown"},
+    "highlight": {"purple", "teal", "brown", "saddlebrown", "olive", "slateblue", "royalblue", "deeppink"},
     "colormap": {"#2166ac", "#b2182b"},          # the two ends of RdBu, for text that reads a diverging colormap (L7)
     "neutral": {"k", "black", "white", "w", "none", "gray", "grey", "dimgray", "lightgray", "slategray",
-                "rgba(0,0,0", "rgba(200,200,200"},
+                "rgba(0,0,0", "rgba(200,200,200", "rgba(255,255,255"},
 }
 ALLOWED = set().union(*PALETTE.values())
 GREY = re.compile(r"^(0?\.\d+|#([0-9a-f])\2\2|#([0-9a-f]{2})\3\3)$")      # '0.6', '#999', '#e8e8e8'

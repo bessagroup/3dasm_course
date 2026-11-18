@@ -90,6 +90,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **With few data, do not trust one optimum of the marginal likelihood**: its landscape is flat or has several local optima. Restart the optimizer from several starting points and compare. (L17)
 - **Perfectly separable classes make the MLE weights grow without bound**, turning the sigmoid into a step. A Gaussian prior on the weights keeps them finite (scikit-learn's `C` is the variance of that prior: a larger `C` regularizes less). Separation becomes more likely as the model becomes more flexible. (L24)
 - **Judge an optimizer over many repetitions, for a fixed budget of evaluations**: one run can crown the wrong method. A local optimizer restarted $k$ times from random points finds the global minimum with probability $1-(1-p)^k$, where $p$ is the share of the design space that drains into it. Count every evaluation, including the ones spent on finite-difference gradients. (L26)
+- **Gradient descent is as slow as the problem is badly scaled**: its step size must suit the steepest direction, so it crawls along the flattest one, and its iterations grow with the condition number of the Hessian ($\kappa = \lambda_{\max}/\lambda_{\min}$). Standardize the inputs first; L-BFGS, momentum and Adam reduce what remains. (L27)
 
 ### 5. Validate and select
 
@@ -288,5 +289,7 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Lecture 26**
     - In a convex problem every local minimum is global *(concept: Models)*
     - Judge an optimizer over many repetitions, for a fixed budget of evaluations *(practice: Fit the model)*
+- **Lecture 27**
+    - Gradient descent is as slow as the problem is badly scaled *(practice: Fit the model)*
 
 <!-- END INDEX -->
