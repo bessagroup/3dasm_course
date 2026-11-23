@@ -45,6 +45,8 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **In classification the noise is the Bernoulli draw itself**: there is no additive noise term, and $\rho(\mathbf{x})$ sets both the class probabilities and the noise, the variance $\rho(1-\rho)$. A smooth sigmoid encodes classes that overlap (noise); a step encodes no noise. The noise of logistic regression is symmetric around its decision boundary, the true noise need not be. (L24)
 - **A generative classifier models the inputs too**: Gaussian discriminant analysis models $p(y,\mathbf{x}|\mathbf{z}) = p(\mathbf{x}|y)\,p(y)$ with one Gaussian per class. It fits in closed form (class fractions, means and covariances), gives the probability of each class by Bayes' rule, and can generate new inputs. With a covariance shared by all classes (LDA) the class probability has exactly the form of logistic regression, fitted differently. (L25)
 - **In a convex problem every local minimum is global**: least squares, Ridge, Lasso and logistic regression are convex, so any starting point works; the marginal likelihood of a Gaussian process, neural networks and most design problems are not. (L26)
+- **A neural network is a regression or classification model whose basis functions are learned**: linear and logistic regression are networks whose hidden layer is fixed by us; a network learns it too (at the price of a non-convex loss). One hidden layer is a sum of shifted and stretched activations; with many inputs each neuron is a ridge along a learned direction, and a classifier's output layer is a logistic regression on the learned features. Without nonlinear activations any depth collapses to a linear model. One hidden layer can approximate any continuous function, but depth can be exponentially cheaper (each layer folds the input space). (L29)
+- **A neural network is the same Bayesian model as always**: the observation distribution sets the output layer and the loss (linear output and MSE for a Gaussian, softmax and cross-entropy for a categorical), and a Gaussian prior on the weights is weight decay. A prior on the weights is a prior on functions; infinitely wide, it is a Gaussian process. The loss is not convex (permuting the hidden neurons alone gives equivalent minima). (L30)
 
 ### Generalization
 
@@ -93,6 +95,9 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Gradient descent is as slow as the problem is badly scaled**: its step size must suit the steepest direction, so it crawls along the flattest one, and its iterations grow with the condition number of the Hessian ($\kappa = \lambda_{\max}/\lambda_{\min}$). Standardize the inputs first; L-BFGS, momentum and Adam reduce what remains. (L27)
 - **Get gradients by automatic differentiation when you have the code of the function**: exact up to rounding, for a small multiple of the cost of one evaluation (reverse mode, whatever the number of parameters). Finite differences cost $D_x + 1$ evaluations per gradient and keep about half the digits (fewer in single precision); keep them for black boxes such as a simulation. (L28)
 - **Choose the optimizer by the dimension, the noise and the landscape**: with many parameters use the gradient (L-BFGS when the evaluations are exact, Adam when they are noisy); Newton only for few parameters, since a Hessian costs $D$ gradients and $D^2$ memory; line searches (L-BFGS, Newton) fail with noisy values, and finite differences amplify the noise. Keep gradient-free optimizers (CMA-ES, Nelder-Mead) for black boxes, noisy values and many local minima in few dimensions. (L28)
+- **Train a neural network on held-out data and over several seeds**: with few points, a large network interpolates them and the seed decides the function in between. Choose the size, the learning rate and the number of epochs on validation data (early stopping), add weight decay, and report the spread over seeds. (L30)
+- **Pair a deep network's activation with its initialization**: ReLU with He initialization, or the gradient vanishes before it reaches the first layers. (L31)
+- **A network's plug-in PPD has no epistemic uncertainty**: an ensemble over seeds adds an approximate one, but only as large as the members' disagreement, which can be too small away from the data. With few points in few dimensions, compare with a Gaussian process. (L31)
 
 ### 5. Validate and select
 
@@ -296,5 +301,13 @@ The list grows with the course. Each lecture notebook ends with a notes cell, "F
 - **Lecture 28**
     - Get gradients by automatic differentiation when you have the code of the function *(practice: Fit the model)*
     - Choose the optimizer by the dimension, the noise and the landscape *(practice: Fit the model)*
+- **Lecture 29**
+    - A neural network is a regression or classification model whose basis functions are learned *(concept: Models)*
+- **Lecture 30**
+    - A neural network is the same Bayesian model as always *(concept: Models)*
+    - Train a neural network on held-out data and over several seeds *(practice: Fit the model)*
+- **Lecture 31**
+    - Pair a deep network's activation with its initialization *(practice: Fit the model)*
+    - A network's plug-in PPD has no epistemic uncertainty *(practice: Fit the model)*
 
 <!-- END INDEX -->
